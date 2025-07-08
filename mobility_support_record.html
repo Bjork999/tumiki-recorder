@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="ja"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>移動支援記録表</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<style>
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 py-4">
+    <div class="w-full max-w-sm bg-white p-6 shadow-lg rounded-lg border border-gray-200 mx-auto py-4">
+        <form id="recordForm" method="POST" action="https://script.google.com/macros/s/AKfycbwUM1PK_RYXbxEizau5qadUOSRkeqizH3SF7LLf5KVDHgIraWa2hvQudd2ubkF_rsaC/exec">
+        <div class="border border-gray-400 p-2 text-center mb-6">
+            <h1 class="text-xl font-bold tracking-widest">移動支援記録表</h1>
+        </div>
+
+        <!-- Date Inputs -->
+        <div class="mb-6 flex items-center space-x-2 text-lg flex-wrap">
+            <input list="years" id="year" name="year" class="w-24 border-b border-gray-400 text-center" placeholder="YYYY" required>
+            <datalist id="years"></datalist>
+            <span class="ml-1">年</span>
+
+            <input list="months" id="month" name="month" class="w-16 border-b border-gray-400 text-center" placeholder="MM" required>
+            <datalist id="months"></datalist>
+            <span class="ml-1">月</span>
+
+            <input list="days" id="day" name="day" class="w-16 border-b border-gray-400 text-center" placeholder="DD" required>
+            <datalist id="days"></datalist>
+            <span class="ml-1">日</span>
+        </div>
+
+        <!-- Time Inputs -->
+        <div class="mb-6 flex items-center space-x-4 text-lg flex-wrap">
+            <input id="start-time" name="startTime" class="w-24 border-b border-gray-400 text-center" placeholder="開始時間" required>
+            <span class="font-bold mx-2">~</span>
+            <input id="end-time" name="endTime" class="w-24 border-b border-gray-400 text-center" placeholder="終了時間" required>
+        </div>
+
+        <!-- User Input -->
+        <div class="mb-2 flex flex-wrap items-center">
+            <label class="block text-sm font-medium bg-gray-200 px-3 py-1.5 inline-block border border-gray-400 mr-2" for="user-input">利用者</label>
+            <input list="users" id="user-input" name="user" class="mt-1 flex-1 border-b-2 border-gray-400 h-8 px-2" required>
+            <datalist id="users">
+                <option value="上林誠"></option>
+                <option value="溝川皓介"></option>
+                <option value="久山大"></option>
+                <option value="渡邊一孝"></option>
+                <option value="塩谷拓也"></option>
+                <option value="藤本和也"></option>
+                <option value="上田治"></option>
+                <option value="仲西美由紀"></option>
+                <option value="田上慶祐"></option>
+                <option value="榎本良児"></option>
+                <option value="千葉美沙代"></option>
+                <option value="菰田絵美子"></option>
+                <option value="平林恵子"></option>
+                <option value="空山紘子"></option>
+                <option value="山崎多恵"></option>
+                <option value="水谷夕美子"></option>
+                <option value="塚原歩美"></option>
+                <option value="上村梨桜"></option>
+                <option value="岩本小耶子"></option>
+                <option value="澤村和浩"></option>
+                <option value="廣瀬久男"></option>
+                <option value="清水健司"></option>
+                <option value="田中真也"></option>
+                <option value="中西俊也"></option>
+            </datalist>
+        </div>
+
+        <!-- Supporter Input -->
+        <div class="mb-2 flex flex-wrap items-center">
+            <label class="block text-sm font-medium bg-gray-200 px-3 py-1.5 inline-block border border-gray-400 mr-2" for="supporter-input">支援員</label>
+            <input list="supporters" id="supporter-input" name="supporter" class="mt-1 flex-1 border-b-2 border-gray-400 h-8 px-2" required>
+            <datalist id="supporters">
+                <option value="入江隆浩"></option>
+                <option value="和田真由美"></option>
+                <option value="和田郁人"></option>
+                <option value="南鑑憲"></option>
+                <option value="森垣彰"></option>
+                <option value="岩井泰子"></option>
+                <option value="相馬芳子"></option>
+                <option value="奥村さつき"></option>
+                <option value="奥村紘平"></option>
+                <option value="松下紗季"></option>
+                <option value="今西彩"></option>
+                <option value="亀野浩"></option>
+                <option value="林恵美子"></option>
+                <option value="西村孝仁"></option>
+                <option value="出口茜視"></option>
+                <option value="木下裕晃"></option>
+                <option value="廣瀬優"></option>
+                <option value="木村凛"></option>
+                <option value="夏原真咲代"></option>
+                <option value="藤田梓平"></option>
+            </datalist>
+        </div>
+
+        <!-- Destination Input -->
+        <div class="mb-2 flex flex-wrap items-center">
+            <label class="block text-sm font-medium bg-gray-200 px-3 py-1.5 inline-block border border-gray-400 mr-2" for="destination-input">行き先</label>
+            <input list="destinations" id="destination-input" name="destination" class="mt-1 flex-1 border-b-2 border-gray-400 h-8 px-2" required>
+            <datalist id="destinations">
+                <option value="散歩"></option>
+                <option value="スポセン"></option>
+                <option value="買い物"></option>
+                <option value="サイゼ"></option>
+                <option value="図書館"></option>
+            </datalist>
+        </div>
+
+        <div class="mb-2 flex flex-wrap items-center">
+            <label class="block text-sm font-medium bg-gray-200 px-3 py-1.5 inline-block border border-gray-400 mr-2" for="support-type-input">支援種別</label>
+            <input list="support-types" id="support-type-input" name="supportType" class="mt-1 flex-1 border-b-2 border-gray-400 h-8 px-2" required>
+            <datalist id="support-types">
+                <option value="移動支援"></option>
+                <option value="行動援護"></option>
+                <option value="通院"></option>
+            </datalist>
+        </div>
+
+        <div class="mt-4 pt-2">
+            <div class="bg-yellow-100 border-2 border-yellow-400 rounded-lg p-4">
+                <div class="flex items-center">
+                    <input type="checkbox" id="check1" name="userCheck" class="h-6 w-6 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500" required>
+                    <label for="check1" class="ml-3 block text-lg font-bold text-gray-900">利用者確認チェック</label>
+                </div>
+                <p class="text-red-600 text-sm mt-2">※上記の内容に誤りがないようでしたら、チェックをお願いいたします。</p>
+            </div>
+            <div class="mb-2 flex flex-wrap items-center">
+                <label class="block text-sm font-medium bg-gray-200 px-3 py-1.5 inline-block border border-gray-400 mr-2" for="appearance-input">様子</label>
+                <input list="appearances" id="appearance-input" name="appearance" class="mt-1 flex-1 border-b-2 border-gray-400 h-8 px-2" required>
+                <datalist id="appearances">
+                    <option value="気持ちが良さそうだった"></option>
+                    <option value="笑顔が多い様子だった"></option>
+                    <option value="少し疲れた様子だった"></option>
+                    <option value="また外出したいと話していた"></option>
+                    <option value="元気な様子だった"></option>
+                    <option value="活発に動けた"></option>
+                    <option value="少し落ち着きがなかった"></option>
+                    <option value="不安な表情が見えた"></option>
+                    <option value="コミュニケーションが多かった"></option>
+                    <option value="無口な時間があった"></option>
+                </datalist>
+            </div>
+        </div>
+        <button type="submit" class="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mt-4">記録を送信</button>
+        </form>
+    </div>
+
+    <script>
+        console.log("Script loaded and running"); // Debugging line
+
+        // Populate date options
+        const currentYear = new Date().getFullYear();
+        const yearsDatalist = document.getElementById('years');
+        for (let i = 0; i < 5; i++) {
+            const option = document.createElement('option');
+            option.value = currentYear - i;
+            yearsDatalist.appendChild(option);
+        }
+
+        const monthsDatalist = document.getElementById('months');
+        for (let i = 1; i <= 12; i++) {
+            const option = document.createElement('option');
+            option.value = i;
+            monthsDatalist.appendChild(option);
+        }
+
+        const daysDatalist = document.getElementById('days');
+        for (let i = 1; i <= 31; i++) {
+            const option = document.createElement('option');
+            option.value = i;
+            daysDatalist.appendChild(option);
+        }
+
+        // Set current date as default
+        const now = new Date();
+        document.getElementById('year').value = now.getFullYear();
+        document.getElementById('month').value = now.getMonth() + 1;
+        document.getElementById('day').value = now.getDate();
+
+        // Function to format time input
+        function formatTime(event) {
+            console.log("formatTime called for:", event.target.id); // Debugging line
+            const inputElement = event.target;
+            let value = inputElement.value.replace(/[^0-9]/g, ''); // Keep only numbers
+
+            if (value === '') {
+                inputElement.value = ''; // Clear if empty
+                return;
+            }
+
+            let hour, minute;
+
+            if (value.length <= 2) {
+                hour = parseInt(value, 10);
+                minute = 0;
+            } else {
+                minute = parseInt(value.slice(-2), 10);
+                hour = parseInt(value.slice(0, -2), 10);
+            }
+
+            // Ensure hour and minute are valid numbers, default to 0 if NaN
+            hour = isNaN(hour) ? 0 : hour;
+            minute = isNaN(minute) ? 0 : minute;
+
+            // Validate hours and minutes
+            if (hour > 23) {
+                hour = 23;
+            }
+            if (minute > 59) {
+                minute = 59;
+            }
+
+            // Format and set the value
+            const formattedHour = hour.toString();
+            const formattedMinute = minute.toString().padStart(2, '0');
+            inputElement.value = `${formattedHour}:${formattedMinute}`;
+        }
+
+        // Attach event listeners to time fields
+        document.getElementById('start-time').addEventListener('blur', formatTime);
+        document.getElementById('end-time').addEventListener('blur', formatTime);
+    </script>
+</body></html>
