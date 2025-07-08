@@ -249,10 +249,14 @@
                     method: 'POST',
                     mode: 'cors',
                     headers: {
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
                     },
                     body: JSON.stringify(formData)
                 });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
 
                 const result = await response.json();
                 
@@ -268,6 +272,7 @@
                     alert('エラーが発生しました: ' + result.message);
                 }
             } catch (error) {
+                console.error('Error:', error);
                 alert('送信中にエラーが発生しました: ' + error.toString());
             }
         }
