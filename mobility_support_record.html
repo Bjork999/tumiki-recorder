@@ -248,6 +248,7 @@
                 const response = await fetch('https://script.google.com/macros/s/AKfycbxqT1j0yRxZoKMT4jhv5zwOemSr__6689mZZgOwGJaiQle1qEO24io1Rl7HWi8JQr-C/exec', {
                     method: 'POST',
                     mode: 'cors',
+                    redirect: 'follow',
                     headers: {
                         'Content-Type': 'application/json',
                     },
@@ -255,10 +256,12 @@
                 });
 
                 if (!response.ok) {
+                    console.error('Response not OK:', response.status, response.statusText);
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
 
                 const result = await response.json();
+                console.log('Response:', result); // デバッグ用
                 
                 if (result.status === 'success') {
                     alert('記録が保存されました');
@@ -269,10 +272,11 @@
                     document.getElementById('month').value = now.getMonth() + 1;
                     document.getElementById('day').value = now.getDate();
                 } else {
+                    console.error('API Error:', result.message);
                     alert('エラーが発生しました: ' + result.message);
                 }
             } catch (error) {
-                console.error('Error:', error);
+                console.error('Fetch Error:', error);
                 alert('送信中にエラーが発生しました: ' + error.toString());
             }
         }
