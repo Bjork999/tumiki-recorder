@@ -13,7 +13,7 @@
 </head>
 <body class="bg-gray-100 py-4">
     <div class="w-full max-w-sm bg-white p-6 shadow-lg rounded-lg border border-gray-200 mx-auto py-4">
-        <form id="recordForm" onsubmit="submitForm(event)">
+        <form id="recordForm" method="POST" action="https://script.google.com/macros/s/AKfycbxI6diPM9a65TXcPGTIYuw6p5SPICgZtZmWHrCuHJm7P366tvfoE96aCHFmszu8Z6Tl/exec" target="_blank">
         <div class="border border-gray-400 p-2 text-center mb-6">
             <h1 class="text-xl font-bold tracking-widest">移動支援記録表</h1>
         </div>
@@ -153,7 +153,7 @@
     </div>
 
     <script>
-        console.log("Script loaded and running"); // Debugging line
+        console.log("Script loaded and running");
 
         // Populate date options
         const currentYear = new Date().getFullYear();
@@ -186,12 +186,12 @@
 
         // Function to format time input
         function formatTime(event) {
-            console.log("formatTime called for:", event.target.id); // Debugging line
+            console.log("formatTime called for:", event.target.id);
             const inputElement = event.target;
-            let value = inputElement.value.replace(/[^0-9]/g, ''); // Keep only numbers
+            let value = inputElement.value.replace(/[^0-9]/g, '');
 
             if (value === '') {
-                inputElement.value = ''; // Clear if empty
+                inputElement.value = '';
                 return;
             }
 
@@ -205,11 +205,9 @@
                 hour = parseInt(value.slice(0, -2), 10);
             }
 
-            // Ensure hour and minute are valid numbers, default to 0 if NaN
             hour = isNaN(hour) ? 0 : hour;
             minute = isNaN(minute) ? 0 : minute;
 
-            // Validate hours and minutes
             if (hour > 23) {
                 hour = 23;
             }
@@ -217,7 +215,6 @@
                 minute = 59;
             }
 
-            // Format and set the value
             const formattedHour = hour.toString();
             const formattedMinute = minute.toString().padStart(2, '0');
             inputElement.value = `${formattedHour}:${formattedMinute}`;
@@ -227,94 +224,9 @@
         document.getElementById('start-time').addEventListener('blur', formatTime);
         document.getElementById('end-time').addEventListener('blur', formatTime);
 
-        async function submitForm(event) {
-            event.preventDefault();
-            
-            const form = event.target;
-            
-            // 必須フィールドのバリデーション
-            if (!form.year.value || !form.month.value || !form.day.value || !form.user.value) {
-                alert('必須フィールド（年、月、日、利用者）を入力してください。');
-                return;
-            }
-            
-            const formData = {
-                year: form.year.value,
-                month: form.month.value,
-                day: form.day.value,
-                startTime: form.startTime.value,
-                endTime: form.endTime.value,
-                user: form.user.value,
-                supporter: form.supporter.value,
-                destination: form.destination.value,
-                supportType: form.supportType.value,
-                userCheck: form.userCheck.checked ? 'on' : 'off',
-                appearance: form.appearance.value
-            };
-
-            console.log('送信データ:', formData);
-
-            // 送信ボタンを無効化
-            const submitButton = form.querySelector('button[type="submit"]');
-            submitButton.disabled = true;
-            submitButton.textContent = '送信中...';
-
-            try {
-                const response = await fetch('https://script.google.com/macros/s/AKfycbxI6diPM9a65TXcPGTIYuw6p5SPICgZtZmWHrCuHJm7P366tvfoE96aCHFmszu8Z6Tl/exec', {
-                    method: 'POST',
-                    mode: 'cors',
-                    cache: 'no-cache',
-                    redirect: 'follow',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(formData)
-                });
-
-                console.log('Response status:', response.status);
-                console.log('Response headers:', response.headers);
-
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status} - ${response.statusText}`);
-                }
-
-                const contentType = response.headers.get('content-type');
-                if (!contentType || !contentType.includes('application/json')) {
-                    const text = await response.text();
-                    console.error('Non-JSON response:', text);
-                    throw new Error('サーバーから無効なレスポンスが返されました');
-                }
-
-                const result = await response.json();
-                console.log('Response data:', result);
-                
-                if (result.status === 'success') {
-                    alert('記録が保存されました');
-                    form.reset();
-                    // 日付を現在の日付にリセット
-                    const now = new Date();
-                    document.getElementById('year').value = now.getFullYear();
-                    document.getElementById('month').value = now.getMonth() + 1;
-                    document.getElementById('day').value = now.getDate();
-                } else {
-                    alert('エラーが発生しました: ' + (result.message || '不明なエラー'));
-                }
-            } catch (error) {
-                console.error('詳細なエラー情報:', error);
-                
-                if (error.name === 'TypeError' && error.message.includes('Failed to fetch')) {
-                    alert('ネットワークエラーまたはCORSエラーが発生しました。\n' +
-                          '1. インターネット接続を確認してください\n' +
-                          '2. Google Apps Scriptが正しくデプロイされているか確認してください\n' +
-                          '3. ブラウザの設定で広告ブロッカーを無効にしてみてください');
-                } else {
-                    alert('送信中にエラーが発生しました: ' + error.message);
-                }
-            } finally {
-                // 送信ボタンを有効化
-                submitButton.disabled = false;
-                submitButton.textContent = '記録を送信';
-            }
-        }
+        // フォーム送信時の処理
+        document.getElementById('recordForm').addEventListener('submit', function(event) {
+            alert('フォームを送信します。新しいタブで結果が表示されます。');
+        });
     </script>
 </body></html>
