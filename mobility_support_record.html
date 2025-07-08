@@ -231,6 +231,13 @@
             event.preventDefault();
             
             const form = event.target;
+            
+            // 必須フィールドのバリデーション
+            if (!form.year.value || !form.month.value || !form.day.value || !form.user.value) {
+                alert('必須フィールド（年、月、日、利用者）を入力してください。');
+                return;
+            }
+            
             const formData = {
                 year: form.year.value,
                 month: form.month.value,
@@ -241,8 +248,11 @@
                 supporter: form.supporter.value,
                 destination: form.destination.value,
                 supportType: form.supportType.value,
+                userCheck: form.userCheck.checked ? 'on' : 'off',
                 appearance: form.appearance.value
             };
+
+            console.log('送信データ:', formData); // デバッグ用
 
             try {
                 const response = await fetch('https://script.google.com/macros/s/AKfycbz4cytyfk4B4qpeKYXpwLZ5xYeB6cL4xRxwoudTu6X8b6-XW9y1xs2-8k5ZxRkqv4o/exec', {
