@@ -13,7 +13,7 @@
 </head>
 <body class="bg-gray-100 py-4">
     <div class="w-full max-w-sm bg-white p-6 shadow-lg rounded-lg border border-gray-200 mx-auto py-4">
-        <form id="recordForm" method="POST" action="https://script.google.com/macros/s/AKfycbzXeLhw1OnHuKXOtrpwkyyDWxGr5F1lr7UxPK3wN4-VMMq9rqzbrzvrCheQhqkG6Jj7/exec">
+        <form id="recordForm" method="POST" action="https://script.google.com/macros/s/AKfycbwOBw9BOdqiWVRn_imj_VdPQYoNVssHxiHgDcSDc3h5u1Bp2Pg9Ijck3hMz9Z8km4fS/exec" target="_blank">
         <div class="border border-gray-400 p-2 text-center mb-6">
             <h1 class="text-xl font-bold tracking-widest">移動支援記録表</h1>
         </div>
@@ -159,7 +159,7 @@
     </div>
 
     <script>
-        console.log("Script loaded and running"); // Debugging line
+        console.log("Script loaded and running");
 
         // Populate date options
         const currentYear = new Date().getFullYear();
@@ -192,12 +192,12 @@
 
         // Function to format time input
         function formatTime(event) {
-            console.log("formatTime called for:", event.target.id); // Debugging line
+            console.log("formatTime called for:", event.target.id);
             const inputElement = event.target;
-            let value = inputElement.value.replace(/[^0-9]/g, ''); // Keep only numbers
+            let value = inputElement.value.replace(/[^0-9]/g, '');
 
             if (value === '') {
-                inputElement.value = ''; // Clear if empty
+                inputElement.value = '';
                 return;
             }
 
@@ -211,11 +211,9 @@
                 hour = parseInt(value.slice(0, -2), 10);
             }
 
-            // Ensure hour and minute are valid numbers, default to 0 if NaN
             hour = isNaN(hour) ? 0 : hour;
             minute = isNaN(minute) ? 0 : minute;
 
-            // Validate hours and minutes
             if (hour > 23) {
                 hour = 23;
             }
@@ -223,7 +221,6 @@
                 minute = 59;
             }
 
-            // Format and set the value
             const formattedHour = hour.toString();
             const formattedMinute = minute.toString().padStart(2, '0');
             inputElement.value = `${formattedHour}:${formattedMinute}`;
@@ -232,5 +229,10 @@
         // Attach event listeners to time fields
         document.getElementById('start-time').addEventListener('blur', formatTime);
         document.getElementById('end-time').addEventListener('blur', formatTime);
+
+        // フォーム送信時の処理
+        document.getElementById('recordForm').addEventListener('submit', function(event) {
+            alert('フォームを送信します。新しいタブで結果が表示されます。');
+        });
     </script>
 </body></html>
