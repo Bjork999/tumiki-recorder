@@ -13,7 +13,7 @@
 </head>
 <body class="bg-gray-100 py-4">
     <div class="w-full max-w-sm bg-white p-6 shadow-lg rounded-lg border border-gray-200 mx-auto py-4">
-        <form id="recordForm" method="POST" action="https://script.google.com/macros/s/AKfycbwUM1PK_RYXbxEizau5qadUOSRkeqizH3SF7LLf5KVDHgIraWa2hvQudd2ubkF_rsaC/exec">
+        <form id="recordForm" method="POST" action="https://script.google.com/macros/s/AKfycbzXeLhw1OnHuKXOtrpwkyyDWxGr5F1lr7UxPK3wN4-VMMq9rqzbrzvrCheQhqkG6Jj7/exec">
         <div class="border border-gray-400 p-2 text-center mb-6">
             <h1 class="text-xl font-bold tracking-widest">移動支援記録表</h1>
         </div>
@@ -72,10 +72,10 @@
             </datalist>
         </div>
 
-        <!-- Supporter Input -->
+        <!-- Supporter 1 Input -->
         <div class="mb-2 flex flex-wrap items-center">
-            <label class="block text-sm font-medium bg-gray-200 px-3 py-1.5 inline-block border border-gray-400 mr-2" for="supporter-input">支援員</label>
-            <input list="supporters" id="supporter-input" name="supporter" class="mt-1 flex-1 border-b-2 border-gray-400 h-8 px-2" required>
+            <label class="block text-sm font-medium bg-gray-200 px-3 py-1.5 inline-block border border-gray-400 mr-2" for="supporter1-input">支援員1</label>
+            <input list="supporters" id="supporter1-input" name="supporter1" class="mt-1 flex-1 border-b-2 border-gray-400 h-8 px-2" required>
             <datalist id="supporters">
                 <option value="入江隆浩"></option>
                 <option value="和田真由美"></option>
@@ -98,6 +98,12 @@
                 <option value="夏原真咲代"></option>
                 <option value="藤田梓平"></option>
             </datalist>
+        </div>
+
+        <!-- Supporter 2 Input -->
+        <div class="mb-2 flex flex-wrap items-center">
+            <label class="block text-sm font-medium bg-gray-200 px-3 py-1.5 inline-block border border-gray-400 mr-2" for="supporter2-input">支援員2</label>
+            <input list="supporters" id="supporter2-input" name="supporter2" class="mt-1 flex-1 border-b-2 border-gray-400 h-8 px-2">
         </div>
 
         <!-- Destination Input -->
