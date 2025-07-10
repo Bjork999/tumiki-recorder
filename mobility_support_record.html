@@ -232,7 +232,21 @@
 
         // フォーム送信時の処理
         document.getElementById('recordForm').addEventListener('submit', function(event) {
-            alert('フォームを送信します。新しいタブで結果が表示されます。');
+            // デバッグ：送信データを確認
+            const formData = new FormData(event.target);
+            const data = {};
+            for (let [key, value] of formData.entries()) {
+                data[key] = value;
+            }
+            console.log('送信データ:', data);
+            
+            // 支援員データの確認
+            const supporter1 = document.getElementById('supporter1-input').value;
+            const supporter2 = document.getElementById('supporter2-input').value;
+            console.log('支援員1:', supporter1);
+            console.log('支援員2:', supporter2);
+            
+            alert(`フォームを送信します。\n支援員1: ${supporter1}\n支援員2: ${supporter2}`);
         });
     </script>
 </body></html>
