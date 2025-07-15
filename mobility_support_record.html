@@ -311,12 +311,37 @@
                 }
                 console.log('送信データ:', data);
                 
+                // 各フィールドの値を取得
+                const year = document.getElementById('year').value;
+                const month = document.getElementById('month').value;
+                const day = document.getElementById('day').value;
+                const startTime = document.getElementById('start-time').value;
+                const endTime = document.getElementById('end-time').value;
+                const user = document.getElementById('user-input').value;
                 const supporter1 = document.getElementById('supporter1-input').value;
                 const supporter2 = document.getElementById('supporter2-input').value;
-                console.log('支援員1:', supporter1);
-                console.log('支援員2:', supporter2);
+                const destination = document.getElementById('destination-input').value;
+                const supportType = document.getElementById('support-type-input').value;
+                const appearance = document.getElementById('appearance-input').value;
+                const userCheck = document.getElementById('check1').checked ? 'はい' : 'いいえ';
                 
-                alert(`フォームを送信します。\n支援員1: ${supporter1}\n支援員2: ${supporter2}`);
+                // 確認メッセージを作成
+                const confirmMessage = `以下の内容で送信してよろしいですか？
+
+📅 日付: ${year}年${month}月${day}日
+⏰ 時間: ${startTime} ～ ${endTime}
+👤 利用者: ${user}
+👥 支援員1: ${supporter1}
+👥 支援員2: ${supporter2}
+📍 行き先: ${destination}
+🏷️ 支援種別: ${supportType}
+😊 様子: ${appearance}
+✅ 利用者様確認: ${userCheck}`;
+                
+                if (!confirm(confirmMessage)) {
+                    event.preventDefault();
+                    return false;
+                }
             });
         }
     </script>
