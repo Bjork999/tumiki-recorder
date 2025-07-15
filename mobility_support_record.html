@@ -165,8 +165,11 @@
             datalist.innerHTML = '';
             console.log(`🗑️ ${datalistId} の既存オプションをクリアしました`);
             
+            // "-" を除外してフィルタリング
+            const filteredItems = items.filter(item => item && item.toString().trim() !== '' && item.toString().trim() !== '-');
+            
             // 新しいオプションを追加
-            items.forEach((item, index) => {
+            filteredItems.forEach((item, index) => {
                 const option = document.createElement('option');
                 option.value = item;
                 datalist.appendChild(option);
@@ -175,7 +178,7 @@
                 }
             });
             
-            console.log(`✅ ${datalistId} の更新完了（${items.length}個のオプション）`);
+            console.log(`✅ ${datalistId} の更新完了（${filteredItems.length}個のオプション、${items.length - filteredItems.length}個除外）`);
         }
 
         // デフォルトデータを読み込む関数（フォールバック用）
