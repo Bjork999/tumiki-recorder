@@ -108,30 +108,44 @@
         // スプレッドシートからデータを取得する関数
         async function loadDataLists() {
             try {
-                console.log("データリストを取得中...");
+                console.log("=== データリストを取得中... ===");
                 
                 // Google Apps Script の URL（データ取得用のエンドポイント）
                 const dataUrl = 'https://script.google.com/macros/s/AKfycbyo23kSiELZp09J1GLfrIAr5kwAVdt5-DVPjwEqyzmg06Ork_RvJ4DVrJDhppIzsZS8/exec?action=getData';
+                console.log("データ取得URL:", dataUrl);
                 
                 const response = await fetch(dataUrl);
-                const data = await response.json();
+                console.log("レスポンスステータス:", response.status);
+                console.log("レスポンスOK:", response.ok);
+                
+                const responseText = await response.text();
+                console.log("生レスポンス:", responseText);
+                
+                const data = JSON.parse(responseText);
+                console.log("パース後データ:", data);
                 
                 if (data.success) {
                     // 各リストを更新
+                    console.log("利用者数:", data.users?.length || 0);
+                    console.log("支援員数:", data.supporters?.length || 0);
+                    console.log("行き先数:", data.destinations?.length || 0);
+                    console.log("様子数:", data.appearances?.length || 0);
+                    
                     updateDatalist('users', data.users || []);
                     updateDatalist('supporters', data.supporters || []);
                     updateDatalist('destinations', data.destinations || []);
                     updateDatalist('support-types', data.supportTypes || []);
                     updateDatalist('appearances', data.appearances || []);
                     
-                    console.log("データリストの更新が完了しました");
+                    console.log("✅ データリストの更新が完了しました");
                 } else {
-                    console.error("データ取得エラー:", data.error);
+                    console.error("❌ データ取得エラー:", data.error);
                     // フォールバック：デフォルトデータを使用
                     loadDefaultData();
                 }
             } catch (error) {
-                console.error("データ取得に失敗:", error);
+                console.error("❌ データ取得に失敗:", error);
+                console.error("エラーの詳細:", error.message);
                 // フォールバック：デフォルトデータを使用
                 loadDefaultData();
             }
@@ -139,18 +153,29 @@
 
         // datalist を更新する関数
         function updateDatalist(datalistId, items) {
+            console.log(`📝 ${datalistId} を更新中... アイテム数: ${items.length}`);
             const datalist = document.getElementById(datalistId);
-            if (!datalist) return;
+            
+            if (!datalist) {
+                console.error(`❌ datalist が見つかりません: ${datalistId}`);
+                return;
+            }
             
             // 既存のオプションをクリア
             datalist.innerHTML = '';
+            console.log(`🗑️ ${datalistId} の既存オプションをクリアしました`);
             
             // 新しいオプションを追加
-            items.forEach(item => {
+            items.forEach((item, index) => {
                 const option = document.createElement('option');
                 option.value = item;
                 datalist.appendChild(option);
+                if (index < 3) { // 最初の3つだけログ出力
+                    console.log(`➕ ${datalistId}[${index}]: ${item}`);
+                }
             });
+            
+            console.log(`✅ ${datalistId} の更新完了（${items.length}個のオプション）`);
         }
 
         // デフォルトデータを読み込む関数（フォールバック用）
