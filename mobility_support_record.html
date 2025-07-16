@@ -13,7 +13,7 @@
 </head>
 <body class="bg-gray-100 py-4">
     <div class="w-full max-w-sm bg-white p-6 shadow-lg rounded-lg border border-gray-200 mx-auto py-4">
-        <form id="recordForm" method="POST" action="https://script.google.com/macros/s/AKfycbwP189_qi4SaHmywrKlUpSNhMjBuARmlDFclp7fxnGVbOyuOAVVZ1xdzgLpFSevRcF7/exec" target="_blank">
+        <form id="recordForm" method="POST" action="https://script.google.com/macros/s/AKfycbw2BZmbC-0V8GuPKAhAb8Jq4VPDW-DiZyMK1Ur87_dpjWQWynjq2JQBivdqdvjysPPH/exec" target="_blank">
         <div class="border border-gray-400 p-2 text-center mb-6">
             <h1 class="text-xl font-bold tracking-widest">移動支援記録表</h1>
         </div>
@@ -111,7 +111,7 @@
                 console.log("=== データリストを取得中... ===");
                 
                 // Google Apps Script の URL（データ取得用のエンドポイント）
-                const dataUrl = 'https://script.google.com/macros/s/AKfycbwP189_qi4SaHmywrKlUpSNhMjBuARmlDFclp7fxnGVbOyuOAVVZ1xdzgLpFSevRcF7/exec?action=getData';
+                const dataUrl = 'https://script.google.com/macros/s/AKfycbw2BZmbC-0V8GuPKAhAb8Jq4VPDW-DiZyMK1Ur87_dpjWQWynjq2JQBivdqdvjysPPH/exec?action=getData';
                 console.log("データ取得URL:", dataUrl);
                 
                 const response = await fetch(dataUrl);
@@ -343,6 +343,35 @@
                     return false;
                 }
             });
+        }
+
+        // 空白行を非表示にする関数
+        function hideEmptyRows(sheet, startRow, endRow) {
+          const hiddenRows = [];
+          
+          try {
+            console.log(`空白行チェック: ${startRow}行目～${endRow}行目`);
+            
+            // 各行をチェック
+            for (let row = startRow; row <= endRow; row++) {
+              // A列の値を取得
+              const valueA = sheet.getRange(row, 1).getValue();
+              
+              // A列が空白または空文字の場合
+              if (!valueA || valueA.toString().trim() === '') {
+                // 行を非表示にする
+                sheet.hideRows(row, 1);
+                hiddenRows.push(row);
+              }
+            }
+            
+            console.log(`非表示にした行: ${hiddenRows.length}行`);
+            return hiddenRows;
+            
+          } catch (error) {
+            console.error('空白行非表示エラー:', error);
+            return hiddenRows;
+          }
         }
     </script>
 </body></html>
