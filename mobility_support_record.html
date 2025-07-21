@@ -13,7 +13,7 @@
 </head>
 <body class="bg-gray-100 py-4">
     <div class="w-full max-w-sm bg-white p-6 shadow-lg rounded-lg border border-gray-200 mx-auto py-4">
-        <form id="recordForm" method="POST" action="https://script.google.com/macros/s/AKfycbzLmk6c48w5fcSpB-rcr3nAzadvENqvmj5sTZrLv2U_u59xMXJT2bXPR8i2hnhDy7oO/exec" target="_blank">
+        <form id="recordForm" method="POST" action="https://script.google.com/macros/s/AKfycbypuH8-XTZyQ8YKTdxsb-r2PA5AemFlg9IHJNwkRs1l0-j-2367-yU_GEnUOjpMKcxw/exec" target="_blank">
         <div class="border border-gray-400 p-2 text-center mb-6">
             <h1 class="text-xl font-bold tracking-widest">移動支援記録表</h1>
         </div>
@@ -105,13 +105,15 @@
     <script>
         console.log("Script loaded and running");
 
+        let supporterSupportTypesMap = {};
+
         // スプレッドシートからデータを取得する関数
         async function loadDataLists() {
             try {
                 console.log("=== データリストを取得中... ===");
                 
                 // Google Apps Script の URL（データ取得用のエンドポイント）
-                const dataUrl = 'https://script.google.com/macros/s/AKfycbzLmk6c48w5fcSpB-rcr3nAzadvENqvmj5sTZrLv2U_u59xMXJT2bXPR8i2hnhDy7oO/exec?action=getData';
+                const dataUrl = 'https://script.google.com/macros/s/AKfycbypuH8-XTZyQ8YKTdxsb-r2PA5AemFlg9IHJNwkRs1l0-j-2367-yU_GEnUOjpMKcxw/exec?action=getData';
                 console.log("データ取得URL:", dataUrl);
                 
                 const response = await fetch(dataUrl);
@@ -136,6 +138,7 @@
                     updateDatalist('destinations', data.destinations || []);
                     updateDatalist('support-types', data.supportTypes || []);
                     updateDatalist('appearances', data.appearances || []);
+                    supporterSupportTypesMap = data.supporterSupportTypes || {};
                     
                     console.log("✅ データリストの更新が完了しました");
                 } else {
@@ -148,6 +151,7 @@
                 console.error("エラーの詳細:", error.message);
                 // フォールバック：デフォルトデータを使用
                 loadDefaultData();
+                supporterSupportTypesMap = {}; // フォールバック時は空
             }
         }
 
@@ -213,6 +217,7 @@
             updateDatalist('destinations', defaultDestinations);
             updateDatalist('support-types', defaultSupportTypes);
             updateDatalist('appearances', defaultAppearances);
+            supporterSupportTypesMap = {}; // デフォルト時は空
         }
 
         // ページ読み込み時の初期化
@@ -220,6 +225,16 @@
             // データリストを読み込み
             await loadDataLists();
             
+            // 支援員1の入力値で支援種別候補を切り替え
+            document.getElementById('supporter1-input').addEventListener('input', function(e) {
+                const name = e.target.value.trim();
+                let types = supporterSupportTypesMap[name];
+                if (!types || types.length === 0) {
+                    types = ["移動支援", "行動援護", "通院介助"];
+                }
+                updateDatalist('support-types', types);
+            });
+
             // 既存の初期化処理
             initializeDateOptions();
             setCurrentDate();
