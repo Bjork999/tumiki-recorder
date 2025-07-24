@@ -13,7 +13,7 @@
 </head>
 <body class="bg-gray-100 py-4">
     <div class="w-full max-w-sm bg-white p-6 shadow-lg rounded-lg border border-gray-200 mx-auto py-4">
-        <form id="recordForm" method="POST" action="https://script.google.com/macros/s/AKfycbxvJiUSII300foaonjON3wRxwjvgXR6b2YFWlx8Gz4tEcTP0LFnAOkOU0yyKNoSMS0h/exec" target="_blank">
+        <form id="recordForm" method="POST" action="https://script.google.com/macros/s/AKfycbxKPlNzZruq9ylZAn5GAW8LIAQr46-CuRx2ihUWCp-snECrAtK0finrMvmN430_glBr/exec" target="_blank">
         <div class="border border-gray-400 p-2 text-center mb-6">
             <h1 class="text-xl font-bold tracking-widest">移動支援記録表</h1>
         </div>
@@ -169,10 +169,11 @@
             datalist.innerHTML = '';
             console.log(`🗑️ ${datalistId} の既存オプションをクリアしました`);
             
-            // "-" を除外してフィルタリング
-            const filteredItems = items.filter(item => item && item.toString().trim() !== '' && item.toString().trim() !== '-');
+            // "-" や空白、null、undefinedを除外して追加
+            const filteredItems = items.filter(item =>
+                item && item.toString().trim() !== '' && item.toString().trim() !== '-'
+            );
             
-            // 新しいオプションを追加
             filteredItems.forEach((item, index) => {
                 const option = document.createElement('option');
                 option.value = item;
