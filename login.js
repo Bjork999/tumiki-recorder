@@ -17,6 +17,7 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
     // グローバルコールバック関数を作成
     window[callbackName] = function(result) {
         try {
+            console.log('Login response received:', result);
             if (result.success) {
                 sessionStorage.setItem('userRole', result.role);
                 window.location.href = 'main.html';
@@ -35,7 +36,8 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
 
     // エラーハンドリング
     script.onerror = function() {
-        errorMessage.textContent = 'サーバーとの通信に失敗しました。';
+        console.error('Script load error - 403 Forbidden or network issue');
+        errorMessage.textContent = 'サーバーとの通信に失敗しました。Google Apps Scriptの権限を確認してください。';
         document.head.removeChild(script);
         delete window[callbackName];
     };
