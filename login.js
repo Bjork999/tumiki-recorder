@@ -1,34 +1,65 @@
-document.getElementById('loginForm').addEventListener('submit', async function(event) {
+document.getElementById('loginForm').addEventListener('submit', function(event) {
     event.preventDefault();
 
     const userId = document.getElementById('username').value;
     const password = document.getElementById('password').value;
     const errorMessage = document.getElementById('errorMessage');
-    // ↓↓↓↓ ご自身の新しいウェブアプリのURLに書き換えてください ↓↓↓↓
-    const gasUrl = 'https://script.google.com/macros/s/AKfycbwliS2nlVfOs5zx6IdQ8bGyGLovRFUeA8PcrrfbFF1Qkckn9sxxiUSFZHgUQJKb5OXh/exec';
-
+    
     errorMessage.textContent = '';
 
-    try {
-        const response = await fetch(gasUrl, {
-            method: 'POST',
-            body: JSON.stringify({ 
-                username: userId,
-                password: password
-            }),
-            headers: { 'Content-Type': 'text/plain' }, // GAS特有のヘッダー
-        });
+    // フォームデータを作成
+    const formData = new FormData();
+    formData.append('username', userId);
+    formData.append('password', password);
 
-        const result = await response.json();
+    // フォーム送信方式でCORS問題を回避
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = 'https://script.google.com/macros/s/AKfycbwliS2nlVfOs5zx6IdQ8bGyGLovRFUeA8PcrrfbFF1Qkckn9sxxiUSFZHgUQJKb5OXh/exec';
+    form.target = 'loginFrame';
 
-        if (result.success) {
-            sessionStorage.setItem('userRole', result.role);
-            window.location.href = 'main.html';
-        } else {
-            errorMessage.textContent = result.error || 'ユーザーIDまたはパスワードが違います。';
+    // 隠しフィールドを追加
+    const usernameField = document.createElement('input');
+    usernameField.type = 'hidden';
+    usernameField.name = 'username';
+    usernameField.value = userId;
+    form.appendChild(usernameField);
+
+    const passwordField = document.createElement('input');
+    passwordField.type = 'hidden';
+    passwordField.name = 'password';
+    passwordField.value = password;
+    form.appendChild(passwordField);
+
+    // 隠しiframeを作成
+    const iframe = document.createElement('iframe');
+    iframe.name = 'loginFrame';
+    iframe.style.display = 'none';
+    document.body.appendChild(iframe);
+
+    // フォームを送信
+    document.body.appendChild(form);
+    form.submit();
+
+    // レスポンスを処理
+    iframe.onload = function() {
+        try {
+            const response = iframe.contentDocument.body.textContent;
+            const result = JSON.parse(response);
+            
+            if (result.success) {
+                sessionStorage.setItem('userRole', result.role);
+                window.location.href = 'main.html';
+            } else {
+                errorMessage.textContent = result.error || 'ユーザーIDまたはパスワードが違います。';
+            }
+        } catch (error) {
+            console.error('Login Error:', error);
+            errorMessage.textContent = 'ログイン処理中にエラーが発生しました。';
         }
-    } catch (error) {
-        console.error('Login Error:', error);
-        errorMessage.textContent = 'ログイン処理中にエラーが発生しました。';
-    }
+        
+        // クリーンアップ
+        document.body.removeChild(form);
+        document.body.removeChild(iframe);
+    };
 });

@@ -1,0 +1,25 @@
+{
+  "name": "mobility-support-record",
+  "version": "1.0.0",
+  "main": "admin.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build:css": "tailwindcss -i ./input.css -o ./style.css --minify",
+    "watch:css": "tailwindcss -i ./input.css -o ./style.css --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Bjork999/mobility-support-record.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Bjork999/mobility-support-record/issues"
+  },
+  "homepage": "https://github.com/Bjork999/mobility-support-record#readme",
+  "description": "",
+  "devDependencies": {
+    "tailwindcss": "^4.1.11"
+  }
+}
