@@ -7,46 +7,16 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
     
     errorMessage.textContent = '';
 
-    // フォームデータを作成
-    const formData = new FormData();
-    formData.append('username', userId);
-    formData.append('password', password);
+    // ローディング表示
+    errorMessage.textContent = 'ログイン中...';
 
-    // フォーム送信方式でCORS問題を回避
-    const form = document.createElement('form');
-    form.method = 'POST';
-    form.action = 'https://script.google.com/macros/s/AKfycbyna0_6rW0Ai8DvjzRq4cZT-E-TzALu8fxFFgP8vmsX_zIXhPdDwF_8z9KL29xxHER7/exec';
-    form.target = 'loginFrame';
-
-    // 隠しフィールドを追加
-    const usernameField = document.createElement('input');
-    usernameField.type = 'hidden';
-    usernameField.name = 'username';
-    usernameField.value = userId;
-    form.appendChild(usernameField);
-
-    const passwordField = document.createElement('input');
-    passwordField.type = 'hidden';
-    passwordField.name = 'password';
-    passwordField.value = password;
-    form.appendChild(passwordField);
-
-    // 隠しiframeを作成
-    const iframe = document.createElement('iframe');
-    iframe.name = 'loginFrame';
-    iframe.style.display = 'none';
-    document.body.appendChild(iframe);
-
-    // フォームを送信
-    document.body.appendChild(form);
-    form.submit();
-
-    // レスポンスを処理
-    iframe.onload = function() {
+    // JSONPアプローチでCORS問題を回避
+    const script = document.createElement('script');
+    const callbackName = 'loginCallback_' + Date.now();
+    
+    // グローバルコールバック関数を作成
+    window[callbackName] = function(result) {
         try {
-            const response = iframe.contentDocument.body.textContent;
-            const result = JSON.parse(response);
-            
             if (result.success) {
                 sessionStorage.setItem('userRole', result.role);
                 window.location.href = 'main.html';
@@ -59,7 +29,20 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
         }
         
         // クリーンアップ
-        document.body.removeChild(form);
-        document.body.removeChild(iframe);
+        document.head.removeChild(script);
+        delete window[callbackName];
     };
+
+    // エラーハンドリング
+    script.onerror = function() {
+        errorMessage.textContent = 'サーバーとの通信に失敗しました。';
+        document.head.removeChild(script);
+        delete window[callbackName];
+    };
+
+    // Google Apps ScriptのURLにパラメータを追加
+    const url = `https://script.google.com/macros/s/AKfycbxRKrZHm1H7DfvWq7O__499VCjhlC5o30Xe27DO1fxTVXcWxYWAWiAg_r15sJEGUW-z/exec?callback=${callbackName}&username=${encodeURIComponent(userId)}&password=${encodeURIComponent(password)}`;
+    
+    script.src = url;
+    document.head.appendChild(script);
 });
