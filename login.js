@@ -15,7 +15,7 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
     // フォーム送信方式でCORS問題を回避
     const form = document.createElement('form');
     form.method = 'POST';
-    form.action = 'https://script.google.com/macros/s/AKfycbwliS2nlVfOs5zx6IdQ8bGyGLovRFUeA8PcrrfbFF1Qkckn9sxxiUSFZHgUQJKb5OXh/exec';
+    form.action = 'https://script.google.com/macros/s/AKfycbyna0_6rW0Ai8DvjzRq4cZT-E-TzALu8fxFFgP8vmsX_zIXhPdDwF_8z9KL29xxHER7/exec';
     form.target = 'loginFrame';
 
     // 隠しフィールドを追加
