@@ -4,31 +4,34 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ログイン</title>
-    <link href="https://script.google.com/macros/s/AKfycbxPLq71hcRs-4l-RD3TVIuacBMQdJWob-91qSQ9EFeK11_Fu6rPIz48CofPbUsXH7vU/exec" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://script.google.com/macros/s/AKfycbwliS2nlVfOs5zx6IdQ8bGyGLovRFUeA8PcrrfbFF1Qkckn9sxxiUSFZHgUQJKb5OXh/exec" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+        }
+    </style>
 </head>
 <body class="bg-gray-100 py-4">
     <div class="w-full max-w-sm bg-white p-6 shadow-lg rounded-lg border border-gray-200 mx-auto py-4">
-        <form id="loginForm" class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
-            <div class="mb-4">
-                <label class="block text-gray-700 text-sm font-bold mb-2" for="username">
-                    ユーザー名
-                </label>
-                <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="username" type="text" placeholder="ユーザー名">
+        <form id="loginForm">
+            <div class="border border-gray-400 p-2 text-center mb-6">
+                <h1 class="text-xl font-bold tracking-widest">ログイン</h1>
             </div>
-            <div class="mb-6">
-                <label class="block text-gray-700 text-sm font-bold mb-2" for="password">
-                    パスワード
-                </label>
-                <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline" id="password" type="password" placeholder="******************">
-                
+            <div class="mb-2 flex flex-wrap items-center">
+                <label class="block text-sm font-medium bg-gray-200 px-3 py-1.5 inline-block border border-gray-400 mr-2" for="username">ユーザーID</label>
+                <input class="mt-1 flex-1 border-b-2 border-gray-400 h-8 px-2" id="username" type="text" placeholder="ユーザーID" required>
             </div>
-            <div class="flex items-center justify-between">
-                <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit">
+            <div class="mb-6 flex flex-wrap items-center">
+                <label class="block text-sm font-medium bg-gray-200 px-3 py-1.5 inline-block border border-gray-400 mr-2" for="password">パスワード</label>
+                <input class="mt-1 flex-1 border-b-2 border-gray-400 h-8 px-2" id="password" type="password" placeholder="パスワード" required>
+            </div>
+            <div class="text-center">
+                <button class="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit">
                     ログイン
                 </button>
             </div>
-            <p id="errorMessage" class="text-red-500 text-xs italic mt-4"></p>
+            <p id="errorMessage" class="text-red-500 text-xs italic mt-4 text-center"></p>
         </form>
 
     </div>
