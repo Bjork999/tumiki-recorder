@@ -5,7 +5,7 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
     const password = document.getElementById('password').value;
     const errorMessage = document.getElementById('errorMessage');
     // ↓↓↓↓ ご自身の新しいウェブアプリのURLに書き換えてください ↓↓↓↓
-    const gasUrl = 'ここに新しいウェブアプリのURLを貼り付け';
+    const gasUrl = 'https://script.google.com/macros/s/AKfycbxPLq71hcRs-4l-RD3TVIuacBMQdJWob-91qSQ9EFeK11_Fu6rPIz48CofPbUsXH7vU/exec';
 
     errorMessage.textContent = '';
 
