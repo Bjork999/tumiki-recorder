@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ユーザー管理</title>
+    <link href="https://script.google.com/macros/s/AKfycbxPLq71hcRs-4l-RD3TVIuacBMQdJWob-91qSQ9EFeK11_Fu6rPIz48CofPbUsXH7vU/exec" rel="stylesheet">
+</head>
+<body class="bg-gray-100 py-4">
+    <div class="w-full max-w-sm bg-white p-6 shadow-lg rounded-lg border border-gray-200 mx-auto py-4">
+        <h1 class="text-xl font-bold tracking-widest text-center mb-6">ユーザー管理</h1>
+
+        <!-- Add User -->
+        <div class="mb-6">
+            <h2 class="text-lg font-bold mb-2">ユーザー追加</h2>
+            <div class="flex">
+                <input type="text" id="new-user-id" class="flex-1 border-b-2 border-gray-400 h-8 px-2" placeholder="新しいユーザーID">
+                <button id="add-user-btn" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded ml-2">追加</button>
+            </div>
+        </div>
+
+        <!-- User List -->
+        <div>
+            <h2 class="text-lg font-bold mb-2">ユーザー一覧</h2>
+            <ul id="user-list" class="list-disc pl-5">
+                <!-- ユーザーリストがここに表示されます -->
+            </ul>
+        </div>
+
+        <div class="text-center mt-6">
+            <a href="main.html" class="text-blue-500 hover:underline">戻る</a>
+        </div>
+    </div>
+
+    <script src="admin.js"></script>
+</body>
+</html>
