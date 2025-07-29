@@ -97,13 +97,79 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
     }
 
     // Google Apps ScriptのURL
-                    const gasUrl = 'https://script.google.com/macros/s/AKfycbwQmGGwqMZnNUEL4Z84ApE1lmndtLFhGlX38y8DJR19JHzYA_JYOtKr1kkp79gQaill/exec';
-    const url = `${gasUrl}?action=login&callback=${callbackName}&username=${encodeURIComponent(userId)}&password=${encodeURIComponent(password)}`;
+    const gasUrl = 'https://script.google.com/macros/s/AKfycbwQmGGwqMZnNUEL4Z84ApE1lmndtLFhGlX38y8DJR19JHzYA_JYOtKr1kkp79gQaill/exec';
     
-    console.log('ログインリクエスト URL:', url);
     console.log('ユーザーエージェント:', navigator.userAgent);
     console.log('画面サイズ:', window.innerWidth, 'x', window.innerHeight);
     
-    script.src = url;
-    document.head.appendChild(script);
+    // モバイル対応：複数の通信方法を試行
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    
+    if (isMobile) {
+        console.log('モバイルデバイス検出: 代替通信方法を使用');
+        // モバイル用：fetch APIを試行
+        tryMobileLogin();
+    } else {
+        console.log('デスクトップデバイス: JSONPを使用');
+        // デスクトップ用：従来のJSONP
+        tryJsonpLogin();
+    }
+    
+    // モバイル用のfetch API通信
+    async function tryMobileLogin() {
+        try {
+            const url = `${gasUrl}?action=login&username=${encodeURIComponent(userId)}&password=${encodeURIComponent(password)}`;
+            console.log('モバイル用ログインリクエスト URL:', url);
+            
+            const response = await fetch(url, {
+                method: 'GET',
+                mode: 'cors',
+                headers: {
+                    'Accept': 'application/json'
+                }
+            });
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            const result = await response.json();
+            console.log('モバイル用ログイン応答:', result);
+            
+            if (result && result.success) {
+                console.log('モバイル用ログイン成功');
+                sessionStorage.setItem('userId', result.userId || userId);
+                sessionStorage.setItem('userName', result.userName || result.userId || userId);
+                
+                errorMessage.textContent = 'ログイン成功！リダイレクト中...';
+                errorMessage.style.color = '#10B981';
+                
+                setTimeout(() => {
+                    window.location.href = 'main.html';
+                }, 1000);
+            } else {
+                console.log('モバイル用ログイン失敗:', result);
+                errorMessage.textContent = result?.error || 'ユーザーIDまたはパスワードが違います。';
+                errorMessage.style.color = '#EF4444';
+            }
+        } catch (error) {
+            console.error('モバイル用ログインエラー:', error);
+            errorMessage.textContent = 'モバイル通信に失敗しました。JSONPを試行中...';
+            errorMessage.style.color = '#F59E0B';
+            
+            // フォールバック：JSONPを試行
+            setTimeout(() => {
+                tryJsonpLogin();
+            }, 1000);
+        }
+    }
+    
+    // 従来のJSONP通信
+    function tryJsonpLogin() {
+        const url = `${gasUrl}?action=login&callback=${callbackName}&username=${encodeURIComponent(userId)}&password=${encodeURIComponent(password)}`;
+        console.log('JSONPログインリクエスト URL:', url);
+        
+        script.src = url;
+        document.head.appendChild(script);
+    }
 });
