@@ -10,83 +10,52 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
     // ローディング表示
     errorMessage.textContent = 'ログイン中...';
 
-                    // 隠しフォームでPOST送信（CORS回避）
-                const iframe = document.createElement('iframe');
-                iframe.name = 'hidden-iframe';
-                iframe.style.display = 'none';
-                document.body.appendChild(iframe);
-
-                const form = document.createElement('form');
-                form.method = 'POST';
-                form.action = 'https://script.google.com/macros/s/AKfycbyDK_MQ0oIS8VKNXUfc9i03j6IscHou_YIW-YjK33xRQ0XXpkIT9TsIc7W-4YoN2sFy/exec';
-                form.target = 'hidden-iframe';
-
-                // ユーザーID
-                const usernameInput = document.createElement('input');
-                usernameInput.type = 'hidden';
-                usernameInput.name = 'username';
-                usernameInput.value = userId;
-                form.appendChild(usernameInput);
-
-                // パスワード
-                const passwordInput = document.createElement('input');
-                passwordInput.type = 'hidden';
-                passwordInput.name = 'password';
-                passwordInput.value = password;
-                form.appendChild(passwordInput);
-
-                document.body.appendChild(form);
-
-                // レスポンス処理
-                iframe.onload = function() {
+                // JSONPアプローチでCORS問題を回避
+                const script = document.createElement('script');
+                const callbackName = 'loginCallback_' + Date.now();
+                
+                // グローバルコールバック関数を作成
+                window[callbackName] = function(result) {
                     try {
-                        console.log('Iframe loaded, checking response...');
-                        
-                        // iframeの内容を確認
-                        const iframeContent = iframe.contentDocument || iframe.contentWindow.document;
-                        console.log('Iframe content:', iframeContent.body ? iframeContent.body.textContent : 'No body');
-                        
-                        if (iframeContent.body && iframeContent.body.textContent) {
-                            const responseText = iframeContent.body.textContent.trim();
-                            console.log('Response text:', responseText);
-                            
-                            try {
-                                const result = JSON.parse(responseText);
-                                console.log('Parsed response:', result);
-                                
-                                if (result.success) {
-                                    window.location.href = 'main.html';
-                                } else {
-                                    errorMessage.textContent = result.error || 'ユーザーIDまたはパスワードが違います。';
-                                }
-                            } catch (parseError) {
-                                console.error('JSON parse error:', parseError);
-                                errorMessage.textContent = 'レスポンスの解析に失敗しました。';
-                            }
+                        console.log('Login response received:', result);
+                        if (result.success) {
+                            window.location.href = 'main.html';
                         } else {
-                            console.log('Empty response. Iframe content:', iframeContent);
-                            errorMessage.textContent = 'サーバーからの応答が空です。';
+                            errorMessage.textContent = result.error || 'ユーザーIDまたはパスワードが違います。';
                         }
                     } catch (error) {
-                        console.error('Iframe access error:', error);
-                        errorMessage.textContent = 'レスポンスの取得に失敗しました。';
+                        console.error('Login Error:', error);
+                        errorMessage.textContent = 'ログイン処理中にエラーが発生しました。';
                     }
                     
                     // クリーンアップ
-                    setTimeout(() => {
-                        document.body.removeChild(form);
-                        document.body.removeChild(iframe);
-                    }, 1000);
+                    document.head.removeChild(script);
+                    delete window[callbackName];
                 };
 
                 // エラーハンドリング
-                iframe.onerror = function() {
-                    console.error('Iframe load error');
-                    errorMessage.textContent = 'サーバーとの通信に失敗しました。';
-                    document.body.removeChild(form);
-                    document.body.removeChild(iframe);
+                script.onerror = function() {
+                    console.error('Script load error - 403 Forbidden or network issue');
+                    console.error('Script URL:', url);
+                    console.error('Error details:', this);
+                    errorMessage.textContent = 'サーバーとの通信に失敗しました。Google Apps Scriptの権限を確認してください。';
+                    document.head.removeChild(script);
+                    delete window[callbackName];
                 };
 
-                // フォーム送信
-                form.submit();
+                // タイムアウト処理を追加
+                setTimeout(function() {
+                    if (window[callbackName]) {
+                        console.error('Login timeout - no response received');
+                        errorMessage.textContent = 'ログイン処理がタイムアウトしました。';
+                        document.head.removeChild(script);
+                        delete window[callbackName];
+                    }
+                }, 10000); // 10秒でタイムアウト
+
+                // Google Apps ScriptのURLにパラメータを追加
+                const url = `https://script.google.com/macros/s/AKfycbyDK_MQ0oIS8VKNXUfc9i03j6IscHou_YIW-YjK33xRQ0XXpkIT9TsIc7W-4YoN2sFy/exec?callback=${callbackName}&username=${encodeURIComponent(userId)}&password=${encodeURIComponent(password)}`;
+                
+                script.src = url;
+                document.head.appendChild(script);
 });
