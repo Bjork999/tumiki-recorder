@@ -111,53 +111,7 @@
 
         let supporterSupportTypesMap = {};
 
-        // スプレッドシートからデータを取得する関数
-        async function loadDataLists() {
-            try {
-                console.log("=== データリストを取得中... ===");
-                
-                // Google Apps Script の URL（データ取得用のエンドポイント）
-                const dataUrl = 'https://script.google.com/macros/s/AKfycbw0dsRageVDdgh--cXz5MPsRqV5CH1KseDNXqnNc8IHeebmwlrPf4oS_lJpS5ljNpd4/exec?action=getData';
-                console.log("データ取得URL:", dataUrl);
-                
-                const response = await fetch(dataUrl);
-                console.log("レスポンスステータス:", response.status);
-                console.log("レスポンスOK:", response.ok);
-                
-                const responseText = await response.text();
-                console.log("生レスポンス:", responseText);
-                
-                const data = JSON.parse(responseText);
-                console.log("パース後データ:", data);
-                
-                if (data.success) {
-                    // 各リストを更新
-                    console.log("利用者数:", data.users?.length || 0);
-                    console.log("支援員数:", data.supporters?.length || 0);
-                    console.log("行き先数:", data.destinations?.length || 0);
-                    console.log("様子数:", data.appearances?.length || 0);
-                    
-                    updateDatalist('users', data.users || []);
-                    updateDatalist('supporters', data.supporters || []);
-                    updateDatalist('destinations', data.destinations || []);
-                    updateDatalist('support-types', data.supportTypes || []);
-                    updateDatalist('appearances', data.appearances || []);
-                    supporterSupportTypesMap = data.supporterSupportTypes || {};
-                    
-                    console.log("✅ データリストの更新が完了しました");
-                } else {
-                    console.error("❌ データ取得エラー:", data.error);
-                    // フォールバック：デフォルトデータを使用
-                    loadDefaultData();
-                }
-            } catch (error) {
-                console.error("❌ データ取得に失敗:", error);
-                console.error("エラーの詳細:", error.message);
-                // フォールバック：デフォルトデータを使用
-                loadDefaultData();
-                supporterSupportTypesMap = {}; // フォールバック時は空
-            }
-        }
+
 
         // datalist を更新する関数
         function updateDatalist(datalistId, items) {
@@ -225,12 +179,20 @@
             supporterSupportTypesMap = {}; // デフォルト時は空
         }
 
-        // ページ読み込み時の初期化
-        document.addEventListener('DOMContentLoaded', async function() {
-            // データリストを読み込み
-            await loadDataLists();
+        // ページ読み込み時の初期化（高速化版）
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log("🚀 高速初期化開始");
             
-            // 支援員1の入力値で支援種別候補を切り替え
+            // 1. 即座に基本UI要素を初期化（日付、時間など）
+            initializeDateOptions();
+            setCurrentDate();
+            setupTimeFormatting();
+            setupFormSubmission();
+            
+            // 2. デフォルトデータを即座に読み込み（オフライン対応）
+            loadDefaultData();
+            
+            // 3. 支援員入力イベントの設定
             document.getElementById('supporter1-input').addEventListener('input', function(e) {
                 const name = e.target.value.trim();
                 let types = supporterSupportTypesMap[name];
@@ -239,13 +201,94 @@
                 }
                 updateDatalist('support-types', types);
             });
-
-            // 既存の初期化処理
-            initializeDateOptions();
-            setCurrentDate();
-            setupTimeFormatting();
-            setupFormSubmission();
+            
+            console.log("✅ 基本初期化完了 - ページ利用可能");
+            
+            // 4. バックグラウンドで最新データを取得（非ブロッキング）
+            setTimeout(() => {
+                loadDataFromGAS();
+            }, 100); // 100ms後に開始（UIレンダリング優先）
         });
+        
+        // Google Apps Scriptから最新データを非同期取得
+        async function loadDataFromGAS() {
+            try {
+                console.log("🔄 最新データを取得中...");
+                
+                const dataUrl = 'https://script.google.com/macros/s/AKfycbw0dsRageVDdgh--cXz5MPsRqV5CH1KseDNXqnNc8IHeebmwlrPf4oS_lJpS5ljNpd4/exec?action=getData';
+                
+                const response = await fetch(dataUrl);
+                const responseText = await response.text();
+                const data = JSON.parse(responseText);
+                
+                if (data.success) {
+                    // 最新データでリストを更新
+                    updateDatalist('users', data.users || []);
+                    updateDatalist('supporters', data.supporters || []);
+                    updateDatalist('destinations', data.destinations || []);
+                    updateDatalist('support-types', data.supportTypes || []);
+                    updateDatalist('appearances', data.appearances || []);
+                    supporterSupportTypesMap = data.supporterSupportTypes || {};
+                    
+                    console.log("✅ 最新データ更新完了");
+                    showUpdateNotification("📊 最新データに更新されました");
+                } else {
+                    console.warn("⚠️ データ取得エラー:", data.error);
+                    showUpdateNotification("⚠️ データ取得に失敗しました", "warning");
+                }
+            } catch (error) {
+                console.warn("⚠️ ネットワークエラー:", error.message);
+                showUpdateNotification("📴 オフラインモードで動作中", "info");
+            }
+        }
+        
+        // 通知表示機能
+        function showUpdateNotification(message, type = "success") {
+            const colors = {
+                success: { bg: "#10b981", icon: "✅" },
+                warning: { bg: "#f59e0b", icon: "⚠️" },
+                info: { bg: "#3b82f6", icon: "ℹ️" }
+            };
+            
+            const color = colors[type] || colors.success;
+            
+            const notification = document.createElement('div');
+            notification.innerHTML = `${color.icon} ${message}`;
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: ${color.bg};
+                color: white;
+                padding: 12px 16px;
+                border-radius: 8px;
+                font-size: 14px;
+                font-weight: 500;
+                z-index: 1000;
+                opacity: 0;
+                transform: translateX(100%);
+                transition: all 0.3s ease;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            `;
+            document.body.appendChild(notification);
+            
+            // スライドイン
+            setTimeout(() => {
+                notification.style.opacity = '1';
+                notification.style.transform = 'translateX(0)';
+            }, 100);
+            
+            // 3秒後にスライドアウト
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                notification.style.transform = 'translateX(100%)';
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        document.body.removeChild(notification);
+                    }
+                }, 300);
+            }, 3000);
+        }
 
         // 日付オプションの初期化
         function initializeDateOptions() {
