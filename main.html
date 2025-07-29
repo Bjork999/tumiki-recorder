@@ -29,9 +29,77 @@
 <meta name="theme-color" content="#ffffff">
 
 <link rel="stylesheet" href="style.css">
-<style>
+    <style>
         body {
             font-family: 'Noto Sans JP', sans-serif;
+        }
+        
+        /* スマートフォン対応 */
+        @media (max-width: 768px) {
+            .w-full.max-w-sm {
+                max-width: 95%;
+                margin: 0 auto;
+                padding: 1.5rem;
+                min-width: 320px;
+            }
+            
+            .text-xl {
+                font-size: 26px;
+                padding: 1rem;
+            }
+            
+            .text-lg {
+                font-size: 20px;
+            }
+            
+            .text-sm {
+                font-size: 16px;
+                padding: 8px 12px;
+            }
+            
+            input[type="text"], input[type="number"], input {
+                font-size: 16px;
+                height: 44px;
+                padding: 10px 12px;
+                border-radius: 6px;
+                border: 2px solid #d1d5db;
+            }
+            
+            button {
+                font-size: 18px;
+                height: 50px;
+                padding: 12px 16px;
+                border-radius: 8px;
+            }
+            
+            .border.border-gray-400 {
+                border-width: 2px;
+                border-radius: 10px;
+                padding: 1.5rem;
+            }
+            
+            .bg-yellow-100 {
+                border-radius: 10px;
+                padding: 1.5rem;
+            }
+            
+            .flex.items-center {
+                margin-bottom: 1rem;
+            }
+            
+            .w-24, .w-16 {
+                min-width: 80px;
+            }
+            
+            label {
+                margin-bottom: 0.5rem;
+                font-weight: 600;
+            }
+            
+            .py-4 {
+                padding-top: 1rem;
+                padding-bottom: 1rem;
+            }
         }
     </style>
 </head>
