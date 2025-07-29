@@ -37,10 +37,21 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
     script.onerror = function() {
         console.error('Script load error - 403 Forbidden or network issue');
         console.error('Script URL:', url);
+        console.error('Error details:', this);
         errorMessage.textContent = 'サーバーとの通信に失敗しました。Google Apps Scriptの権限を確認してください。';
         document.head.removeChild(script);
         delete window[callbackName];
     };
+
+    // タイムアウト処理を追加
+    setTimeout(function() {
+        if (window[callbackName]) {
+            console.error('Login timeout - no response received');
+            errorMessage.textContent = 'ログイン処理がタイムアウトしました。';
+            document.head.removeChild(script);
+            delete window[callbackName];
+        }
+    }, 10000); // 10秒でタイムアウト
 
     // Google Apps ScriptのURLにパラメータを追加
     const url = `https://script.google.com/macros/s/AKfycbyDK_MQ0oIS8VKNXUfc9i03j6IscHou_YIW-YjK33xRQ0XXpkIT9TsIc7W-4YoN2sFy/exec?callback=${callbackName}&username=${encodeURIComponent(userId)}&password=${encodeURIComponent(password)}`;
