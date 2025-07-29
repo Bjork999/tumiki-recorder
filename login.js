@@ -64,20 +64,36 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
     script.onerror = function(event) {
         console.error('スクリプト読み込みエラー:', event);
         console.error('URL:', script.src);
-        errorMessage.textContent = 'サーバーとの通信に失敗しました。しばらく待ってから再試行してください。';
+        console.error('エラー詳細:', {
+            type: event.type,
+            target: event.target,
+            timeStamp: event.timeStamp
+        });
+        
+        if (isAndroid) {
+            errorMessage.textContent = 'Android通信エラー。ネットワーク接続を確認してください。';
+        } else {
+            errorMessage.textContent = 'サーバーとの通信に失敗しました。しばらく待ってから再試行してください。';
+        }
         errorMessage.style.color = '#EF4444';
         cleanupScript();
     };
 
     // タイムアウト処理
+    const timeoutDuration = isAndroid ? 30000 : 20000; // Android: 30秒、その他: 20秒
+    
     const timeoutId = setTimeout(() => {
         if (window[callbackName]) {
             console.error('ログインタイムアウト');
-            errorMessage.textContent = 'ログイン処理がタイムアウトしました。再度お試しください。';
+            if (isAndroid) {
+                errorMessage.textContent = 'Android通信タイムアウト。ネットワーク環境を確認してください。';
+            } else {
+                errorMessage.textContent = 'ログイン処理がタイムアウトしました。再度お試しください。';
+            }
             errorMessage.style.color = '#EF4444';
             cleanupScript();
         }
-    }, 20000); // モバイル対応：20秒でタイムアウト
+    }, timeoutDuration);
 
     // クリーンアップ関数
     function cleanupScript() {
@@ -104,10 +120,21 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
     
     // モバイル対応：複数の通信方法を試行
     const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    const isAndroid = /Android/i.test(navigator.userAgent);
     
-    if (isMobile) {
+    console.log('デバイス情報:', {
+        isMobile: isMobile,
+        isAndroid: isAndroid,
+        userAgent: navigator.userAgent
+    });
+    
+    if (isAndroid) {
+        console.log('Androidデバイス検出: 直接JSONPを使用');
+        // Android用：直接JSONP（fetch APIは制限が多いため）
+        tryJsonpLogin();
+    } else if (isMobile) {
         console.log('モバイルデバイス検出: 代替通信方法を使用');
-        // モバイル用：fetch APIを試行
+        // その他モバイル用：fetch APIを試行
         tryMobileLogin();
     } else {
         console.log('デスクトップデバイス: JSONPを使用');
