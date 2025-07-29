@@ -78,8 +78,8 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
         clearTimeout(timeoutId);
     }
 
-    // Google Apps ScriptのURL（TODO: 新しいデプロイURLに更新してください）
-    const gasUrl = 'https://script.google.com/macros/s/AKfycbwcxFGoX4tr187BxSFpsRnbVuo2k9G7OowSF3oD-3dUd7KsA28ioRm5pyJLpr6ZhKdd/exec';
+    // Google Apps ScriptのURL
+    const gasUrl = 'https://script.google.com/macros/s/AKfycbw0dsRageVDdgh--cXz5MPsRqV5CH1KseDNXqnNc8IHeebmwlrPf4oS_lJpS5ljNpd4/exec';
     const url = `${gasUrl}?action=login&callback=${callbackName}&username=${encodeURIComponent(userId)}&password=${encodeURIComponent(password)}`;
     
     console.log('ログインリクエスト URL:', url);
