@@ -217,7 +217,7 @@
             try {
                 console.log("🔄 最新データを取得中...");
                 
-                                        const dataUrl = 'https://script.google.com/macros/s/AKfycbwf3WuVCVx7g3fxpJtGsiVSwhMQMlT4XIB-8Wv8zm3eDhWhKZf3Bbj30dZxlk1mYUnv/exec?action=getData';
+                                        const dataUrl = 'https://script.google.com/macros/s/AKfycbwQmGGwqMZnNUEL4Z84ApE1lmndtLFhGlX38y8DJR19JHzYA_JYOtKr1kkp79gQaill/exec?action=getData';
                 
                 const response = await fetch(dataUrl);
                 const responseText = await response.text();
@@ -474,24 +474,34 @@
                 resultMessage.textContent = '送信中...';
                 resultDiv.classList.remove('hidden');
                 
+                console.log('=== フォーム送信開始 ===');
+                console.log('送信データ:', formData);
+                
                 // FormDataを作成
                 const formDataObj = new FormData();
                 Object.keys(formData).forEach(key => {
                     formDataObj.append(key, formData[key]);
+                    console.log(`FormData追加: ${key} = ${formData[key]}`);
                 });
                 
-                const submitUrl = 'https://script.google.com/macros/s/AKfycbwf3WuVCVx7g3fxpJtGsiVSwhMQMlT4XIB-8Wv8zm3eDhWhKZf3Bbj30dZxlk1mYUnv/exec';
+                const submitUrl = 'https://script.google.com/macros/s/AKfycbwQmGGwqMZnNUEL4Z84ApE1lmndtLFhGlX38y8DJR19JHzYA_JYOtKr1kkp79gQaill/exec';
+                console.log('送信URL:', submitUrl);
                 
                 const response = await fetch(submitUrl, {
                     method: 'POST',
                     body: formDataObj
                 });
                 
+                console.log('レスポンスステータス:', response.status);
+                console.log('レスポンスヘッダー:', response.headers);
+                
                 const result = await response.text();
-                console.log('送信結果:', result);
+                console.log('送信結果（生テキスト）:', result);
                 
                 try {
                     const jsonResult = JSON.parse(result);
+                    console.log('送信結果（JSON）:', jsonResult);
+                    
                     if (jsonResult.success) {
                         // 成功
                         resultDiv.className = 'mt-4 p-3 rounded bg-green-100 border border-green-400';
@@ -507,6 +517,8 @@
                         resultMessage.textContent = `❌ エラー: ${jsonResult.error}`;
                     }
                 } catch (parseError) {
+                    console.error('JSONパースエラー:', parseError);
+                    console.error('パース対象テキスト:', result);
                     // JSONパースエラー
                     resultDiv.className = 'mt-4 p-3 rounded bg-yellow-100 border border-yellow-400';
                     resultMessage.textContent = '⚠️ サーバーからの応答を解析できませんでしたが、送信は完了した可能性があります。';

@@ -89,7 +89,7 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
     }
 
     // Google Apps ScriptのURL
-                    const gasUrl = 'https://script.google.com/macros/s/AKfycbwf3WuVCVx7g3fxpJtGsiVSwhMQMlT4XIB-8Wv8zm3eDhWhKZf3Bbj30dZxlk1mYUnv/exec';
+                    const gasUrl = 'https://script.google.com/macros/s/AKfycbwQmGGwqMZnNUEL4Z84ApE1lmndtLFhGlX38y8DJR19JHzYA_JYOtKr1kkp79gQaill/exec';
     const url = `${gasUrl}?action=login&callback=${callbackName}&username=${encodeURIComponent(userId)}&password=${encodeURIComponent(password)}`;
     
     console.log('ログインリクエスト URL:', url);
