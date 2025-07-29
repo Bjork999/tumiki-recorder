@@ -24,6 +24,16 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
             
             if (result && result.success) {
                 console.log('ログイン成功');
+                
+                // ログイン情報をセッションストレージに保存
+                sessionStorage.setItem('userId', result.userId || userId);
+                sessionStorage.setItem('userName', result.userName || result.userId || userId);
+                
+                console.log('保存されたユーザー情報:', {
+                    userId: sessionStorage.getItem('userId'),
+                    userName: sessionStorage.getItem('userName')
+                });
+                
                 errorMessage.textContent = 'ログイン成功！リダイレクト中...';
                 setTimeout(() => {
                     window.location.href = 'main.html';
@@ -79,7 +89,7 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
     }
 
     // Google Apps ScriptのURL
-    const gasUrl = 'https://script.google.com/macros/s/AKfycbw0dsRageVDdgh--cXz5MPsRqV5CH1KseDNXqnNc8IHeebmwlrPf4oS_lJpS5ljNpd4/exec';
+    const gasUrl = 'https://script.google.com/macros/s/AKfycbxyWVw2AzinLID_iglRSq3HHYmUkmEMaltrAVobhhGfsG8LRZjhw2yLhv5zXGiDYA5M/exec';
     const url = `${gasUrl}?action=login&callback=${callbackName}&username=${encodeURIComponent(userId)}&password=${encodeURIComponent(password)}`;
     
     console.log('ログインリクエスト URL:', url);

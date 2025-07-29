@@ -17,7 +17,7 @@
 <body class="bg-gray-100 py-4">
     <div class="w-full max-w-sm bg-white p-6 shadow-lg rounded-lg border border-gray-200 mx-auto py-4">
         <div id="admin-menu" class="text-right mb-4"></div>
-        <form id="recordForm" method="POST" action="https://script.google.com/macros/s/AKfycbw0dsRageVDdgh--cXz5MPsRqV5CH1KseDNXqnNc8IHeebmwlrPf4oS_lJpS5ljNpd4/exec" target="_blank">
+        <form id="recordForm" method="POST" action="https://script.google.com/macros/s/AKfycbxyWVw2AzinLID_iglRSq3HHYmUkmEMaltrAVobhhGfsG8LRZjhw2yLhv5zXGiDYA5M/exec" target="_blank">
         <div class="border border-gray-400 p-2 text-center mb-6">
             <h1 class="text-xl font-bold tracking-widest">移動支援記録表</h1>
         </div>
@@ -186,6 +186,7 @@
             // 1. 即座に基本UI要素を初期化（日付、時間など）
             initializeDateOptions();
             setCurrentDate();
+            setLoggedInUserName();  // ログインユーザーの名前を支援員1に設定
             setupTimeFormatting();
             setupFormSubmission();
             
@@ -215,7 +216,7 @@
             try {
                 console.log("🔄 最新データを取得中...");
                 
-                const dataUrl = 'https://script.google.com/macros/s/AKfycbw0dsRageVDdgh--cXz5MPsRqV5CH1KseDNXqnNc8IHeebmwlrPf4oS_lJpS5ljNpd4/exec?action=getData';
+                const dataUrl = 'https://script.google.com/macros/s/AKfycbxyWVw2AzinLID_iglRSq3HHYmUkmEMaltrAVobhhGfsG8LRZjhw2yLhv5zXGiDYA5M/exec?action=getData';
                 
                 const response = await fetch(dataUrl);
                 const responseText = await response.text();
@@ -321,6 +322,33 @@
             document.getElementById('year').value = now.getFullYear();
             document.getElementById('month').value = now.getMonth() + 1;
             document.getElementById('day').value = now.getDate();
+        }
+
+        // ログインユーザーの名前を支援員1欄に設定
+        function setLoggedInUserName() {
+            try {
+                const userName = sessionStorage.getItem('userName');
+                const userId = sessionStorage.getItem('userId');
+                
+                if (userName) {
+                    const supporter1Input = document.getElementById('supporter1-input');
+                    if (supporter1Input) {
+                        supporter1Input.value = userName;
+                        console.log(`✅ 支援員1に自動入力: ${userName}`);
+                    }
+                } else if (userId) {
+                    // userNameが取得できない場合はuserIdを使用
+                    const supporter1Input = document.getElementById('supporter1-input');
+                    if (supporter1Input) {
+                        supporter1Input.value = userId;
+                        console.log(`✅ 支援員1に自動入力（ID使用）: ${userId}`);
+                    }
+                } else {
+                    console.warn('⚠️ ログインユーザー情報が見つかりません。index.htmlからアクセスしてください。');
+                }
+            } catch (error) {
+                console.error('❌ ログインユーザー名の設定エラー:', error);
+            }
         }
 
         // 時間フォーマット設定
