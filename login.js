@@ -13,7 +13,7 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
     // フォーム送信方式でCORS問題を回避
     const form = document.createElement('form');
     form.method = 'POST';
-    form.action = 'https://script.google.com/macros/s/AKfycbzgClqQUAoOIO-m6wpfgPI66f5RBNBsaB9H2w0V1Ns0HYntWwloG7UIJEJwiOdJ-rtP/exec';
+    form.action = 'https://script.google.com/macros/s/AKfycbyki1ew51-QZ8E0oOTUijTK2pPbQsIHJ7sn2WMi60m-vbFXYpl44N9iv2TzEy6cJtie/exec';
     form.target = 'loginFrame';
     form.style.display = 'none';
 
@@ -46,6 +46,7 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
                 console.log('Response received:', responseText);
                 
                 if (responseText && responseText.trim()) {
+                    console.log('Parsing response:', responseText.trim());
                     const result = JSON.parse(responseText.trim());
                     if (result.success) {
                         sessionStorage.setItem('userRole', result.role);
@@ -54,8 +55,9 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
                         errorMessage.textContent = result.error || 'ユーザーIDまたはパスワードが違います。';
                     }
                 } else {
-                    // 認証成功時はリダイレクトするため空の場合もある
-                    errorMessage.textContent = 'サーバーからのレスポンスを確認できませんでした。';
+                    // レスポンスが空の場合の詳細情報
+                    console.log('Empty response. Iframe content:', iframeDoc.body ? iframeDoc.body.innerHTML : 'No body');
+                    errorMessage.textContent = 'サーバーからのレスポンスが空です。Google Apps Scriptの設定を確認してください。';
                 }
             } catch (error) {
                 console.error('Login Error:', error);
