@@ -196,11 +196,7 @@
             // 3. 支援員入力イベントの設定
             document.getElementById('supporter1-input').addEventListener('input', function(e) {
                 const name = e.target.value.trim();
-                let types = supporterSupportTypesMap[name];
-                if (!types || types.length === 0) {
-                    types = ["移動支援", "行動援護", "通院介助"];
-                }
-                updateDatalist('support-types', types);
+                updateSupportTypesForSupporter(name);
             });
             
             console.log("✅ 基本初期化完了 - ページ利用可能");
@@ -330,24 +326,49 @@
                 const userName = sessionStorage.getItem('userName');
                 const userId = sessionStorage.getItem('userId');
                 
+                const supporter1Input = document.getElementById('supporter1-input');
+                if (!supporter1Input) {
+                    console.error('❌ 支援員1の入力欄が見つかりません');
+                    return;
+                }
+                
                 if (userName) {
-                    const supporter1Input = document.getElementById('supporter1-input');
-                    if (supporter1Input) {
-                        supporter1Input.value = userName;
-                        console.log(`✅ 支援員1に自動入力: ${userName}`);
-                    }
+                    supporter1Input.value = userName;
+                    console.log(`✅ 支援員1に自動入力: ${userName}`);
+                    
+                    // 支援種別の更新をトリガー
+                    updateSupportTypesForSupporter(userName);
                 } else if (userId) {
-                    // userNameが取得できない場合はuserIdを使用
-                    const supporter1Input = document.getElementById('supporter1-input');
-                    if (supporter1Input) {
-                        supporter1Input.value = userId;
-                        console.log(`✅ 支援員1に自動入力（ID使用）: ${userId}`);
-                    }
+                    supporter1Input.value = userId;
+                    console.log(`✅ 支援員1に自動入力（ID使用）: ${userId}`);
+                    
+                    // 支援種別の更新をトリガー
+                    updateSupportTypesForSupporter(userId);
                 } else {
                     console.warn('⚠️ ログインユーザー情報が見つかりません。index.htmlからアクセスしてください。');
                 }
             } catch (error) {
                 console.error('❌ ログインユーザー名の設定エラー:', error);
+            }
+        }
+
+        // 指定された支援員名に基づいて支援種別を更新
+        function updateSupportTypesForSupporter(supporterName) {
+            try {
+                const name = supporterName.trim();
+                let types = supporterSupportTypesMap[name];
+                
+                if (!types || types.length === 0) {
+                    // デフォルトの支援種別
+                    types = ["移動支援", "行動援護", "通院介助"];
+                    console.log(`⚠️ ${name}の支援種別データが見つかりません。デフォルトを使用します。`);
+                } else {
+                    console.log(`✅ ${name}の支援種別を更新:`, types);
+                }
+                
+                updateDatalist('support-types', types);
+            } catch (error) {
+                console.error('❌ 支援種別更新エラー:', error);
             }
         }
 
