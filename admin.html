@@ -3,31 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ユーザー管理</title>
-    <link href="https://script.google.com/macros/s/AKfycbwcxFGoX4tr187BxSFpsRnbVuo2k9G7OowSF3oD-3dUd7KsA28ioRm5pyJLpr6ZhKdd/exec" rel="stylesheet">
+    <title>ユーザー管理 - 移動支援記録表</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+        }
+    </style>
 </head>
 <body class="bg-gray-100 py-4">
     <div class="w-full max-w-sm bg-white p-6 shadow-lg rounded-lg border border-gray-200 mx-auto py-4">
-        <h1 class="text-xl font-bold tracking-widest text-center mb-6">ユーザー管理</h1>
+        <div class="border border-gray-400 p-2 text-center mb-6">
+            <h1 class="text-xl font-bold tracking-widest">ユーザー管理</h1>
+        </div>
 
         <!-- Add User -->
         <div class="mb-6">
             <h2 class="text-lg font-bold mb-2">ユーザー追加</h2>
             <div class="flex">
-                <input type="text" id="new-user-id" class="flex-1 border-b-2 border-gray-400 h-8 px-2" placeholder="新しいユーザーID">
-                <button id="add-user-btn" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded ml-2">追加</button>
+                <input 
+                    type="text" 
+                    id="new-user-id" 
+                    class="flex-1 border-b-2 border-gray-400 h-8 px-2 focus:border-blue-500 focus:outline-none" 
+                    placeholder="新しいユーザーID"
+                >
+                <button 
+                    id="add-user-btn" 
+                    class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded ml-2 transition-colors duration-200"
+                >
+                    追加
+                </button>
             </div>
         </div>
 
         <!-- User List -->
-        <div>
+        <div class="mb-6">
             <h2 class="text-lg font-bold mb-2">ユーザー一覧</h2>
             <ul id="user-list" class="list-disc pl-5">
                 <!-- ユーザーリストがここに表示されます -->
             </ul>
         </div>
 
-        <div class="text-center mt-6">
+        <div class="text-center">
             <a href="main.html" class="text-blue-500 hover:underline">戻る</a>
         </div>
     </div>
