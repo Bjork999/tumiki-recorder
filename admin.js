@@ -36,12 +36,30 @@ document.addEventListener('DOMContentLoaded', function() {
             if (user.userId === 'admin') return;
 
             const li = document.createElement('li');
-            li.className = 'flex justify-between items-center mb-2';
-            li.textContent = user.userId;
+            li.className = 'user-item';
+            li.style.display = 'flex';
+            li.style.justifyContent = 'space-between';
+            li.style.alignItems = 'center';
+
+            const userText = document.createElement('span');
+            userText.textContent = user.userId;
+            li.appendChild(userText);
 
             const deleteBtn = document.createElement('button');
             deleteBtn.textContent = '削除';
-            deleteBtn.className = 'bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded text-sm ml-4';
+            deleteBtn.style.cssText = `
+                background: #dc2626;
+                color: white;
+                font-weight: bold;
+                padding: 8px 16px;
+                border-radius: 6px;
+                border: none;
+                font-size: 14px;
+                cursor: pointer;
+                transition: background-color 0.2s;
+            `;
+            deleteBtn.onmouseover = () => deleteBtn.style.background = '#b91c1c';
+            deleteBtn.onmouseout = () => deleteBtn.style.background = '#dc2626';
             deleteBtn.onclick = () => deleteUser(user.userId);
             li.appendChild(deleteBtn);
 

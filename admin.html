@@ -33,44 +33,208 @@
     <style>
         body {
             font-family: 'Noto Sans JP', sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            background-color: #f3f4f6;
+        }
+        
+        /* 720x1280スマートフォン最適化 */
+        .smartphone-container {
+            width: 100%;
+            max-width: 720px;
+            min-height: 1280px;
+            margin: 0 auto;
+            padding: 16px;
+            box-sizing: border-box;
+        }
+        
+        .admin-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 32px;
+            border: 1px solid #e5e7eb;
+        }
+        
+        /* タイトル */
+        .title-box {
+            border: 2px solid #9ca3af;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 32px;
+            border-radius: 8px;
+        }
+        
+        .title-text {
+            font-size: 28px;
+            font-weight: bold;
+            letter-spacing: 0.1em;
+            color: #1f2937;
+        }
+        
+        /* セクション */
+        .section {
+            margin-bottom: 32px;
+        }
+        
+        .section-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #374151;
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #e5e7eb;
+        }
+        
+        /* 入力フォーム */
+        .input-container {
+            display: flex;
+            gap: 12px;
+            align-items: end;
+        }
+        
+        .input-field {
+            flex: 1;
+            height: 56px;
+            padding: 0 20px;
+            font-size: 18px;
+            border: none;
+            border-bottom: 3px solid #9ca3af;
+            background: transparent;
+            outline: none;
+            transition: border-color 0.2s;
+            box-sizing: border-box;
+        }
+        
+        .input-field:focus {
+            border-bottom-color: #3b82f6;
+        }
+        
+        /* ボタン */
+        .add-button {
+            height: 56px;
+            background: #3b82f6;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            border: none;
+            border-radius: 8px;
+            padding: 0 24px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            white-space: nowrap;
+        }
+        
+        .add-button:hover {
+            background: #2563eb;
+        }
+        
+        /* ユーザーリスト */
+        .user-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .user-item {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 16px 20px;
+            margin-bottom: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            color: #374151;
+        }
+        
+        /* 戻るリンク */
+        .back-link-container {
+            text-align: center;
+            margin-top: 32px;
+        }
+        
+        .back-link {
+            display: inline-block;
+            background: #10b981;
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+            padding: 16px 32px;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: background-color 0.2s;
+        }
+        
+        .back-link:hover {
+            background: #059669;
+        }
+        
+        /* レスポンシブ調整 */
+        @media (max-width: 720px) {
+            .smartphone-container {
+                padding: 12px;
+            }
+            
+            .admin-container {
+                padding: 24px;
+            }
+            
+            .title-text {
+                font-size: 24px;
+            }
+            
+            .input-container {
+                flex-direction: column;
+                gap: 16px;
+            }
+            
+            .input-field {
+                height: 48px;
+                font-size: 16px;
+            }
+            
+            .add-button {
+                height: 48px;
+                width: 100%;
+            }
         }
     </style>
 </head>
-<body class="bg-gray-100 py-4">
-    <div class="w-full max-w-sm bg-white p-6 shadow-lg rounded-lg border border-gray-200 mx-auto py-4">
-        <div class="border border-gray-400 p-2 text-center mb-6">
-            <h1 class="text-xl font-bold tracking-widest">ユーザー管理</h1>
-        </div>
-
-        <!-- Add User -->
-        <div class="mb-6">
-            <h2 class="text-lg font-bold mb-2">ユーザー追加</h2>
-            <div class="flex">
-                <input 
-                    type="text" 
-                    id="new-user-id" 
-                    class="flex-1 border-b-2 border-gray-400 h-8 px-2 focus:border-blue-500 focus:outline-none" 
-                    placeholder="新しいユーザーID"
-                >
-                <button 
-                    id="add-user-btn" 
-                    class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded ml-2 transition-colors duration-200"
-                >
-                    追加
-                </button>
+<body>
+    <div class="smartphone-container">
+        <div class="admin-container">
+            <!-- タイトル -->
+            <div class="title-box">
+                <h1 class="title-text">ユーザー管理</h1>
             </div>
-        </div>
 
-        <!-- User List -->
-        <div class="mb-6">
-            <h2 class="text-lg font-bold mb-2">ユーザー一覧</h2>
-            <ul id="user-list" class="list-disc pl-5">
-                <!-- ユーザーリストがここに表示されます -->
-            </ul>
-        </div>
+            <!-- ユーザー追加 -->
+            <div class="section">
+                <h2 class="section-title">ユーザー追加</h2>
+                <div class="input-container">
+                    <input 
+                        type="text" 
+                        id="new-user-id" 
+                        class="input-field" 
+                        placeholder="新しいユーザーID"
+                    >
+                    <button id="add-user-btn" class="add-button">追加</button>
+                </div>
+            </div>
 
-        <div class="text-center">
-            <a href="main.html" class="text-blue-500 hover:underline">戻る</a>
+            <!-- ユーザー一覧 -->
+            <div class="section">
+                <h2 class="section-title">ユーザー一覧</h2>
+                <ul id="user-list" class="user-list">
+                    <!-- ユーザーリストがここに表示されます -->
+                </ul>
+            </div>
+
+            <!-- 戻るリンク -->
+            <div class="back-link-container">
+                <a href="main.html" class="back-link">戻る</a>
+            </div>
         </div>
     </div>
 

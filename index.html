@@ -33,96 +33,161 @@
     <style>
         body {
             font-family: 'Noto Sans JP', sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            background-color: #f3f4f6;
         }
         
-        .login-container {
-            min-height: 100vh;
+        /* 720x1280スマートフォン最適化 */
+        .smartphone-container {
+            width: 100%;
+            max-width: 720px;
+            min-height: 1280px;
+            margin: 0 auto;
+            padding: 16px;
+            box-sizing: border-box;
             display: flex;
             align-items: center;
             justify-content: center;
         }
         
-        .error-message {
-            min-height: 1.5rem;
+        .login-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 32px;
+            border: 1px solid #e5e7eb;
+            width: 100%;
+            max-width: 400px;
         }
         
-        /* モバイル対応：1画面に収める */
-        @media (max-width: 768px) {
+        /* タイトル */
+        .title-box {
+            border: 2px solid #9ca3af;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 32px;
+            border-radius: 8px;
+        }
+        
+        .title-text {
+            font-size: 28px;
+            font-weight: bold;
+            letter-spacing: 0.1em;
+            color: #1f2937;
+        }
+        
+        /* 入力フィールド */
+        .input-group {
+            margin-bottom: 24px;
+        }
+        
+        .input-label {
+            display: block;
+            font-size: 16px;
+            font-weight: 600;
+            background: #e5e7eb;
+            padding: 12px 16px;
+            border: 1px solid #9ca3af;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            text-align: center;
+        }
+        
+        .input-field {
+            width: 100%;
+            height: 56px;
+            padding: 0 20px;
+            font-size: 18px;
+            border: none;
+            border-bottom: 3px solid #9ca3af;
+            background: transparent;
+            outline: none;
+            transition: border-color 0.2s;
+            box-sizing: border-box;
+        }
+        
+        .input-field:focus {
+            border-bottom-color: #3b82f6;
+        }
+        
+        /* ログインボタン */
+        .login-button {
+            width: 100%;
+            height: 64px;
+            background: #3b82f6;
+            color: white;
+            font-size: 20px;
+            font-weight: bold;
+            border: none;
+            border-radius: 12px;
+            margin-top: 32px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .login-button:hover {
+            background: #2563eb;
+        }
+        
+        .login-button:active {
+            transform: translateY(1px);
+        }
+        
+        /* エラーメッセージ */
+        .error-message {
+            min-height: 32px;
+            margin-top: 16px;
+            text-align: center;
+        }
+        
+        .error-text {
+            color: #dc2626;
+            font-size: 16px;
+            font-weight: 600;
+        }
+        
+        /* レスポンシブ調整 */
+        @media (max-width: 720px) {
+            .smartphone-container {
+                padding: 12px;
+            }
+            
             .login-container {
-                padding: 0.5rem;
-                min-height: 100vh;
+                padding: 24px;
             }
             
-            .w-full.max-w-sm {
-                max-width: 100%;
-                margin: 0 0.5rem;
-                padding: 1rem !important;
+            .title-text {
+                font-size: 24px;
             }
             
-            input[type="text"], input[type="password"] {
-                font-size: 14px; /* フォントサイズを小さく */
-                height: 36px; /* 高さを調整 */
-                padding: 6px 10px;
+            .input-field {
+                height: 48px;
+                font-size: 16px;
             }
             
-            button[type="submit"] {
-                height: 40px; /* ボタンサイズを調整 */
-                font-size: 14px;
-                padding: 0.5rem 1rem;
-            }
-            
-            .text-xl {
-                font-size: 18px; /* タイトルサイズを調整 */
-                padding: 0.5rem;
-            }
-            
-            .text-sm {
-                font-size: 12px; /* ラベルサイズを調整 */
-                padding: 0.25rem 0.5rem;
-            }
-            
-            .mb-4 {
-                margin-bottom: 0.75rem !important;
-            }
-            
-            .mb-6 {
-                margin-bottom: 1rem !important;
-            }
-            
-            .border-gray-400 {
-                border-width: 1px;
-            }
-            
-            .px-3 {
-                padding-left: 0.5rem !important;
-                padding-right: 0.5rem !important;
-            }
-            
-            .py-1\.5 {
-                padding-top: 0.25rem !important;
-                padding-bottom: 0.25rem !important;
-            }
-            
-            .h-8 {
-                height: 1.75rem !important;
+            .login-button {
+                height: 56px;
+                font-size: 18px;
             }
         }
     </style>
 </head>
-<body class="bg-gray-100">
-    <div class="login-container">
-        <div class="w-full max-w-sm bg-white p-6 shadow-lg rounded-lg border border-gray-200">
+<body>
+    <div class="smartphone-container">
+        <div class="login-container">
             <form id="loginForm">
-                <div class="border border-gray-400 p-2 text-center mb-6">
-                    <h1 class="text-xl font-bold tracking-widest">ログイン</h1>
+                <!-- タイトル -->
+                <div class="title-box">
+                    <h1 class="title-text">ログイン</h1>
                 </div>
                 
-                <div class="mb-4 flex flex-wrap items-center">
-                    <label class="block text-sm font-medium bg-gray-200 px-3 py-1.5 inline-block border border-gray-400 mr-2" for="username">
-                        ユーザーID
-                    </label>
+                <!-- ユーザーID -->
+                <div class="input-group">
+                    <label class="input-label" for="username">ユーザーID</label>
                     <input 
-                        class="mt-1 flex-1 border-b-2 border-gray-400 h-8 px-2 focus:border-blue-500 focus:outline-none" 
+                        class="input-field" 
                         id="username" 
                         type="text" 
                         placeholder="ユーザーID" 
@@ -131,12 +196,11 @@
                     >
                 </div>
                 
-                <div class="mb-6 flex flex-wrap items-center">
-                    <label class="block text-sm font-medium bg-gray-200 px-3 py-1.5 inline-block border border-gray-400 mr-2" for="password">
-                        パスワード
-                    </label>
+                <!-- パスワード -->
+                <div class="input-group">
+                    <label class="input-label" for="password">パスワード</label>
                     <input 
-                        class="mt-1 flex-1 border-b-2 border-gray-400 h-8 px-2 focus:border-blue-500 focus:outline-none" 
+                        class="input-field" 
                         id="password" 
                         type="password" 
                         placeholder="パスワード" 
@@ -145,17 +209,12 @@
                     >
                 </div>
                 
-                <div class="text-center mb-4">
-                    <button 
-                        class="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition-colors duration-200" 
-                        type="submit"
-                    >
-                        ログイン
-                    </button>
-                </div>
+                <!-- ログインボタン -->
+                <button class="login-button" type="submit">ログイン</button>
                 
+                <!-- エラーメッセージ -->
                 <div class="error-message">
-                    <p id="errorMessage" class="text-red-500 text-xs italic text-center"></p>
+                    <p id="errorMessage" class="error-text"></p>
                 </div>
             </form>
         </div>
