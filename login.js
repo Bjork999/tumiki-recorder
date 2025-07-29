@@ -19,7 +19,6 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
         try {
             console.log('Login response received:', result);
             if (result.success) {
-                sessionStorage.setItem('userRole', result.role);
                 window.location.href = 'main.html';
             } else {
                 errorMessage.textContent = result.error || 'ユーザーIDまたはパスワードが違います。';
@@ -37,13 +36,14 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
     // エラーハンドリング
     script.onerror = function() {
         console.error('Script load error - 403 Forbidden or network issue');
+        console.error('Script URL:', url);
         errorMessage.textContent = 'サーバーとの通信に失敗しました。Google Apps Scriptの権限を確認してください。';
         document.head.removeChild(script);
         delete window[callbackName];
     };
 
     // Google Apps ScriptのURLにパラメータを追加
-    const url = `https://script.google.com/macros/s/AKfycbyyBd08urDWf-ekmhiUlOfNjsECj5c0K3O0Y2xaRRap5xT_rl0pbMj4tMuosH6IMBcO/exec?callback=${callbackName}&username=${encodeURIComponent(userId)}&password=${encodeURIComponent(password)}`;
+    const url = `https://script.google.com/macros/s/AKfycbyDK_MQ0oIS8VKNXUfc9i03j6IscHou_YIW-YjK33xRQ0XXpkIT9TsIc7W-4YoN2sFy/exec?callback=${callbackName}&username=${encodeURIComponent(userId)}&password=${encodeURIComponent(password)}`;
     
     script.src = url;
     document.head.appendChild(script);
