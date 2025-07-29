@@ -17,7 +17,7 @@
 <body class="bg-gray-100 py-4">
     <div class="w-full max-w-sm bg-white p-6 shadow-lg rounded-lg border border-gray-200 mx-auto py-4">
         <div id="admin-menu" class="text-right mb-4"></div>
-        <form id="recordForm" method="POST" action="https://script.google.com/macros/s/AKfycbxyWVw2AzinLID_iglRSq3HHYmUkmEMaltrAVobhhGfsG8LRZjhw2yLhv5zXGiDYA5M/exec" target="_blank">
+        <form id="recordForm" method="POST" action="https://script.google.com/macros/s/AKfycbziUUzRwY8vyefCuOTuw_Da3bHnu6UMyn2VM5FJgF98GU3oQo1SLxq4OxbQ5gxkt0FI/exec" target="_blank">
         <div class="border border-gray-400 p-2 text-center mb-6">
             <h1 class="text-xl font-bold tracking-widest">移動支援記録表</h1>
         </div>
@@ -212,7 +212,7 @@
             try {
                 console.log("🔄 最新データを取得中...");
                 
-                const dataUrl = 'https://script.google.com/macros/s/AKfycbxyWVw2AzinLID_iglRSq3HHYmUkmEMaltrAVobhhGfsG8LRZjhw2yLhv5zXGiDYA5M/exec?action=getData';
+                const dataUrl = 'https://script.google.com/macros/s/AKfycbziUUzRwY8vyefCuOTuw_Da3bHnu6UMyn2VM5FJgF98GU3oQo1SLxq4OxbQ5gxkt0FI/exec?action=getData';
                 
                 const response = await fetch(dataUrl);
                 const responseText = await response.text();
