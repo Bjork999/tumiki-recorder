@@ -97,7 +97,7 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
     }
 
     // Google Apps ScriptのURL
-    const gasUrl = 'https://script.google.com/macros/s/AKfycbwQmGGwqMZnNUEL4Z84ApE1lmndtLFhGlX38y8DJR19JHzYA_JYOtKr1kkp79gQaill/exec';
+                    const gasUrl = 'https://script.google.com/macros/s/AKfycbz_GP8GXGvXlRKP41ygUbyN4VAlxQ6CmYV2JdzvOCraFKQgqFjWKTmvJxHvHnFRWDjR/exec';
     
     console.log('ユーザーエージェント:', navigator.userAgent);
     console.log('画面サイズ:', window.innerWidth, 'x', window.innerHeight);

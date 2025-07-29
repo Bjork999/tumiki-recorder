@@ -306,7 +306,7 @@
             try {
                 console.log("🔄 最新データを取得中...");
                 
-                                        const dataUrl = 'https://script.google.com/macros/s/AKfycbwQmGGwqMZnNUEL4Z84ApE1lmndtLFhGlX38y8DJR19JHzYA_JYOtKr1kkp79gQaill/exec?action=getData';
+                                        const dataUrl = 'https://script.google.com/macros/s/AKfycbz_GP8GXGvXlRKP41ygUbyN4VAlxQ6CmYV2JdzvOCraFKQgqFjWKTmvJxHvHnFRWDjR/exec?action=getData';
                 
                 const response = await fetch(dataUrl);
                 const responseText = await response.text();
@@ -573,7 +573,7 @@
                     console.log(`FormData追加: ${key} = ${formData[key]}`);
                 });
                 
-                const submitUrl = 'https://script.google.com/macros/s/AKfycbwQmGGwqMZnNUEL4Z84ApE1lmndtLFhGlX38y8DJR19JHzYA_JYOtKr1kkp79gQaill/exec';
+                const submitUrl = 'https://script.google.com/macros/s/AKfycbz_GP8GXGvXlRKP41ygUbyN4VAlxQ6CmYV2JdzvOCraFKQgqFjWKTmvJxHvHnFRWDjR/exec';
                 console.log('送信URL:', submitUrl);
                 
                 const response = await fetch(submitUrl, {
