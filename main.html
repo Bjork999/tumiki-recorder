@@ -217,7 +217,7 @@
             try {
                 console.log("🔄 最新データを取得中...");
                 
-                                        const dataUrl = 'https://script.google.com/macros/s/AKfycbz2Pz8Ks_9cNkX1HvNHJvPFmBvQ_bgnoxVSacw54-L_aZOqUoZ_0_d5NTQf2I0kiRa8/exec?action=getData';
+                                        const dataUrl = 'https://script.google.com/macros/s/AKfycbwf3WuVCVx7g3fxpJtGsiVSwhMQMlT4XIB-8Wv8zm3eDhWhKZf3Bbj30dZxlk1mYUnv/exec?action=getData';
                 
                 const response = await fetch(dataUrl);
                 const responseText = await response.text();
@@ -480,7 +480,7 @@
                     formDataObj.append(key, formData[key]);
                 });
                 
-                const submitUrl = 'https://script.google.com/macros/s/AKfycbz2Pz8Ks_9cNkX1HvNHJvPFmBvQ_bgnoxVSacw54-L_aZOqUoZ_0_d5NTQf2I0kiRa8/exec';
+                const submitUrl = 'https://script.google.com/macros/s/AKfycbwf3WuVCVx7g3fxpJtGsiVSwhMQMlT4XIB-8Wv8zm3eDhWhKZf3Bbj30dZxlk1mYUnv/exec';
                 
                 const response = await fetch(submitUrl, {
                     method: 'POST',
