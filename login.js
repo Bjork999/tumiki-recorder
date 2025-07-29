@@ -33,12 +33,7 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
                     delete window[callbackName];
                 };
 
-                // 一時的な直接認証（CORS問題回避）
-                if (userId === 'admin' && password === '123456') {
-                    console.log('直接認証成功');
-                    window.location.href = 'main.html';
-                    return;
-                }
+
 
                 // エラーハンドリング
                 script.onerror = function() {
@@ -61,7 +56,7 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
                 }, 10000); // 10秒でタイムアウト
 
                 // Google Apps ScriptのURLにパラメータを追加
-                const url = `https://script.google.com/macros/s/AKfycbyDK_MQ0oIS8VKNXUfc9i03j6IscHou_YIW-YjK33xRQ0XXpkIT9TsIc7W-4YoN2sFy/exec?callback=${callbackName}&username=${encodeURIComponent(userId)}&password=${encodeURIComponent(password)}`;
+                const url = `https://script.google.com/macros/s/AKfycbwcxFGoX4tr187BxSFpsRnbVuo2k9G7OowSF3oD-3dUd7KsA28ioRm5pyJLpr6ZhKdd/exec?callback=${callbackName}&username=${encodeURIComponent(userId)}&password=${encodeURIComponent(password)}`;
                 
                 script.src = url;
                 document.head.appendChild(script);
