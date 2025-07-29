@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ログイン - 積み木記録表</title>
+    <title>ログイン - ワンプラス記録表</title>
     
     <!-- PWA対応：アイコン設定 -->
     <link rel="icon" type="image/png" sizes="32x32" href="tumiki-icon.png">
@@ -46,57 +46,65 @@
             min-height: 1.5rem;
         }
         
-        /* スマートフォン対応 */
+        /* モバイル対応：1画面に収める */
         @media (max-width: 768px) {
             .login-container {
-                padding: 2rem 1rem;
+                padding: 0.5rem;
                 min-height: 100vh;
             }
             
             .w-full.max-w-sm {
-                max-width: 90%;
-                margin: 0 auto;
-                padding: 2rem;
-                min-width: 320px;
+                max-width: 100%;
+                margin: 0 0.5rem;
+                padding: 1rem !important;
             }
             
             input[type="text"], input[type="password"] {
-                font-size: 18px; /* 大きめのフォント */
-                height: 50px; /* より大きなタッチサイズ */
-                padding: 12px 16px;
-                margin-top: 8px;
-                border-radius: 8px;
-                border: 2px solid #d1d5db;
+                font-size: 14px; /* フォントサイズを小さく */
+                height: 36px; /* 高さを調整 */
+                padding: 6px 10px;
             }
             
             button[type="submit"] {
-                height: 54px; /* 大きなボタンサイズ */
-                font-size: 20px;
-                font-weight: bold;
-                margin-top: 1.5rem;
-                border-radius: 8px;
+                height: 40px; /* ボタンサイズを調整 */
+                font-size: 14px;
+                padding: 0.5rem 1rem;
             }
             
             .text-xl {
-                font-size: 28px; /* タイトルをより大きく */
-                padding: 1rem;
+                font-size: 18px; /* タイトルサイズを調整 */
+                padding: 0.5rem;
             }
             
             .text-sm {
-                font-size: 18px; /* ラベルを大きく */
-                padding: 8px 12px;
-                margin-bottom: 4px;
+                font-size: 12px; /* ラベルサイズを調整 */
+                padding: 0.25rem 0.5rem;
             }
             
-            .border.border-gray-400 {
-                border-width: 3px;
-                border-radius: 12px;
+            .mb-4 {
+                margin-bottom: 0.75rem !important;
             }
             
-            .error-message {
-                font-size: 16px;
-                min-height: 2rem;
-                margin-top: 1rem;
+            .mb-6 {
+                margin-bottom: 1rem !important;
+            }
+            
+            .border-gray-400 {
+                border-width: 1px;
+            }
+            
+            .px-3 {
+                padding-left: 0.5rem !important;
+                padding-right: 0.5rem !important;
+            }
+            
+            .py-1\.5 {
+                padding-top: 0.25rem !important;
+                padding-bottom: 0.25rem !important;
+            }
+            
+            .h-8 {
+                height: 1.75rem !important;
             }
         }
     </style>
