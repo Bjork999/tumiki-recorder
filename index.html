@@ -20,6 +20,22 @@
         .error-message {
             min-height: 1.5rem;
         }
+        
+        /* モバイル対応 */
+        @media (max-width: 768px) {
+            .login-container {
+                padding: 1rem;
+            }
+            
+            .w-full.max-w-sm {
+                max-width: 100%;
+                margin: 0 1rem;
+            }
+            
+            input[type="text"], input[type="password"] {
+                font-size: 16px; /* iOSでズームを防ぐ */
+            }
+        }
     </style>
 </head>
 <body class="bg-gray-100">

@@ -13,6 +13,7 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
     
     errorMessage.textContent = '';
     errorMessage.textContent = 'ログイン中...';
+    errorMessage.style.color = '#3B82F6'; // 青色でローディング表示
 
     // JSONPコールバック名
     const callbackName = 'loginCallback_' + Date.now();
@@ -35,16 +36,21 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
                 });
                 
                 errorMessage.textContent = 'ログイン成功！リダイレクト中...';
+                errorMessage.style.color = '#10B981'; // 緑色で成功表示
+                
+                // モバイル対応：少し長めの待機時間
                 setTimeout(() => {
                     window.location.href = 'main.html';
-                }, 500);
+                }, 1000);
             } else {
                 console.log('ログイン失敗:', result);
                 errorMessage.textContent = result?.error || 'ユーザーIDまたはパスワードが違います。';
+                errorMessage.style.color = '#EF4444'; // 赤色でエラー表示
             }
         } catch (error) {
             console.error('ログイン処理エラー:', error);
             errorMessage.textContent = 'ログイン処理中にエラーが発生しました。';
+            errorMessage.style.color = '#EF4444';
         }
         
         // クリーンアップ
@@ -59,6 +65,7 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
         console.error('スクリプト読み込みエラー:', event);
         console.error('URL:', script.src);
         errorMessage.textContent = 'サーバーとの通信に失敗しました。しばらく待ってから再試行してください。';
+        errorMessage.style.color = '#EF4444';
         cleanupScript();
     };
 
@@ -67,9 +74,10 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
         if (window[callbackName]) {
             console.error('ログインタイムアウト');
             errorMessage.textContent = 'ログイン処理がタイムアウトしました。再度お試しください。';
+            errorMessage.style.color = '#EF4444';
             cleanupScript();
         }
-    }, 15000); // 15秒でタイムアウト
+    }, 20000); // モバイル対応：20秒でタイムアウト
 
     // クリーンアップ関数
     function cleanupScript() {
@@ -93,6 +101,8 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
     const url = `${gasUrl}?action=login&callback=${callbackName}&username=${encodeURIComponent(userId)}&password=${encodeURIComponent(password)}`;
     
     console.log('ログインリクエスト URL:', url);
+    console.log('ユーザーエージェント:', navigator.userAgent);
+    console.log('画面サイズ:', window.innerWidth, 'x', window.innerHeight);
     
     script.src = url;
     document.head.appendChild(script);
