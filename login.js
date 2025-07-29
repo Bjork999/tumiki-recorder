@@ -43,7 +43,7 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
     };
 
     // Google Apps ScriptのURLにパラメータを追加
-    const url = `https://script.google.com/macros/s/AKfycbxRKrZHm1H7DfvWq7O__499VCjhlC5o30Xe27DO1fxTVXcWxYWAWiAg_r15sJEGUW-z/exec?callback=${callbackName}&username=${encodeURIComponent(userId)}&password=${encodeURIComponent(password)}`;
+    const url = `https://script.google.com/macros/s/AKfycbzgClqQUAoOIO-m6wpfgPI66f5RBNBsaB9H2w0V1Ns0HYntWwloG7UIJEJwiOdJ-rtP/exec?callback=${callbackName}&username=${encodeURIComponent(userId)}&password=${encodeURIComponent(password)}`;
     
     script.src = url;
     document.head.appendChild(script);
