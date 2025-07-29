@@ -10,41 +10,73 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
     // ローディング表示
     errorMessage.textContent = 'ログイン中...';
 
-    // JSONPアプローチでCORS問題を回避
-    const script = document.createElement('script');
-    const callbackName = 'loginCallback_' + Date.now();
+    // フォーム送信方式でCORS問題を回避
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = 'https://script.google.com/macros/s/AKfycbzgClqQUAoOIO-m6wpfgPI66f5RBNBsaB9H2w0V1Ns0HYntWwloG7UIJEJwiOdJ-rtP/exec';
+    form.target = 'loginFrame';
+    form.style.display = 'none';
+
+    // パラメータを追加
+    const usernameInput = document.createElement('input');
+    usernameInput.type = 'hidden';
+    usernameInput.name = 'username';
+    usernameInput.value = userId;
+    form.appendChild(usernameInput);
+
+    const passwordInput = document.createElement('input');
+    passwordInput.type = 'hidden';
+    passwordInput.name = 'password';
+    passwordInput.value = password;
+    form.appendChild(passwordInput);
+
+    // 隠しiframeを作成
+    const iframe = document.createElement('iframe');
+    iframe.name = 'loginFrame';
+    iframe.style.display = 'none';
     
-    // グローバルコールバック関数を作成
-    window[callbackName] = function(result) {
-        try {
-            console.log('Login response received:', result);
-            if (result.success) {
-                sessionStorage.setItem('userRole', result.role);
-                window.location.href = 'main.html';
-            } else {
-                errorMessage.textContent = result.error || 'ユーザーIDまたはパスワードが違います。';
+    // iframeのロード完了を待つ
+    iframe.onload = function() {
+        setTimeout(function() {
+            try {
+                // iframeの内容を取得
+                const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                const responseText = iframeDoc.body ? iframeDoc.body.textContent || iframeDoc.body.innerText : '';
+                
+                console.log('Response received:', responseText);
+                
+                if (responseText && responseText.trim()) {
+                    const result = JSON.parse(responseText.trim());
+                    if (result.success) {
+                        sessionStorage.setItem('userRole', result.role);
+                        window.location.href = 'main.html';
+                    } else {
+                        errorMessage.textContent = result.error || 'ユーザーIDまたはパスワードが違います。';
+                    }
+                } else {
+                    // 認証成功時はリダイレクトするため空の場合もある
+                    errorMessage.textContent = 'サーバーからのレスポンスを確認できませんでした。';
+                }
+            } catch (error) {
+                console.error('Login Error:', error);
+                errorMessage.textContent = 'ログイン処理中にエラーが発生しました: ' + error.message;
             }
-        } catch (error) {
-            console.error('Login Error:', error);
-            errorMessage.textContent = 'ログイン処理中にエラーが発生しました。';
-        }
-        
-        // クリーンアップ
-        document.head.removeChild(script);
-        delete window[callbackName];
+            
+            // クリーンアップ
+            if (document.body.contains(form)) document.body.removeChild(form);
+            if (document.body.contains(iframe)) document.body.removeChild(iframe);
+        }, 2000); // 2秒待機
     };
 
     // エラーハンドリング
-    script.onerror = function() {
-        console.error('Script load error - 403 Forbidden or network issue');
-        errorMessage.textContent = 'サーバーとの通信に失敗しました。Google Apps Scriptの権限を確認してください。';
-        document.head.removeChild(script);
-        delete window[callbackName];
+    iframe.onerror = function() {
+        console.error('Iframe load error');
+        errorMessage.textContent = 'サーバーとの通信に失敗しました。';
+        if (document.body.contains(form)) document.body.removeChild(form);
+        if (document.body.contains(iframe)) document.body.removeChild(iframe);
     };
 
-    // Google Apps ScriptのURLにパラメータを追加
-    const url = `https://script.google.com/macros/s/AKfycbzgClqQUAoOIO-m6wpfgPI66f5RBNBsaB9H2w0V1Ns0HYntWwloG7UIJEJwiOdJ-rtP/exec?callback=${callbackName}&username=${encodeURIComponent(userId)}&password=${encodeURIComponent(password)}`;
-    
-    script.src = url;
-    document.head.appendChild(script);
+    document.body.appendChild(iframe);
+    document.body.appendChild(form);
+    form.submit();
 });
