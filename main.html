@@ -362,15 +362,6 @@
                     <input id="end-time" name="endTime" class="time-input" placeholder="12:00" required>
                 </div>
 
-                <!-- 利用者 -->
-                <div class="input-row">
-                    <label class="input-label" for="user-input">利用者</label>
-                    <input list="users" id="user-input" name="user" class="input-field" required>
-                    <datalist id="users">
-                        <!-- 動的に生成されます -->
-                    </datalist>
-                </div>
-
                 <!-- 支援員1 -->
                 <div class="input-row">
                     <label class="input-label" for="supporter1-input">支援員1</label>
@@ -386,20 +377,29 @@
                     <input list="supporters" id="supporter2-input" name="supporter2" class="input-field">
                 </div>
 
-                <!-- 行き先 -->
-                <div class="input-row">
-                    <label class="input-label" for="destination-input">行き先</label>
-                    <input list="destinations" id="destination-input" name="destination" class="input-field" required>
-                    <datalist id="destinations">
-                        <!-- 動的に生成されます -->
-                    </datalist>
-                </div>
-
                 <!-- 支援種別 -->
                 <div class="input-row">
                     <label class="input-label" for="support-type-input">支援種別</label>
                     <input list="support-types" id="support-type-input" name="supportType" class="input-field" required>
                     <datalist id="support-types">
+                        <!-- 動的に生成されます -->
+                    </datalist>
+                </div>
+
+                <!-- 利用者 -->
+                <div class="input-row">
+                    <label class="input-label" for="user-input">利用者</label>
+                    <input list="users" id="user-input" name="user" class="input-field" required>
+                    <datalist id="users">
+                        <!-- 動的に生成されます -->
+                    </datalist>
+                </div>
+
+                <!-- 行き先 -->
+                <div class="input-row">
+                    <label class="input-label" for="destination-input">行き先</label>
+                    <input list="destinations" id="destination-input" name="destination" class="input-field" required>
+                    <datalist id="destinations">
                         <!-- 動的に生成されます -->
                     </datalist>
                 </div>
@@ -438,6 +438,9 @@
         console.log("Script loaded and running");
 
         let supporterSupportTypesMap = {};
+        let userRemainingTimesMap = {};
+        let allUsers = [];
+        let currentSupportType = ''; // 現在選択されている支援種別を保持
 
 
 
@@ -527,6 +530,17 @@
                 updateSupportTypesForSupporter(name);
             });
             
+            // 4. 支援種別変更イベントの設定
+            document.getElementById('support-type-input').addEventListener('input', function(e) {
+                const supportType = e.target.value.trim();
+                updateUserListBySupportType(supportType);
+            });
+            
+            // 5. 利用者入力欄の背景色更新イベント（一度だけ設定）
+            document.getElementById('user-input').addEventListener('input', function(e) {
+                updateUserInputBackground(e.target.value, currentSupportType);
+            });
+            
             console.log("✅ 基本初期化完了 - ページ利用可能");
             
             // 4. バックグラウンドで最新データを取得（非ブロッキング）
@@ -540,7 +554,7 @@
             try {
                 console.log("🔄 最新データを取得中...");
                 
-                                        const dataUrl = 'https://script.google.com/macros/s/AKfycbwhYACp8x5GNLfbHzSH8T049B4M9FplpyIP1cBG-JyTZ6_9Ec-nHA1Wsm4UN_gWpF-i/exec?action=getData';
+                                        const dataUrl = 'https://script.google.com/macros/s/AKfycbzAVMj_SibFL5p6qXUxbma33CseiOqYCGhFgGUB5SAvtvpYdFcnWwyBaxIDlsAKKijx/exec?action=getData';
                 
                 const response = await fetch(dataUrl);
                 const responseText = await response.text();
@@ -554,6 +568,8 @@
                     updateDatalist('support-types', data.supportTypes || []);
                     updateDatalist('appearances', data.appearances || []);
                     supporterSupportTypesMap = data.supporterSupportTypes || {};
+                    userRemainingTimesMap = data.userRemainingTimes || {};
+                    allUsers = data.users || [];
                     
                     console.log("✅ 最新データ更新完了");
                     showUpdateNotification("📊 最新データに更新されました");
@@ -700,6 +716,106 @@
             }
         }
 
+        // 支援種別に基づいて利用者リストを更新する関数
+        function updateUserListBySupportType(supportType) {
+            console.log(`支援種別「${supportType}」に基づいて利用者リストを更新`);
+            
+            
+            // 背景色を決定する関数
+            function getBackgroundColor(minutes) {
+                if (minutes <= 60) return '#ffcccc'; // 赤（1:00以下）
+                if (minutes <= 120) return '#ffffcc'; // 黄（2:00以下）
+                if (minutes <= 300) return '#ccccff'; // 青（5:00以下）
+                return ''; // それ以上は背景色なし
+            }
+            
+            const userDatalist = document.getElementById('users');
+            userDatalist.innerHTML = ''; // 既存のオプションをクリア
+            
+            // 支援種別が選択されていない場合は全利用者を表示
+            if (!supportType) {
+                updateDatalist('users', allUsers);
+                return;
+            }
+            
+            // フィルタリングされた利用者リストを作成
+            const filteredUsers = [];
+            
+            allUsers.forEach(userName => {
+                if (!userName || userName.trim() === '') return;
+                
+                const userTimes = userRemainingTimesMap[userName];
+                if (!userTimes) return;
+                
+                const remainingTime = userTimes[supportType];
+                if (!remainingTime || remainingTime === '') return;
+                
+                // 残り時間がある利用者のみ追加
+                const minutes = timeToMinutes(remainingTime);
+                if (minutes > 0) {
+                    const option = document.createElement('option');
+                    option.value = userName;
+                    
+                    // 背景色を設定
+                    const color = getBackgroundColor(minutes);
+                    if (color) {
+                        // データリストのオプションにはスタイルが適用されないため、
+                        // カスタム属性として保存
+                        option.setAttribute('data-color', color);
+                        option.setAttribute('data-minutes', minutes);
+                    }
+                    
+                    userDatalist.appendChild(option);
+                    filteredUsers.push(userName);
+                }
+            });
+            
+            console.log(`${supportType}で残り時間がある利用者: ${filteredUsers.length}名`);
+            
+            // 現在の支援種別を保存
+            currentSupportType = supportType;
+        }
+        
+        // 時間を分に変換するヘルパー関数
+        function timeToMinutes(timeStr) {
+            if (!timeStr || typeof timeStr !== 'string') return 0;
+            const parts = timeStr.split(':');
+            if (parts.length !== 2) return 0;
+            const hours = parseInt(parts[0]) || 0;
+            const minutes = parseInt(parts[1]) || 0;
+            return hours * 60 + minutes;
+        }
+        
+        // 利用者入力欄の背景色を更新する関数
+        function updateUserInputBackground(userName, supportType) {
+            const userInput = document.getElementById('user-input');
+            
+            if (!userName || !supportType || !userRemainingTimesMap[userName]) {
+                userInput.style.backgroundColor = '';
+                return;
+            }
+            
+            const remainingTime = userRemainingTimesMap[userName][supportType];
+            if (!remainingTime) {
+                userInput.style.backgroundColor = '';
+                return;
+            }
+            
+            
+            const minutes = timeToMinutes(remainingTime);
+            
+            // 背景色を設定
+            if (minutes <= 60) {
+                userInput.style.backgroundColor = '#ffcccc'; // 赤
+            } else if (minutes <= 120) {
+                userInput.style.backgroundColor = '#ffffcc'; // 黄
+            } else if (minutes <= 300) {
+                userInput.style.backgroundColor = '#ccccff'; // 青
+            } else {
+                userInput.style.backgroundColor = '';
+            }
+        }
+
         // 時間フォーマット設定
         function setupTimeFormatting() {
             function formatTime(event) {
@@ -807,7 +923,7 @@
                     console.log(`FormData追加: ${key} = ${formData[key]}`);
                 });
                 
-                const submitUrl = 'https://script.google.com/macros/s/AKfycbwhYACp8x5GNLfbHzSH8T049B4M9FplpyIP1cBG-JyTZ6_9Ec-nHA1Wsm4UN_gWpF-i/exec';
+                const submitUrl = 'https://script.google.com/macros/s/AKfycbzAVMj_SibFL5p6qXUxbma33CseiOqYCGhFgGUB5SAvtvpYdFcnWwyBaxIDlsAKKijx/exec';
                 console.log('送信URL:', submitUrl);
                 
                 const response = await fetch(submitUrl, {
