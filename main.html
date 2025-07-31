@@ -795,6 +795,21 @@
         // 時間を分に変換するヘルパー関数
         function timeToMinutes(timeStr) {
             if (!timeStr || typeof timeStr !== 'string') return 0;
+            
+            // ISO日付形式の場合（例: "1899-12-30T06:00:00.000Z"）
+            if (timeStr.includes('T') && timeStr.includes('Z')) {
+                try {
+                    const date = new Date(timeStr);
+                    const hours = date.getUTCHours();
+                    const minutes = date.getUTCMinutes();
+                    return hours * 60 + minutes;
+                } catch (error) {
+                    console.error('ISO日付の解析エラー:', error, timeStr);
+                    return 0;
+                }
+            }
+            
+            // HH:MM形式の場合
             const parts = timeStr.split(':');
             if (parts.length !== 2) return 0;
             const hours = parseInt(parts[0]) || 0;
