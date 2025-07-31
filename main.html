@@ -719,7 +719,8 @@
         // 支援種別に基づいて利用者リストを更新する関数
         function updateUserListBySupportType(supportType) {
             console.log(`支援種別「${supportType}」に基づいて利用者リストを更新`);
-            
+            console.log('現在のallUsers:', allUsers);
+            console.log('現在のuserRemainingTimesMap:', userRemainingTimesMap);
             
             // 背景色を決定する関数
             function getBackgroundColor(minutes) {
@@ -745,13 +746,25 @@
                 if (!userName || userName.trim() === '') return;
                 
                 const userTimes = userRemainingTimesMap[userName];
-                if (!userTimes) return;
+                console.log(`利用者「${userName}」の残り時間データ:`, userTimes);
+                
+                if (!userTimes) {
+                    console.log(`利用者「${userName}」: 残り時間データなし`);
+                    return;
+                }
                 
                 const remainingTime = userTimes[supportType];
-                if (!remainingTime || remainingTime === '') return;
+                console.log(`利用者「${userName}」の${supportType}残り時間: "${remainingTime}"`);
+                
+                if (!remainingTime || remainingTime === '') {
+                    console.log(`利用者「${userName}」: ${supportType}の残り時間なし`);
+                    return;
+                }
                 
                 // 残り時間がある利用者のみ追加
                 const minutes = timeToMinutes(remainingTime);
+                console.log(`利用者「${userName}」: ${remainingTime} = ${minutes}分`);
+                
                 if (minutes > 0) {
                     const option = document.createElement('option');
                     option.value = userName;
@@ -767,10 +780,13 @@
                     
                     userDatalist.appendChild(option);
                     filteredUsers.push(userName);
+                    console.log(`利用者「${userName}」をリストに追加`);
+                } else {
+                    console.log(`利用者「${userName}」: 残り時間0分のため除外`);
                 }
             });
             
-            console.log(`${supportType}で残り時間がある利用者: ${filteredUsers.length}名`);
+            console.log(`${supportType}で残り時間がある利用者: ${filteredUsers.length}名 (${filteredUsers.join(', ')})`);
             
             // 現在の支援種別を保存
             currentSupportType = supportType;
