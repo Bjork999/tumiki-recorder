@@ -1127,7 +1127,7 @@
             // 1. 即座に基本UI要素を初期化（日付、時間など）
             initializeDateOptions();
             setCurrentDate();
-            setLoggedInUserName();  // ログインユーザーの名前を支援員1に設定
+            // setLoggedInUserName(); // データ取得完了後に実行するため削除
             setupTimeFormatting();
             setupFormSubmission();
             
@@ -1184,6 +1184,11 @@
                     
                     console.log("✅ 最新データ更新完了");
                     showUpdateNotification("📊 最新データに更新されました");
+                    
+                    // データ取得完了後に支援員1の自動選択を再実行
+                    setTimeout(() => {
+                        setLoggedInUserName();
+                    }, 100);
                 } else {
                     console.warn("⚠️ データ取得エラー:", data.error);
                     showUpdateNotification("⚠️ データ取得に失敗しました", "warning");
