@@ -743,16 +743,13 @@
 
                 <!-- 日付入力 -->
                 <div class="date-container">
-                    <input list="years" id="year" name="year" class="date-input" placeholder="2024" required>
-                    <datalist id="years"></datalist>
+                    <input id="year" name="year" class="date-input" placeholder="2024" required>
                     <span class="date-label">年</span>
 
-                    <input list="months" id="month" name="month" class="date-input" placeholder="7" required>
-                    <datalist id="months"></datalist>
+                    <input id="month" name="month" class="date-input" placeholder="7" required>
                     <span class="date-label">月</span>
 
-                    <input list="days" id="day" name="day" class="date-input" placeholder="20" required>
-                    <datalist id="days"></datalist>
+                    <input id="day" name="day" class="date-input" placeholder="20" required>
                     <span class="date-label">日</span>
                 </div>
 
@@ -1131,7 +1128,6 @@
             }
             
             // 1. 即座に基本UI要素を初期化（日付、時間など）
-            initializeDateOptions();
             setCurrentDate();
             // setLoggedInUserName(); // データ取得完了後に実行するため削除
             setupTimeFormatting();
@@ -1253,30 +1249,6 @@
             }, 3000);
         }
 
-        // 日付オプションの初期化
-        function initializeDateOptions() {
-            const currentYear = new Date().getFullYear();
-            const yearsDatalist = document.getElementById('years');
-            for (let i = 0; i < 5; i++) {
-                const option = document.createElement('option');
-                option.value = currentYear - i;
-                yearsDatalist.appendChild(option);
-            }
-
-            const monthsDatalist = document.getElementById('months');
-            for (let i = 1; i <= 12; i++) {
-                const option = document.createElement('option');
-                option.value = i;
-                monthsDatalist.appendChild(option);
-            }
-
-            const daysDatalist = document.getElementById('days');
-            for (let i = 1; i <= 31; i++) {
-                const option = document.createElement('option');
-                option.value = i;
-                daysDatalist.appendChild(option);
-            }
-        }
 
         // 現在の日付を設定
         function setCurrentDate() {
