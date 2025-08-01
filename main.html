@@ -697,7 +697,7 @@
             function getBackgroundColor(minutes) {
                 if (minutes <= 60) return '#ffcccc'; // 赤（1:00以下）
                 if (minutes <= 120) return '#ffffcc'; // 黄（2:00以下）
-                if (minutes <= 300) return '#ccccff'; // 青（5:00以下）
+                if (minutes <= 300) return '#ccffff'; // 薄い水色（5:00以下）
                 return ''; // それ以上は背景色なし
             }
             
@@ -979,7 +979,7 @@
             function getBackgroundColor(minutes) {
                 if (minutes <= 60) return '#ffcccc'; // 赤（1:00以下）
                 if (minutes <= 120) return '#ffffcc'; // 黄（2:00以下）
-                if (minutes <= 300) return '#ccccff'; // 青（5:00以下）
+                if (minutes <= 300) return '#ccffff'; // 薄い水色（5:00以下）
                 return ''; // それ以上は背景色なし
             }
             
@@ -1166,7 +1166,7 @@
             } else if (minutes <= 120) {
                 userInput.style.backgroundColor = '#ffffcc'; // 黄
             } else if (minutes <= 300) {
-                userInput.style.backgroundColor = '#ccccff'; // 青
+                userInput.style.backgroundColor = '#ccffff'; // 薄い水色
             } else {
                 userInput.style.backgroundColor = '';
             }
