@@ -30,7 +30,8 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
                 sessionStorage.setItem('userId', result.userId || userId);
                 sessionStorage.setItem('userName', result.userName || result.userId || userId);
                 
-                console.log('保存されたユーザー情報:', {
+                console.log('🔍 ログイン応答の詳細:', result);
+                console.log('📝 保存されたユーザー情報:', {
                     userId: sessionStorage.getItem('userId'),
                     userName: sessionStorage.getItem('userName')
                 });
@@ -138,8 +139,14 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
             
             if (result && result.success) {
                 console.log('モバイル用ログイン成功');
+                console.log('🔍 モバイル用ログイン応答の詳細:', result);
                 sessionStorage.setItem('userId', result.userId || userId);
                 sessionStorage.setItem('userName', result.userName || result.userId || userId);
+                
+                console.log('📝 モバイル用保存されたユーザー情報:', {
+                    userId: sessionStorage.getItem('userId'),
+                    userName: sessionStorage.getItem('userName')
+                });
                 
                 errorMessage.textContent = 'ログイン成功！リダイレクト中...';
                 errorMessage.style.color = '#10B981';

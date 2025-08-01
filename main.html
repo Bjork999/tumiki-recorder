@@ -1325,11 +1325,17 @@
                 const userName = sessionStorage.getItem('userName');
                 const userId = sessionStorage.getItem('userId');
                 
+                console.log('🔍 ログイン情報確認:', { userName, userId });
+                
                 const supporter1Select = document.getElementById('supporter1-input');
                 if (!supporter1Select) {
                     console.error('❌ 支援員1の選択欄が見つかりません');
                     return;
                 }
+                
+                // 利用可能なオプションをログ出力
+                console.log('📋 支援員1の利用可能オプション:', 
+                    Array.from(supporter1Select.options).map(opt => `"${opt.value}"`));
                 
                 if (userName) {
                     // selectのoptionから該当する値を探して設定
@@ -1342,6 +1348,7 @@
                         updateSupportTypesForSupporter(userName);
                     } else {
                         console.warn(`⚠️ 支援員リストに「${userName}」が見つかりません`);
+                        console.warn('利用可能な選択肢:', Array.from(supporter1Select.options).map(opt => opt.value));
                     }
                 } else if (userId) {
                     // selectのoptionから該当する値を探して設定
@@ -1354,6 +1361,7 @@
                         updateSupportTypesForSupporter(userId);
                     } else {
                         console.warn(`⚠️ 支援員リストに「${userId}」が見つかりません`);
+                        console.warn('利用可能な選択肢:', Array.from(supporter1Select.options).map(opt => opt.value));
                     }
                 } else {
                     console.warn('⚠️ ログインユーザー情報が見つかりません。index.htmlからアクセスしてください。');
