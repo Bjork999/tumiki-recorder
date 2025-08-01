@@ -668,29 +668,11 @@
         // デフォルトデータを読み込む関数（フォールバック用）
         function loadDefaultData() {
             console.log("デフォルトデータを使用します");
-            
-            const defaultUsers = [
-                "平林恵子", "空山紘子", "山﨑多恵", "水谷夕美子", "塚原歩美", "上村梨桜", 
-                "岩本小耶子", "澤村和浩", "廣瀬久男", "清水健司", "田中真也", "中西俊也", 
-                "森本徹", "小泉春夫", "長野崇", "友田陽子", "今井浩", "出戸市朗", 
-                "岡田浩嗣", "上林誠", "溝川晧介", "久山大", "渡邉一孝", "塩谷拓也", 
-                "藤本和也", "上田治", "仲西美由紀", "田上慶祐", "榎本良児", "千葉美沙代", "菰田絵美子"
-            ];
-
-            const defaultSupporters = [
-                "亀野 浩", "林 恵美子", "西村 孝仁", "出口  茜視", "木下 裕晃", "廣瀬 優", 
-                "木村 凜", "夏原 真咲代", "藤田 梓平", "入江 隆浩", "和田 真由美", "和田 郁人", 
-                "南 鑑憲", "森垣  彰", "岩井 泰子", "相馬 芳子", "奥村 さつき", "奥村 紘平", 
-                "松下 紗季", "今西 彩"
-            ];
-
-            const defaultDestinations = ["散歩", "買い物", "図書館"];
-            const defaultSupportTypes = ["移動支援", "行動援護", "通院介助"];
-            const defaultAppearances = [
-                "気持ちが良さそうだった", "笑顔が多い様子だった", "少し疲れた様子だった", 
-                "また外出したいと話していた", "元気な様子だった", "活発に動けた", 
-                "少し落ち着きがなかった", "不安な表情が見えた", "コミュニケーションが多かった", "無口な時間があった"
-            ];
+            const defaultUsers = [];
+            const defaultSupporters = [];
+            const defaultDestinations = [];
+            const defaultSupportTypes = [];
+            const defaultAppearances = [];
 
             updateSelectOptions('user-input', defaultUsers);
             updateSelectOptions('supporter1-input', defaultSupporters);
@@ -745,7 +727,7 @@
             try {
                 console.log("🔄 最新データを取得中...");
                 
-                                        const dataUrl = 'https://script.google.com/macros/s/AKfycbzpnSoammoQRGg739J5MPD70PaH3-IUbRAig0kCA5EfIGIPRVzU_g4ixbpqMIRZAXM4/exec?action=getData';
+                                        const dataUrl = 'https://script.google.com/macros/s/AKfycbwtDvI3sdJxkodkX_e0uIj7hKmHXDyFv4w8aVCQiNPWupcMeIOhlkMkohmN_PNR7XKr/exec?action=getData';
                 
                 const response = await fetch(dataUrl);
                 const responseText = await response.text();
@@ -947,6 +929,12 @@
             
             allUsers.forEach(userName => {
                 if (!userName || userName.trim() === '') return;
+                
+                // 「※」利用者は常に表示（残り時間データに関係なく）
+                if (userName === '※') {
+                    filteredUsers.push(userName);
+                    return;
+                }
                 
                 const userTimes = userRemainingTimesMap[userName];
                 console.log(`利用者「${userName}」の残り時間データ:`, userTimes);
@@ -1290,7 +1278,7 @@
                     console.log(`FormData追加: ${key} = ${formData[key]}`);
                 });
                 
-                const submitUrl = 'https://script.google.com/macros/s/AKfycbzpnSoammoQRGg739J5MPD70PaH3-IUbRAig0kCA5EfIGIPRVzU_g4ixbpqMIRZAXM4/exec';
+                const submitUrl = 'https://script.google.com/macros/s/AKfycbwtDvI3sdJxkodkX_e0uIj7hKmHXDyFv4w8aVCQiNPWupcMeIOhlkMkohmN_PNR7XKr/exec';
                 console.log('送信URL:', submitUrl);
                 
                 const response = await fetch(submitUrl, {
