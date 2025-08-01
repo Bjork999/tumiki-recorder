@@ -318,6 +318,88 @@
             display: none;
         }
         
+        /* 日付確認モーダルのスタイル */
+        .warning-icon {
+            font-size: 48px;
+            text-align: center;
+            margin: 16px 0;
+        }
+        
+        .date-info {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 16px;
+            margin: 16px 0;
+        }
+        
+        .date-comparison {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .today-date,
+        .input-date {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 12px;
+            border-radius: 4px;
+        }
+        
+        .today-date {
+            background: #ecfdf5;
+            border: 1px solid #a7f3d0;
+        }
+        
+        .input-date {
+            background: #fef3c7;
+            border: 1px solid #fbbf24;
+        }
+        
+        .date-label {
+            font-weight: 600;
+            color: #374151;
+        }
+        
+        .modal-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin-top: 24px;
+        }
+        
+        .btn-ok,
+        .btn-cancel {
+            padding: 12px 24px;
+            border-radius: 6px;
+            border: none;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            min-width: 120px;
+            transition: all 0.2s;
+        }
+        
+        .btn-ok {
+            background: #3b82f6;
+            color: white;
+        }
+        
+        .btn-ok:hover {
+            background: #2563eb;
+        }
+        
+        .btn-cancel {
+            background: #6b7280;
+            color: white;
+        }
+        
+        .btn-cancel:hover {
+            background: #4b5563;
+        }
+        
         /* 時間入力欄のプレースホルダーを薄くする */
         .time-input::placeholder {
             color: #d1d5db;
@@ -1082,7 +1164,7 @@
             try {
                 console.log("🔄 最新データを取得中...");
                 
-                                        const dataUrl = 'https://script.google.com/macros/s/AKfycbzmwGCRCQjMfzF4o11fhp7lXmtT6CCfVEwpY4GaL_iggdrhalEV5X_6z-hiUDShV_JB/exec?action=getData';
+                                        const dataUrl = 'https://script.google.com/macros/s/AKfycbwyos1rggYa4yrOAKw6FtjzuLHvQ1_JJX3GukgCGVspb39PyiHM7avQktzg1K-B851b/exec?action=getData';
                 
                 const response = await fetch(dataUrl);
                 const responseText = await response.text();
@@ -1191,6 +1273,50 @@
             document.getElementById('year').value = now.getFullYear();
             document.getElementById('month').value = now.getMonth() + 1;
             document.getElementById('day').value = now.getDate();
+        }
+
+        // 入力された日付が今日と異なるかチェック
+        function isDateDifferentFromToday(year, month, day) {
+            const today = new Date();
+            const inputDate = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+            
+            return today.getFullYear() !== inputDate.getFullYear() ||
+                   today.getMonth() !== inputDate.getMonth() ||
+                   today.getDate() !== inputDate.getDate();
+        }
+
+        // 日付確認モーダルを表示
+        function showDateConfirmModal(year, month, day, onConfirm, onCancel) {
+            const modal = document.getElementById('dateConfirmModal');
+            const todayDateText = document.getElementById('todayDateText');
+            const inputDateText = document.getElementById('inputDateText');
+            const okButton = document.getElementById('dateConfirmOk');
+            const cancelButton = document.getElementById('dateConfirmCancel');
+            
+            // 今日の日付を表示
+            const today = new Date();
+            todayDateText.textContent = `${today.getFullYear()}年${today.getMonth() + 1}月${today.getDate()}日`;
+            
+            // 入力された日付を表示
+            inputDateText.textContent = `${year}年${month}月${day}日`;
+            
+            // イベントリスナーをクリア
+            okButton.replaceWith(okButton.cloneNode(true));
+            cancelButton.replaceWith(cancelButton.cloneNode(true));
+            
+            // 新しいイベントリスナーを設定
+            document.getElementById('dateConfirmOk').addEventListener('click', function() {
+                modal.classList.add('hidden');
+                onConfirm();
+            });
+            
+            document.getElementById('dateConfirmCancel').addEventListener('click', function() {
+                modal.classList.add('hidden');
+                onCancel();
+            });
+            
+            // モーダルを表示
+            modal.classList.remove('hidden');
         }
 
         // ログインユーザーの名前を支援員1欄に設定
@@ -1520,30 +1646,59 @@
                 const appearance = document.getElementById('appearance-input').value;
                 const userCheck = document.getElementById('check1').checked ? 'はい' : 'いいえ';
                 
-                // 確認メッセージを作成
-                const confirmMessage = `以下の内容で送信してよろしいですか？
-
-📅 日付: ${year}年${month}月${day}日
-⏰ 時間: ${startTime} ～ ${endTime}
-👤 利用者: ${user}
-👥 支援員1: ${supporter1}
-👥 支援員2: ${supporter2}
-📍 行き先: ${destination}
-🏷️ 支援種別: ${supportType}
-😊 様子: ${appearance}
-✅ 利用者様確認: ${userCheck}`;
-                
-                if (!confirm(confirmMessage)) {
-                    return false;
-                }
-                
-                // フォームデータを送信
-                submitFormData({
+                // フォームデータをオブジェクトとして作成
+                const formData = {
                     year, month, day, startTime, endTime,
                     user, supporter1, supporter2, destination,
                     supportType, userCheck, appearance
-                });
+                };
+                
+                // 日付確認フローを開始
+                checkDateAndProceed(formData);
             });
+        }
+
+        // 日付確認フローの実行
+        function checkDateAndProceed(formData) {
+            // 日付が今日と異なるかチェック
+            if (isDateDifferentFromToday(formData.year, formData.month, formData.day)) {
+                // 今日と異なる場合：日付確認モーダルを表示
+                showDateConfirmModal(
+                    formData.year, 
+                    formData.month, 
+                    formData.day,
+                    function() { // OK: 内容確認に進む
+                        showContentConfirmation(formData);
+                    },
+                    function() { // キャンセル: 何もしない
+                        console.log('日付確認がキャンセルされました');
+                    }
+                );
+            } else {
+                // 今日と同じ場合：直接内容確認に進む
+                showContentConfirmation(formData);
+            }
+        }
+
+        // 内容確認画面を表示
+        function showContentConfirmation(formData) {
+            // 確認メッセージを作成
+            const confirmMessage = `以下の内容で送信してよろしいですか？
+
+📅 日付: ${formData.year}年${formData.month}月${formData.day}日
+⏰ 時間: ${formData.startTime} ～ ${formData.endTime}
+👤 利用者: ${formData.user}
+👥 支援員1: ${formData.supporter1}
+👥 支援員2: ${formData.supporter2}
+📍 行き先: ${formData.destination}
+🏷️ 支援種別: ${formData.supportType}
+😊 様子: ${formData.appearance}
+✅ 利用者様確認: ${formData.userCheck}`;
+            
+            if (confirm(confirmMessage)) {
+                // 送信実行
+                submitFormData(formData);
+            }
         }
         
         // モーダルを表示する関数
@@ -1633,7 +1788,7 @@
                     console.log(`FormData追加: ${key} = ${formData[key]}`);
                 });
                 
-                const submitUrl = 'https://script.google.com/macros/s/AKfycbzmwGCRCQjMfzF4o11fhp7lXmtT6CCfVEwpY4GaL_iggdrhalEV5X_6z-hiUDShV_JB/exec';
+                const submitUrl = 'https://script.google.com/macros/s/AKfycbwyos1rggYa4yrOAKw6FtjzuLHvQ1_JJX3GukgCGVspb39PyiHM7avQktzg1K-B851b/exec';
                 console.log('送信URL:', submitUrl);
                 
                 const response = await fetch(submitUrl, {
@@ -1745,6 +1900,38 @@
             }
         });
     </script>
+    
+    <!-- 日付確認モーダル -->
+    <div id="dateConfirmModal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">日付確認</h2>
+            </div>
+            <div class="modal-body">
+                <div class="warning-icon">⚠️</div>
+                <p class="modal-message">
+                    入力された日付が今日と異なります。<br>
+                    このまま送信してもよろしいですか？
+                </p>
+                <div class="date-info">
+                    <div class="date-comparison">
+                        <div class="today-date">
+                            <span class="date-label">今日：</span>
+                            <span id="todayDateText"></span>
+                        </div>
+                        <div class="input-date">
+                            <span class="date-label">入力日：</span>
+                            <span id="inputDateText"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-buttons">
+                    <button id="dateConfirmOk" class="btn-ok">OK（送信続行）</button>
+                    <button id="dateConfirmCancel" class="btn-cancel">キャンセル</button>
+                </div>
+            </div>
+        </div>
+    </div>
     
     <!-- 送信完了モーダル -->
     <div id="submitModal" class="modal-overlay hidden">
