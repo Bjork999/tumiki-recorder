@@ -400,6 +400,12 @@
             background: #4b5563;
         }
         
+        /* 送信中のスピンアニメーション */
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
         /* 時間入力欄のプレースホルダーを薄くする */
         .time-input::placeholder {
             color: #d1d5db;
@@ -1788,11 +1794,30 @@
             });
         });
 
+        // 送信ボタンの状態を管理する関数
+        function setSubmitButtonState(isLoading) {
+            const submitButton = document.querySelector('.submit-button');
+            if (isLoading) {
+                submitButton.disabled = true;
+                submitButton.innerHTML = '送信中... <span style="animation: spin 1s linear infinite; display: inline-block;">⏳</span>';
+                submitButton.style.opacity = '0.7';
+                submitButton.style.cursor = 'not-allowed';
+            } else {
+                submitButton.disabled = false;
+                submitButton.innerHTML = '記録を送信';
+                submitButton.style.opacity = '1';
+                submitButton.style.cursor = 'pointer';
+            }
+        }
+
         // フォームデータをAJAXで送信
         async function submitFormData(formData) {
             try {
                 console.log('=== フォーム送信開始 ===');
                 console.log('送信データ:', formData);
+                
+                // 送信中状態に変更
+                setSubmitButtonState(true);
                 
                 // FormDataを作成
                 const formDataObj = new FormData();
@@ -1866,6 +1891,9 @@
             } catch (error) {
                 console.error('送信エラー:', error);
                 showModal(false, `送信に失敗しました: ${error.message}`, null);
+            } finally {
+                // 送信完了後は必ずボタンを元に戻す
+                setSubmitButtonState(false);
             }
         }
 
