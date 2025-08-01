@@ -186,6 +186,27 @@
             border-bottom-color: #3b82f6;
         }
         
+        /* select要素用の追加スタイル */
+        select.input-field {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 16px;
+            padding-right: 40px;
+        }
+        
+        select.input-field:hover {
+            border-bottom-color: #6b7280;
+        }
+        
+        select.input-field option {
+            background: white;
+            color: #1f2937;
+            padding: 8px;
+        }
+        
         /* 確認欄 */
         .confirmation-box {
             background: #fef3c7;
@@ -270,16 +291,176 @@
             background: #059669;
         }
         
-        /* 結果表示エリア */
-        .result-area {
-            margin-top: 16px;
-            padding: 16px;
-            border-radius: 8px;
-            font-size: 16px;
+        
+        /* モーダルスタイル */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            animation: fadeIn 0.3s ease;
         }
         
-        .result-area.hidden {
+        .modal-overlay.hidden {
             display: none;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            animation: slideUp 0.3s ease;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        .modal-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #1f2937;
+            margin: 0;
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 28px;
+            color: #6b7280;
+            cursor: pointer;
+            transition: color 0.2s;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+        }
+        
+        .modal-close:hover {
+            color: #1f2937;
+            background: #f3f4f6;
+        }
+        
+        .modal-body {
+            padding: 20px;
+        }
+        
+        .success-icon {
+            font-size: 48px;
+            text-align: center;
+            margin-bottom: 16px;
+        }
+        
+        .modal-message {
+            font-size: 18px;
+            text-align: center;
+            color: #1f2937;
+            margin-bottom: 24px;
+        }
+        
+        .submitted-data {
+            background: #f9fafb;
+            border-radius: 8px;
+            padding: 16px;
+            margin-top: 20px;
+        }
+        
+        .submitted-data h3 {
+            font-size: 16px;
+            font-weight: bold;
+            color: #374151;
+            margin: 0 0 12px 0;
+        }
+        
+        .data-table {
+            width: 100%;
+            font-size: 14px;
+        }
+        
+        .data-table tr {
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        .data-table tr:last-child {
+            border-bottom: none;
+        }
+        
+        .data-table th {
+            text-align: left;
+            padding: 8px 12px;
+            color: #6b7280;
+            font-weight: 600;
+            white-space: nowrap;
+            width: 35%;
+        }
+        
+        .data-table td {
+            padding: 8px 12px;
+            color: #1f2937;
+        }
+        
+        .modal-footer {
+            padding: 20px;
+            border-top: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: center;
+        }
+        
+        .modal-button {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 12px 32px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        
+        .modal-button:hover {
+            background: #2563eb;
+        }
+        
+        .modal-button:active {
+            transform: translateY(1px);
+        }
+        
+        /* アニメーション */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+        
+        @keyframes slideUp {
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
         }
         
         /* レスポンシブ調整 */
@@ -365,43 +546,46 @@
                 <!-- 支援員1 -->
                 <div class="input-row">
                     <label class="input-label" for="supporter1-input">支援員1</label>
-                    <input list="supporters" id="supporter1-input" name="supporter1" class="input-field" required>
-                    <datalist id="supporters">
+                    <select id="supporter1-input" name="supporter1" class="input-field" required>
+                        <option value="">選択してください</option>
                         <!-- 動的に生成されます -->
-                    </datalist>
+                    </select>
                 </div>
 
                 <!-- 支援員2 -->
                 <div class="input-row">
                     <label class="input-label" for="supporter2-input">支援員2</label>
-                    <input list="supporters" id="supporter2-input" name="supporter2" class="input-field">
+                    <select id="supporter2-input" name="supporter2" class="input-field">
+                        <option value="">選択してください</option>
+                        <!-- 動的に生成されます -->
+                    </select>
                 </div>
 
                 <!-- 支援種別 -->
                 <div class="input-row">
                     <label class="input-label" for="support-type-input">支援種別</label>
-                    <input list="support-types" id="support-type-input" name="supportType" class="input-field" required>
-                    <datalist id="support-types">
+                    <select id="support-type-input" name="supportType" class="input-field" required>
+                        <option value="">選択してください</option>
                         <!-- 動的に生成されます -->
-                    </datalist>
+                    </select>
                 </div>
 
                 <!-- 利用者 -->
                 <div class="input-row">
                     <label class="input-label" for="user-input">利用者</label>
-                    <input list="users" id="user-input" name="user" class="input-field" required>
-                    <datalist id="users">
+                    <select id="user-input" name="user" class="input-field" required>
+                        <option value="">選択してください</option>
                         <!-- 動的に生成されます -->
-                    </datalist>
+                    </select>
                 </div>
 
                 <!-- 行き先 -->
                 <div class="input-row">
                     <label class="input-label" for="destination-input">行き先</label>
-                    <input list="destinations" id="destination-input" name="destination" class="input-field" required>
-                    <datalist id="destinations">
+                    <select id="destination-input" name="destination" class="input-field" required>
+                        <option value="">選択してください</option>
                         <!-- 動的に生成されます -->
-                    </datalist>
+                    </select>
                 </div>
 
                 <!-- 利用者様確認欄 -->
@@ -417,19 +601,14 @@
                 <!-- 様子 -->
                 <div class="input-row">
                     <label class="input-label" for="appearance-input">様子</label>
-                    <input list="appearances" id="appearance-input" name="appearance" class="input-field" required>
-                    <datalist id="appearances">
+                    <select id="appearance-input" name="appearance" class="input-field" required>
+                        <option value="">選択してください</option>
                         <!-- 動的に生成されます -->
-                    </datalist>
+                    </select>
                 </div>
 
                 <!-- 送信ボタン -->
                 <button type="submit" class="submit-button">記録を送信</button>
-                
-                <!-- 送信結果表示エリア -->
-                <div id="submissionResult" class="result-area hidden">
-                    <p id="resultMessage"></p>
-                </div>
             </form>
         </div>
     </div>
@@ -444,19 +623,29 @@
 
 
 
-        // datalist を更新する関数
-        function updateDatalist(datalistId, items) {
-            console.log(`📝 ${datalistId} を更新中... アイテム数: ${items.length}`);
-            const datalist = document.getElementById(datalistId);
+        // select要素を更新する関数
+        function updateSelectOptions(selectId, items) {
+            console.log(`📝 ${selectId} を更新中... アイテム数: ${items.length}`);
+            const selectElement = document.getElementById(selectId);
             
-            if (!datalist) {
-                console.error(`❌ datalist が見つかりません: ${datalistId}`);
+            if (!selectElement) {
+                console.error(`❌ select要素が見つかりません: ${selectId}`);
                 return;
             }
             
-            // 既存のオプションをクリア
-            datalist.innerHTML = '';
-            console.log(`🗑️ ${datalistId} の既存オプションをクリアしました`);
+            // 既存のオプションをクリア（最初の「選択してください」オプションは保持）
+            const firstOption = selectElement.querySelector('option[value=""]');
+            selectElement.innerHTML = '';
+            if (firstOption) {
+                selectElement.appendChild(firstOption);
+            } else {
+                // 「選択してください」オプションがない場合は作成
+                const defaultOption = document.createElement('option');
+                defaultOption.value = '';
+                defaultOption.textContent = '選択してください';
+                selectElement.appendChild(defaultOption);
+            }
+            console.log(`🗑️ ${selectId} の既存オプションをクリアしました`);
             
             // "-" や空白、null、undefinedを除外して追加
             const filteredItems = items.filter(item =>
@@ -466,13 +655,14 @@
             filteredItems.forEach((item, index) => {
                 const option = document.createElement('option');
                 option.value = item;
-                datalist.appendChild(option);
+                option.textContent = item;
+                selectElement.appendChild(option);
                 if (index < 3) { // 最初の3つだけログ出力
-                    console.log(`➕ ${datalistId}[${index}]: ${item}`);
+                    console.log(`➕ ${selectId}[${index}]: ${item}`);
                 }
             });
             
-            console.log(`✅ ${datalistId} の更新完了（${filteredItems.length}個のオプション、${items.length - filteredItems.length}個除外）`);
+            console.log(`✅ ${selectId} の更新完了（${filteredItems.length}個のオプション、${items.length - filteredItems.length}個除外）`);
         }
 
         // デフォルトデータを読み込む関数（フォールバック用）
@@ -502,11 +692,12 @@
                 "少し落ち着きがなかった", "不安な表情が見えた", "コミュニケーションが多かった", "無口な時間があった"
             ];
 
-            updateDatalist('users', defaultUsers);
-            updateDatalist('supporters', defaultSupporters);
-            updateDatalist('destinations', defaultDestinations);
-            updateDatalist('support-types', defaultSupportTypes);
-            updateDatalist('appearances', defaultAppearances);
+            updateSelectOptions('user-input', defaultUsers);
+            updateSelectOptions('supporter1-input', defaultSupporters);
+            updateSelectOptions('supporter2-input', defaultSupporters);
+            updateSelectOptions('destination-input', defaultDestinations);
+            updateSelectOptions('support-type-input', defaultSupportTypes);
+            updateSelectOptions('appearance-input', defaultAppearances);
             supporterSupportTypesMap = {}; // デフォルト時は空
         }
 
@@ -524,20 +715,20 @@
             // 2. デフォルトデータを即座に読み込み（オフライン対応）
             loadDefaultData();
             
-            // 3. 支援員入力イベントの設定
-            document.getElementById('supporter1-input').addEventListener('input', function(e) {
+            // 3. 支援員選択イベントの設定
+            document.getElementById('supporter1-input').addEventListener('change', function(e) {
                 const name = e.target.value.trim();
                 updateSupportTypesForSupporter(name);
             });
             
             // 4. 支援種別変更イベントの設定
-            document.getElementById('support-type-input').addEventListener('input', function(e) {
+            document.getElementById('support-type-input').addEventListener('change', function(e) {
                 const supportType = e.target.value.trim();
                 updateUserListBySupportType(supportType);
             });
             
-            // 5. 利用者入力欄の背景色更新イベント（一度だけ設定）
-            document.getElementById('user-input').addEventListener('input', function(e) {
+            // 5. 利用者選択欄の背景色更新イベント（一度だけ設定）
+            document.getElementById('user-input').addEventListener('change', function(e) {
                 updateUserInputBackground(e.target.value, currentSupportType);
             });
             
@@ -562,11 +753,12 @@
                 
                 if (data.success) {
                     // 最新データでリストを更新
-                    updateDatalist('users', data.users || []);
-                    updateDatalist('supporters', data.supporters || []);
-                    updateDatalist('destinations', data.destinations || []);
-                    updateDatalist('support-types', data.supportTypes || []);
-                    updateDatalist('appearances', data.appearances || []);
+                    updateSelectOptions('user-input', data.users || []);
+                    updateSelectOptions('supporter1-input', data.supporters || []);
+                    updateSelectOptions('supporter2-input', data.supporters || []);
+                    updateSelectOptions('destination-input', data.destinations || []);
+                    updateSelectOptions('support-type-input', data.supportTypes || []);
+                    updateSelectOptions('appearance-input', data.appearances || []);
                     supporterSupportTypesMap = data.supporterSupportTypes || {};
                     userRemainingTimesMap = data.userRemainingTimes || {};
                     allUsers = data.users || [];
@@ -670,24 +862,36 @@
                 const userName = sessionStorage.getItem('userName');
                 const userId = sessionStorage.getItem('userId');
                 
-                const supporter1Input = document.getElementById('supporter1-input');
-                if (!supporter1Input) {
-                    console.error('❌ 支援員1の入力欄が見つかりません');
+                const supporter1Select = document.getElementById('supporter1-input');
+                if (!supporter1Select) {
+                    console.error('❌ 支援員1の選択欄が見つかりません');
                     return;
                 }
                 
                 if (userName) {
-                    supporter1Input.value = userName;
-                    console.log(`✅ 支援員1に自動入力: ${userName}`);
-                    
-                    // 支援種別の更新をトリガー
-                    updateSupportTypesForSupporter(userName);
+                    // selectのoptionから該当する値を探して設定
+                    const option = Array.from(supporter1Select.options).find(opt => opt.value === userName);
+                    if (option) {
+                        supporter1Select.value = userName;
+                        console.log(`✅ 支援員1に自動選択: ${userName}`);
+                        
+                        // 支援種別の更新をトリガー
+                        updateSupportTypesForSupporter(userName);
+                    } else {
+                        console.warn(`⚠️ 支援員リストに「${userName}」が見つかりません`);
+                    }
                 } else if (userId) {
-                    supporter1Input.value = userId;
-                    console.log(`✅ 支援員1に自動入力（ID使用）: ${userId}`);
-                    
-                    // 支援種別の更新をトリガー
-                    updateSupportTypesForSupporter(userId);
+                    // selectのoptionから該当する値を探して設定
+                    const option = Array.from(supporter1Select.options).find(opt => opt.value === userId);
+                    if (option) {
+                        supporter1Select.value = userId;
+                        console.log(`✅ 支援員1に自動選択（ID使用）: ${userId}`);
+                        
+                        // 支援種別の更新をトリガー
+                        updateSupportTypesForSupporter(userId);
+                    } else {
+                        console.warn(`⚠️ 支援員リストに「${userId}」が見つかりません`);
+                    }
                 } else {
                     console.warn('⚠️ ログインユーザー情報が見つかりません。index.htmlからアクセスしてください。');
                 }
@@ -710,7 +914,7 @@
                     console.log(`✅ ${name}の支援種別を更新:`, types);
                 }
                 
-                updateDatalist('support-types', types);
+                updateSelectOptions('support-type-input', types);
             } catch (error) {
                 console.error('❌ 支援種別更新エラー:', error);
             }
@@ -730,12 +934,11 @@
                 return ''; // それ以上は背景色なし
             }
             
-            const userDatalist = document.getElementById('users');
-            userDatalist.innerHTML = ''; // 既存のオプションをクリア
+            const userSelect = document.getElementById('user-input');
             
             // 支援種別が選択されていない場合は全利用者を表示
             if (!supportType) {
-                updateDatalist('users', allUsers);
+                updateSelectOptions('user-input', allUsers);
                 return;
             }
             
@@ -766,19 +969,6 @@
                 console.log(`利用者「${userName}」: ${remainingTime} = ${minutes}分`);
                 
                 if (minutes > 0) {
-                    const option = document.createElement('option');
-                    option.value = userName;
-                    
-                    // 背景色を設定
-                    const color = getBackgroundColor(minutes);
-                    if (color) {
-                        // データリストのオプションにはスタイルが適用されないため、
-                        // カスタム属性として保存
-                        option.setAttribute('data-color', color);
-                        option.setAttribute('data-minutes', minutes);
-                    }
-                    
-                    userDatalist.appendChild(option);
                     filteredUsers.push(userName);
                     console.log(`利用者「${userName}」をリストに追加`);
                 } else {
@@ -787,6 +977,9 @@
             });
             
             console.log(`${supportType}で残り時間がある利用者: ${filteredUsers.length}名 (${filteredUsers.join(', ')})`);
+            
+            // フィルタリングされた利用者でselectを更新
+            updateSelectOptions('user-input', filteredUsers);
             
             // 現在の支援種別を保存
             currentSupportType = supportType;
@@ -933,17 +1126,83 @@
             });
         }
         
+        // モーダルを表示する関数
+        function showModal(isSuccess, message, formData) {
+            const modal = document.getElementById('submitModal');
+            const modalMessage = modal.querySelector('.modal-message');
+            const successIcon = modal.querySelector('.success-icon');
+            const modalDataContent = document.getElementById('modalDataContent');
+            
+            // メッセージとアイコンを設定
+            modalMessage.textContent = message;
+            if (isSuccess) {
+                successIcon.textContent = '✅';
+                successIcon.style.color = '#10b981';
+            } else {
+                successIcon.textContent = '❌';
+                successIcon.style.color = '#dc2626';
+            }
+            
+            // 送信データをテーブルに表示
+            modalDataContent.innerHTML = '';
+            if (isSuccess && formData) {
+                const dataRows = [
+                    { label: '日付', value: `${formData.year}年${formData.month}月${formData.day}日` },
+                    { label: '時間', value: `${formData.startTime} ～ ${formData.endTime}` },
+                    { label: '利用者', value: formData.user },
+                    { label: '支援員1', value: formData.supporter1 },
+                    { label: '支援員2', value: formData.supporter2 || 'なし' },
+                    { label: '行き先', value: formData.destination },
+                    { label: '支援種別', value: formData.supportType },
+                    { label: '様子', value: formData.appearance },
+                    { label: '利用者確認', value: formData.userCheck === 'はい' ? '確認済み' : '未確認' }
+                ];
+                
+                dataRows.forEach(row => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <th>${row.label}</th>
+                        <td>${row.value}</td>
+                    `;
+                    modalDataContent.appendChild(tr);
+                });
+            }
+            
+            // モーダルを表示
+            modal.classList.remove('hidden');
+            
+            // 閉じるボタンにフォーカス
+            setTimeout(() => {
+                modal.querySelector('.modal-button').focus();
+            }, 100);
+        }
+        
+        // モーダルを閉じる関数
+        function closeModal() {
+            const modal = document.getElementById('submitModal');
+            modal.classList.add('hidden');
+        }
+        
+        // ESCキーでモーダルを閉じる
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+        
+        // オーバーレイクリックでモーダルを閉じる
+        document.addEventListener('DOMContentLoaded', function() {
+            const modalOverlay = document.getElementById('submitModal');
+            modalOverlay.addEventListener('click', function(e) {
+                if (e.target === modalOverlay) {
+                    closeModal();
+                }
+            });
+        });
+
         // フォームデータをAJAXで送信
         async function submitFormData(formData) {
-            const resultDiv = document.getElementById('submissionResult');
-            const resultMessage = document.getElementById('resultMessage');
-            
             try {
-                // ローディング表示
-                resultDiv.className = 'mt-4 p-3 rounded bg-blue-100 border border-blue-400';
-                resultMessage.textContent = '送信中...';
-                resultDiv.classList.remove('hidden');
-                
                 console.log('=== フォーム送信開始 ===');
                 console.log('送信データ:', formData);
                 
@@ -973,37 +1232,40 @@
                     console.log('送信結果（JSON）:', jsonResult);
                     
                     if (jsonResult.success) {
-                        // 成功
-                        resultDiv.className = 'mt-4 p-3 rounded bg-green-100 border border-green-400';
-                        resultMessage.textContent = `✅ ${jsonResult.message || '記録が正常に送信されました'}`;
+                        // 成功モーダルを表示
+                        showModal(true, jsonResult.message || '記録が正常に送信されました', formData);
                         
                         // フォームをリセット
                         document.getElementById('recordForm').reset();
                         setCurrentDate(); // 日付を再設定
-                        setLoggedInUserName(); // 支援員名を再設定
+                        
+                        // selectフィールドを「選択してください」にリセット
+                        document.getElementById('supporter1-input').value = '';
+                        document.getElementById('supporter2-input').value = '';
+                        document.getElementById('support-type-input').value = '';
+                        document.getElementById('user-input').value = '';
+                        document.getElementById('destination-input').value = '';
+                        document.getElementById('appearance-input').value = '';
+                        
+                        // 少し遅れて支援員名を再設定（selectのoptionが準備されてから）
+                        setTimeout(() => {
+                            setLoggedInUserName();
+                        }, 100);
                     } else {
-                        // エラー
-                        resultDiv.className = 'mt-4 p-3 rounded bg-red-100 border border-red-400';
-                        resultMessage.textContent = `❌ エラー: ${jsonResult.error}`;
+                        // エラーモーダルを表示
+                        showModal(false, `エラー: ${jsonResult.error}`, null);
                     }
                 } catch (parseError) {
                     console.error('JSONパースエラー:', parseError);
                     console.error('パース対象テキスト:', result);
-                    // JSONパースエラー
-                    resultDiv.className = 'mt-4 p-3 rounded bg-yellow-100 border border-yellow-400';
-                    resultMessage.textContent = '⚠️ サーバーからの応答を解析できませんでしたが、送信は完了した可能性があります。';
+                    // JSONパースエラーモーダルを表示
+                    showModal(false, 'サーバーからの応答を解析できませんでしたが、送信は完了した可能性があります。', formData);
                 }
                 
             } catch (error) {
                 console.error('送信エラー:', error);
-                resultDiv.className = 'mt-4 p-3 rounded bg-red-100 border border-red-400';
-                resultMessage.textContent = `❌ 送信に失敗しました: ${error.message}`;
+                showModal(false, `送信に失敗しました: ${error.message}`, null);
             }
-            
-            // 5秒後に結果を非表示
-            setTimeout(() => {
-                resultDiv.classList.add('hidden');
-            }, 5000);
         }
 
         // 空白行を非表示にする関数
@@ -1050,4 +1312,29 @@
             }
         });
     </script>
+    
+    <!-- 送信完了モーダル -->
+    <div id="submitModal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">送信完了</h2>
+                <button class="modal-close" onclick="closeModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="success-icon">✅</div>
+                <p class="modal-message">記録が正常に送信されました</p>
+                <div class="submitted-data">
+                    <h3>送信内容</h3>
+                    <table class="data-table">
+                        <tbody id="modalDataContent">
+                            <!-- 動的に生成されます -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-button" onclick="closeModal()">閉じる</button>
+            </div>
+        </div>
+    </div>
 </body></html>
