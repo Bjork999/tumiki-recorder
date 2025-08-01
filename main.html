@@ -1667,6 +1667,19 @@
                         document.getElementById('destination-input').value = '';
                         document.getElementById('appearance-input').value = '';
                         
+                        // カスタムドロップダウンもリセット（モバイル用）
+                        const customUserButton = document.getElementById('custom-user-button');
+                        const customUserList = document.getElementById('custom-user-list');
+                        if (customUserButton) {
+                            customUserButton.textContent = '選択してください';
+                        }
+                        if (customUserList) {
+                            // 選択状態をクリア
+                            customUserList.querySelectorAll('.custom-dropdown-item').forEach(item => {
+                                item.classList.remove('selected');
+                            });
+                        }
+                        
                         // 少し遅れて支援員名を再設定（selectのoptionが準備されてから）
                         setTimeout(() => {
                             setLoggedInUserName();
