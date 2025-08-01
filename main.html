@@ -745,7 +745,7 @@
             try {
                 console.log("🔄 最新データを取得中...");
                 
-                                        const dataUrl = 'https://script.google.com/macros/s/AKfycbzAVMj_SibFL5p6qXUxbma33CseiOqYCGhFgGUB5SAvtvpYdFcnWwyBaxIDlsAKKijx/exec?action=getData';
+                                        const dataUrl = 'https://script.google.com/macros/s/AKfycbzpnSoammoQRGg739J5MPD70PaH3-IUbRAig0kCA5EfIGIPRVzU_g4ixbpqMIRZAXM4/exec?action=getData';
                 
                 const response = await fetch(dataUrl);
                 const responseText = await response.text();
@@ -998,12 +998,13 @@
         
         // 時間を分に変換するヘルパー関数
         function timeToMinutes(timeStr) {
-            console.log(`🔍 timeToMinutes呼び出し: "${timeStr}"`);
+            console.log(`🔍 timeToMinutes呼び出し: "${timeStr}" (型: ${typeof timeStr})`);
             
             if (!timeStr || typeof timeStr !== 'string') {
                 console.log(`❌ 無効な入力: ${timeStr}`);
                 return 0;
             }
+            
             
             // ISO日付形式の場合（例: "1899-12-30T06:00:00.000Z"）
             if (timeStr.includes('T') && timeStr.includes('Z')) {
@@ -1040,19 +1041,24 @@
                             return totalMinutes;
                         }
                         
-                        // 基準日から異なる日付の場合、経過時間を計算
-                        // 特に1900-01-01の場合、時刻部分が実際の時間データを表す可能性がある
+                        // Excelの日付システムを考慮した処理
+                        // 1899年システムでは、時間のみのデータは日付部分に反映される場合がある
+                        
+                        // 1900-01-01の場合、時刻部分が実際の時間データを表す
                         if (year === 1900 && month === 0 && day === 1) {
-                            // 1900-01-01T15:00:00の場合、15時間として処理
                             const totalMinutes = hours * 60 + minutes;
                             console.log(`🎯 1900-01-01の時刻データとして処理: ${hours}時間${minutes}分 = ${totalMinutes}分`);
                             return totalMinutes;
                         }
                         
+                        // 基準日からの経過時間を計算（1899-12-29などの場合）
+                        // ただし、負の値になる場合は、24時間を加算して再計算
                         const baseDate = new Date('1899-12-30T00:00:00.000Z');
-                        const diffMs = date.getTime() - baseDate.getTime();
-                        const diffMinutes = Math.floor(diffMs / (1000 * 60));
+                        let diffMs = date.getTime() - baseDate.getTime();
+                        let diffMinutes = Math.floor(diffMs / (1000 * 60));
+                        
                         console.log(`📈 基準日からの経過時間: ${diffMinutes}分`);
+                        
                         return Math.max(0, diffMinutes);
                     }
                     
@@ -1284,7 +1290,7 @@
                     console.log(`FormData追加: ${key} = ${formData[key]}`);
                 });
                 
-                const submitUrl = 'https://script.google.com/macros/s/AKfycbzAVMj_SibFL5p6qXUxbma33CseiOqYCGhFgGUB5SAvtvpYdFcnWwyBaxIDlsAKKijx/exec';
+                const submitUrl = 'https://script.google.com/macros/s/AKfycbzpnSoammoQRGg739J5MPD70PaH3-IUbRAig0kCA5EfIGIPRVzU_g4ixbpqMIRZAXM4/exec';
                 console.log('送信URL:', submitUrl);
                 
                 const response = await fetch(submitUrl, {

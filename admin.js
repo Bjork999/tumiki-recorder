@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // ↓↓↓↓ ご自身の新しいウェブアプリのURLに書き換えてください ↓↓↓↓
-    const gasUrl = 'ここに新しいウェブアプリのURLを貼り付け';
+    const gasUrl = 'https://script.google.com/macros/s/AKfycbzpnSoammoQRGg739J5MPD70PaH3-IUbRAig0kCA5EfIGIPRVzU_g4ixbpqMIRZAXM4/exec';
     const userList = document.getElementById('user-list');
     const addUserBtn = document.getElementById('add-user-btn');
     const newUserIdInput = document.getElementById('new-user-id');
