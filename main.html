@@ -957,7 +957,7 @@
                 }
                 
                 const remainingTime = userTimes[supportType];
-                console.log(`利用者「${userName}」の${supportType}残り時間: "${remainingTime}"`);
+                console.log(`利用者「${userName}」の${supportType}残り時間: "${remainingTime}" (型: ${typeof remainingTime})`);
                 
                 if (!remainingTime || remainingTime === '') {
                     console.log(`利用者「${userName}」: ${supportType}の残り時間なし`);
@@ -967,6 +967,17 @@
                 // 残り時間がある利用者のみ追加
                 const minutes = timeToMinutes(remainingTime);
                 console.log(`利用者「${userName}」: ${remainingTime} = ${minutes}分`);
+                
+                // 詳細比較用ログ（上林誠と久山大の場合）
+                if (userName === '上林誠' || userName === '久山大') {
+                    console.log(`🔍 ${userName}の詳細データ:`, {
+                        原データ: remainingTime,
+                        型: typeof remainingTime,
+                        長さ: remainingTime.length,
+                        文字コード: [...remainingTime].map(c => c.charCodeAt(0)),
+                        計算結果: minutes
+                    });
+                }
                 
                 if (minutes > 0) {
                     filteredUsers.push(userName);
@@ -987,27 +998,87 @@
         
         // 時間を分に変換するヘルパー関数
         function timeToMinutes(timeStr) {
-            if (!timeStr || typeof timeStr !== 'string') return 0;
+            console.log(`🔍 timeToMinutes呼び出し: "${timeStr}"`);
+            
+            if (!timeStr || typeof timeStr !== 'string') {
+                console.log(`❌ 無効な入力: ${timeStr}`);
+                return 0;
+            }
             
             // ISO日付形式の場合（例: "1899-12-30T06:00:00.000Z"）
             if (timeStr.includes('T') && timeStr.includes('Z')) {
                 try {
                     const date = new Date(timeStr);
+                    console.log(`📅 ISO日付として解析: ${date.toISOString()}`);
+                    
+                    // 1899年基準の日付の場合
+                    if (date.getUTCFullYear() === 1899 || date.getUTCFullYear() === 1900) {
+                        // スプレッドシートで時間データ(HH:MM)がISO日付に変換される際、
+                        // 1899-12-30が基準日として使われ、時刻部分に実際の時間が入る場合と
+                        // 基準日からの経過時間として日付部分に加算される場合がある
+                        
+                        const year = date.getUTCFullYear();
+                        const month = date.getUTCMonth(); // 0ベース（12月=11）
+                        const day = date.getUTCDate();
+                        const hours = date.getUTCHours();
+                        const minutes = date.getUTCMinutes();
+                        
+                        console.log(`📊 日付詳細: ${year}-${month+1}-${day} ${hours}:${minutes}`);
+                        
+                        // 基準日（1899-12-30）と同じ日付の場合の特別処理
+                        if (year === 1899 && month === 11 && day === 30) {
+                            // 時刻部分がゼロの場合、これは時間データの変換問題の可能性がある
+                            if (hours === 0 && minutes === 0) {
+                                console.log(`⚠️ 基準日で時刻が00:00 - データ変換問題の可能性`);
+                                // この場合、元のデータが何時間だったかを推測する必要がある
+                                // ただし、実際に0時間の場合もあるため、0を返す
+                                return 0;
+                            }
+                            
+                            const totalMinutes = hours * 60 + minutes;
+                            console.log(`⏰ 同日の時刻として計算: ${hours}時間${minutes}分 = ${totalMinutes}分`);
+                            return totalMinutes;
+                        }
+                        
+                        // 基準日から異なる日付の場合、経過時間を計算
+                        // 特に1900-01-01の場合、時刻部分が実際の時間データを表す可能性がある
+                        if (year === 1900 && month === 0 && day === 1) {
+                            // 1900-01-01T15:00:00の場合、15時間として処理
+                            const totalMinutes = hours * 60 + minutes;
+                            console.log(`🎯 1900-01-01の時刻データとして処理: ${hours}時間${minutes}分 = ${totalMinutes}分`);
+                            return totalMinutes;
+                        }
+                        
+                        const baseDate = new Date('1899-12-30T00:00:00.000Z');
+                        const diffMs = date.getTime() - baseDate.getTime();
+                        const diffMinutes = Math.floor(diffMs / (1000 * 60));
+                        console.log(`📈 基準日からの経過時間: ${diffMinutes}分`);
+                        return Math.max(0, diffMinutes);
+                    }
+                    
+                    // 通常の日付の場合、時刻部分のみを使用
                     const hours = date.getUTCHours();
                     const minutes = date.getUTCMinutes();
-                    return hours * 60 + minutes;
+                    const totalMinutes = hours * 60 + minutes;
+                    console.log(`🕐 通常の時刻計算: ${hours}時間${minutes}分 = ${totalMinutes}分`);
+                    return totalMinutes;
                 } catch (error) {
-                    console.error('ISO日付の解析エラー:', error, timeStr);
+                    console.error('❌ ISO日付の解析エラー:', error, timeStr);
                     return 0;
                 }
             }
             
             // HH:MM形式の場合
             const parts = timeStr.split(':');
-            if (parts.length !== 2) return 0;
+            if (parts.length !== 2) {
+                console.log(`❌ HH:MM形式ではない: ${timeStr}`);
+                return 0;
+            }
             const hours = parseInt(parts[0]) || 0;
             const minutes = parseInt(parts[1]) || 0;
-            return hours * 60 + minutes;
+            const totalMinutes = hours * 60 + minutes;
+            console.log(`🕐 HH:MM形式として計算: ${hours}時間${minutes}分 = ${totalMinutes}分`);
+            return totalMinutes;
         }
         
         // 利用者入力欄の背景色を更新する関数
