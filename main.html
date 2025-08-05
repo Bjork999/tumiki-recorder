@@ -35,7 +35,7 @@
             margin: 0;
             padding: 0;
             min-height: 100vh;
-            background-color: #f3f4f6;
+            background-color: #ffe4cc;
         }
         
         /* 720x1280スマートフォン最適化 */
@@ -63,6 +63,7 @@
             text-align: center;
             margin-bottom: 16px;
             border-radius: 6px;
+            background-color: #ffe4cc;
         }
         
         .title-text {
@@ -205,226 +206,6 @@
             background: white;
             color: #1f2937;
             padding: 8px;
-        }
-        
-        /* 利用者選択ドロップダウンの色付きオプション */
-        #user-input option[style*="background-color"] {
-            font-weight: 500;
-        }
-        
-        /* モバイル用カスタムドロップダウン */
-        .custom-dropdown {
-            position: relative;
-            display: none; /* デフォルトは非表示 */
-            flex: 1; /* 親要素の幅に合わせる */
-        }
-        
-        .custom-dropdown.mobile-active {
-            display: block;
-        }
-        
-        .custom-dropdown-button {
-            width: 100%;
-            height: 48px;
-            padding: 0 40px 0 16px;
-            font-size: 16px;
-            border: none;
-            border-bottom: 3px solid #9ca3af;
-            background: transparent;
-            outline: none;
-            cursor: pointer;
-            text-align: left;
-            position: relative;
-            transition: border-color 0.2s;
-        }
-        
-        .custom-dropdown-button:focus {
-            border-bottom-color: #3b82f6;
-        }
-        
-        .custom-dropdown-button::after {
-            content: '';
-            position: absolute;
-            right: 12px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 0;
-            height: 0;
-            border-left: 8px solid transparent;
-            border-right: 8px solid transparent;
-            border-top: 8px solid #6b7280;
-            transition: transform 0.2s;
-        }
-        
-        .custom-dropdown-button.active::after {
-            transform: translateY(-50%) rotate(180deg);
-        }
-        
-        .custom-dropdown-list {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            right: 0;
-            background: white;
-            border: 1px solid #d1d5db;
-            border-radius: 6px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            max-height: 200px;
-            overflow-y: auto;
-            z-index: 1000;
-            display: none;
-        }
-        
-        .custom-dropdown-list.show {
-            display: block;
-        }
-        
-        .custom-dropdown-item {
-            padding: 12px 16px;
-            cursor: pointer;
-            border-bottom: 1px solid #f3f4f6;
-            font-size: 16px;
-            transition: background-color 0.2s;
-        }
-        
-        .custom-dropdown-item:last-child {
-            border-bottom: none;
-        }
-        
-        .custom-dropdown-item:hover {
-            background-color: #f9fafb;
-        }
-        
-        .custom-dropdown-item.selected {
-            background-color: #e5e7eb;
-            font-weight: 600;
-        }
-        
-        /* 色分け用のカスタムドロップダウンアイテム */
-        .custom-dropdown-item.time-red {
-            background-color: #ffcccc !important;
-        }
-        
-        .custom-dropdown-item.time-yellow {
-            background-color: #ffffcc !important;
-        }
-        
-        .custom-dropdown-item.time-cyan {
-            background-color: #ccffff !important;
-        }
-        
-        /* モバイル時は元のselectを隠す */
-        .mobile-device #user-input {
-            display: none;
-        }
-        
-        /* 日付確認モーダルのスタイル */
-        .warning-icon {
-            font-size: 48px;
-            text-align: center;
-            margin: 16px 0;
-        }
-        
-        .date-info {
-            background: #f9fafb;
-            border: 1px solid #e5e7eb;
-            border-radius: 8px;
-            padding: 16px;
-            margin: 16px 0;
-        }
-        
-        .date-comparison {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-        
-        .today-date,
-        .input-date {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 8px 12px;
-            border-radius: 4px;
-        }
-        
-        .today-date {
-            background: #ecfdf5;
-            border: 1px solid #a7f3d0;
-        }
-        
-        .input-date {
-            background: #fef3c7;
-            border: 1px solid #fbbf24;
-        }
-        
-        .date-label {
-            font-weight: 600;
-            color: #374151;
-        }
-        
-        .modal-buttons {
-            display: flex;
-            gap: 12px;
-            justify-content: center;
-            margin-top: 24px;
-        }
-        
-        .btn-ok,
-        .btn-cancel {
-            padding: 12px 24px;
-            border-radius: 6px;
-            border: none;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            min-width: 120px;
-            transition: all 0.2s;
-        }
-        
-        .btn-ok {
-            background: #3b82f6;
-            color: white;
-        }
-        
-        .btn-ok:hover {
-            background: #2563eb;
-        }
-        
-        .btn-cancel {
-            background: #6b7280;
-            color: white;
-        }
-        
-        .btn-cancel:hover {
-            background: #4b5563;
-        }
-        
-        /* 送信中のスピンアニメーション */
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        /* 時間入力欄のプレースホルダーを薄くする */
-        .time-input::placeholder {
-            color: #d1d5db;
-            opacity: 0.7;
-        }
-        
-        .time-input::-webkit-input-placeholder {
-            color: #d1d5db;
-            opacity: 0.7;
-        }
-        
-        .time-input::-moz-placeholder {
-            color: #d1d5db;
-            opacity: 0.7;
-        }
-        
-        .time-input:-ms-input-placeholder {
-            color: #d1d5db;
-            opacity: 0.7;
         }
         
         /* 確認欄 */
@@ -743,13 +524,16 @@
 
                 <!-- 日付入力 -->
                 <div class="date-container">
-                    <input id="year" name="year" class="date-input" placeholder="2024" required>
+                    <input list="years" id="year" name="year" class="date-input" placeholder="2024" required>
+                    <datalist id="years"></datalist>
                     <span class="date-label">年</span>
 
-                    <input id="month" name="month" class="date-input" placeholder="7" required>
+                    <input list="months" id="month" name="month" class="date-input" placeholder="7" required>
+                    <datalist id="months"></datalist>
                     <span class="date-label">月</span>
 
-                    <input id="day" name="day" class="date-input" placeholder="20" required>
+                    <input list="days" id="day" name="day" class="date-input" placeholder="20" required>
+                    <datalist id="days"></datalist>
                     <span class="date-label">日</span>
                 </div>
 
@@ -794,15 +578,6 @@
                         <option value="">選択してください</option>
                         <!-- 動的に生成されます -->
                     </select>
-                    <!-- モバイル用カスタムドロップダウン -->
-                    <div id="custom-user-dropdown" class="custom-dropdown">
-                        <button type="button" class="custom-dropdown-button" id="custom-user-button">
-                            選択してください
-                        </button>
-                        <div class="custom-dropdown-list" id="custom-user-list">
-                            <!-- 動的に生成されます -->
-                        </div>
-                    </div>
                 </div>
 
                 <!-- 行き先 -->
@@ -891,210 +666,6 @@
             console.log(`✅ ${selectId} の更新完了（${filteredItems.length}個のオプション、${items.length - filteredItems.length}個除外）`);
         }
 
-        // モバイル端末検出
-        function isMobileDevice() {
-            return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-        }
-
-        // カスタムドロップダウンの初期化とイベント設定
-        function initializeCustomDropdown() {
-            const customDropdown = document.getElementById('custom-user-dropdown');
-            const customButton = document.getElementById('custom-user-button');
-            const customList = document.getElementById('custom-user-list');
-            const originalSelect = document.getElementById('user-input');
-
-            if (!customDropdown || !customButton || !customList || !originalSelect) {
-                console.error('カスタムドロップダウンの要素が見つかりません');
-                return;
-            }
-
-            // ドロップダウンボタンクリック
-            customButton.addEventListener('click', function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                
-                const isOpen = customList.classList.contains('show');
-                if (isOpen) {
-                    customList.classList.remove('show');
-                    customButton.classList.remove('active');
-                } else {
-                    customList.classList.add('show');
-                    customButton.classList.add('active');
-                }
-            });
-
-            // 外部クリックでドロップダウンを閉じる
-            document.addEventListener('click', function(e) {
-                if (!customDropdown.contains(e.target)) {
-                    customList.classList.remove('show');
-                    customButton.classList.remove('active');
-                }
-            });
-
-            // アイテム選択
-            customList.addEventListener('click', function(e) {
-                if (e.target.classList.contains('custom-dropdown-item')) {
-                    const value = e.target.dataset.value;
-                    const text = e.target.textContent;
-                    
-                    // 選択状態を更新
-                    customList.querySelectorAll('.custom-dropdown-item').forEach(item => {
-                        item.classList.remove('selected');
-                    });
-                    e.target.classList.add('selected');
-                    
-                    // ボタンテキストを更新
-                    customButton.textContent = text;
-                    
-                    // 元のselectの値を同期
-                    originalSelect.value = value;
-                    
-                    // changeイベントを発火
-                    const changeEvent = new Event('change', { bubbles: true });
-                    originalSelect.dispatchEvent(changeEvent);
-                    
-                    // ドロップダウンを閉じる
-                    customList.classList.remove('show');
-                    customButton.classList.remove('active');
-                }
-            });
-        }
-
-        // カスタムドロップダウンを更新する関数
-        function updateCustomDropdown(items, supportType) {
-            console.log(`🎨 カスタムドロップダウンを更新中... アイテム数: ${items.length}, 支援種別: ${supportType}`);
-            
-            const customList = document.getElementById('custom-user-list');
-            const customButton = document.getElementById('custom-user-button');
-            
-            if (!customList || !customButton) {
-                console.error('カスタムドロップダウンの要素が見つかりません');
-                return;
-            }
-            
-            // リストをクリア
-            customList.innerHTML = '';
-            
-            // 背景色を決定する関数
-            function getTimeColorClass(minutes) {
-                if (minutes <= 60) return 'time-red'; // 赤（1:00以下）
-                if (minutes <= 120) return 'time-yellow'; // 黄（2:00以下）
-                if (minutes <= 300) return 'time-cyan'; // 薄い水色（5:00以下）
-                return ''; // それ以上は背景色なし
-            }
-            
-            // "選択してください"オプション
-            const defaultItem = document.createElement('div');
-            defaultItem.className = 'custom-dropdown-item';
-            defaultItem.dataset.value = '';
-            defaultItem.textContent = '選択してください';
-            customList.appendChild(defaultItem);
-            
-            // フィルタリングされたアイテムを追加
-            const filteredItems = items.filter(item =>
-                item && item.toString().trim() !== '' && item.toString().trim() !== '-'
-            );
-            
-            filteredItems.forEach((item, index) => {
-                const itemElement = document.createElement('div');
-                itemElement.className = 'custom-dropdown-item';
-                itemElement.dataset.value = item;
-                itemElement.textContent = item;
-                
-                // 「※」利用者以外は残り時間に基づく背景色クラスを適用
-                if (item !== '※' && supportType && userRemainingTimesMap[item] && userRemainingTimesMap[item][supportType]) {
-                    const remainingTime = userRemainingTimesMap[item][supportType];
-                    const minutes = timeToMinutes(remainingTime);
-                    const colorClass = getTimeColorClass(minutes);
-                    
-                    if (colorClass) {
-                        itemElement.classList.add(colorClass);
-                    }
-                }
-                
-                customList.appendChild(itemElement);
-                
-                if (index < 3) { // 最初の3つだけログ出力
-                    console.log(`🎨 カスタムドロップダウン[${index}]: ${item} (クラス: ${itemElement.className})`);
-                }
-            });
-            
-            // ボタンテキストをリセット
-            customButton.textContent = '選択してください';
-            
-            console.log(`✅ カスタムドロップダウンの更新完了（${filteredItems.length}個のアイテム）`);
-        }
-
-        // 利用者選択用：背景色付きオプションを作成する関数
-        function updateSelectOptionsWithColors(selectId, items, supportType) {
-            console.log(`🎨 ${selectId} を色付きで更新中... アイテム数: ${items.length}, 支援種別: ${supportType}`);
-            
-            // モバイル判定：モバイルの場合はカスタムドロップダウンを使用
-            if (selectId === 'user-input' && isMobileDevice()) {
-                console.log('📱 モバイル端末検出: カスタムドロップダウンを使用');
-                updateCustomDropdown(items, supportType);
-                return;
-            }
-            
-            const selectElement = document.getElementById(selectId);
-            
-            if (!selectElement) {
-                console.error(`❌ select要素が見つかりません: ${selectId}`);
-                return;
-            }
-            
-            // 既存のオプションをクリア（最初の「選択してください」オプションは保持）
-            const firstOption = selectElement.querySelector('option[value=""]');
-            selectElement.innerHTML = '';
-            if (firstOption) {
-                selectElement.appendChild(firstOption);
-            } else {
-                // 「選択してください」オプションがない場合は作成
-                const defaultOption = document.createElement('option');
-                defaultOption.value = '';
-                defaultOption.textContent = '選択してください';
-                selectElement.appendChild(defaultOption);
-            }
-            
-            // 背景色を決定する関数
-            function getBackgroundColor(minutes) {
-                if (minutes <= 60) return '#ffcccc'; // 赤（1:00以下）
-                if (minutes <= 120) return '#ffffcc'; // 黄（2:00以下）
-                if (minutes <= 300) return '#ccffff'; // 薄い水色（5:00以下）
-                return ''; // それ以上は背景色なし
-            }
-            
-            // "-" や空白、null、undefinedを除外して追加
-            const filteredItems = items.filter(item =>
-                item && item.toString().trim() !== '' && item.toString().trim() !== '-'
-            );
-            
-            filteredItems.forEach((item, index) => {
-                const option = document.createElement('option');
-                option.value = item;
-                option.textContent = item;
-                
-                // 「※」利用者以外は残り時間に基づく背景色を適用
-                if (item !== '※' && supportType && userRemainingTimesMap[item] && userRemainingTimesMap[item][supportType]) {
-                    const remainingTime = userRemainingTimesMap[item][supportType];
-                    const minutes = timeToMinutes(remainingTime);
-                    const backgroundColor = getBackgroundColor(minutes);
-                    
-                    if (backgroundColor) {
-                        option.style.backgroundColor = backgroundColor;
-                        option.style.color = '#000'; // 黒文字で見やすく
-                    }
-                }
-                
-                selectElement.appendChild(option);
-                if (index < 3) { // 最初の3つだけログ出力
-                    console.log(`🎨 ${selectId}[${index}]: ${item} (背景色: ${option.style.backgroundColor || 'なし'})`);
-                }
-            });
-            
-            console.log(`✅ ${selectId} の色付き更新完了（${filteredItems.length}個のオプション）`);
-        }
-
         // デフォルトデータを読み込む関数（フォールバック用）
         function loadDefaultData() {
             console.log("デフォルトデータを使用します");
@@ -1117,19 +688,10 @@
         document.addEventListener('DOMContentLoaded', function() {
             console.log("🚀 高速初期化開始");
             
-            // 0. モバイル判定とUI切り替え
-            if (isMobileDevice()) {
-                console.log("📱 モバイル端末を検出");
-                document.body.classList.add('mobile-device');
-                document.getElementById('custom-user-dropdown').classList.add('mobile-active');
-                initializeCustomDropdown();
-            } else {
-                console.log("💻 デスクトップ端末を検出");
-            }
-            
             // 1. 即座に基本UI要素を初期化（日付、時間など）
+            initializeDateOptions();
             setCurrentDate();
-            // setLoggedInUserName(); // データ取得完了後に実行するため削除
+            setLoggedInUserName();  // ログインユーザーの名前を支援員1に設定
             setupTimeFormatting();
             setupFormSubmission();
             
@@ -1166,7 +728,7 @@
             try {
                 console.log("🔄 最新データを取得中...");
                 
-                                        const dataUrl = 'https://script.google.com/macros/s/AKfycbwyos1rggYa4yrOAKw6FtjzuLHvQ1_JJX3GukgCGVspb39PyiHM7avQktzg1K-B851b/exec?action=getData';
+                                        const dataUrl = 'https://script.google.com/macros/s/AKfycbzmwGCRCQjMfzF4o11fhp7lXmtT6CCfVEwpY4GaL_iggdrhalEV5X_6z-hiUDShV_JB/exec?action=getData';
                 
                 const response = await fetch(dataUrl);
                 const responseText = await response.text();
@@ -1186,11 +748,6 @@
                     
                     console.log("✅ 最新データ更新完了");
                     showUpdateNotification("📊 最新データに更新されました");
-                    
-                    // データ取得完了後に支援員1の自動選択を再実行
-                    setTimeout(() => {
-                        setLoggedInUserName();
-                    }, 100);
                 } else {
                     console.warn("⚠️ データ取得エラー:", data.error);
                     showUpdateNotification("⚠️ データ取得に失敗しました", "warning");
@@ -1249,6 +806,30 @@
             }, 3000);
         }
 
+        // 日付オプションの初期化
+        function initializeDateOptions() {
+            const currentYear = new Date().getFullYear();
+            const yearsDatalist = document.getElementById('years');
+            for (let i = 0; i < 5; i++) {
+                const option = document.createElement('option');
+                option.value = currentYear - i;
+                yearsDatalist.appendChild(option);
+            }
+
+            const monthsDatalist = document.getElementById('months');
+            for (let i = 1; i <= 12; i++) {
+                const option = document.createElement('option');
+                option.value = i;
+                monthsDatalist.appendChild(option);
+            }
+
+            const daysDatalist = document.getElementById('days');
+            for (let i = 1; i <= 31; i++) {
+                const option = document.createElement('option');
+                option.value = i;
+                daysDatalist.appendChild(option);
+            }
+        }
 
         // 現在の日付を設定
         function setCurrentDate() {
@@ -1258,67 +839,17 @@
             document.getElementById('day').value = now.getDate();
         }
 
-        // 入力された日付が今日と異なるかチェック
-        function isDateDifferentFromToday(year, month, day) {
-            const today = new Date();
-            const inputDate = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
-            
-            return today.getFullYear() !== inputDate.getFullYear() ||
-                   today.getMonth() !== inputDate.getMonth() ||
-                   today.getDate() !== inputDate.getDate();
-        }
-
-        // 日付確認モーダルを表示
-        function showDateConfirmModal(year, month, day, onConfirm, onCancel) {
-            const modal = document.getElementById('dateConfirmModal');
-            const todayDateText = document.getElementById('todayDateText');
-            const inputDateText = document.getElementById('inputDateText');
-            const okButton = document.getElementById('dateConfirmOk');
-            const cancelButton = document.getElementById('dateConfirmCancel');
-            
-            // 今日の日付を表示
-            const today = new Date();
-            todayDateText.textContent = `${today.getFullYear()}年${today.getMonth() + 1}月${today.getDate()}日`;
-            
-            // 入力された日付を表示
-            inputDateText.textContent = `${year}年${month}月${day}日`;
-            
-            // イベントリスナーをクリア
-            okButton.replaceWith(okButton.cloneNode(true));
-            cancelButton.replaceWith(cancelButton.cloneNode(true));
-            
-            // 新しいイベントリスナーを設定
-            document.getElementById('dateConfirmOk').addEventListener('click', function() {
-                modal.classList.add('hidden');
-                onConfirm();
-            });
-            
-            document.getElementById('dateConfirmCancel').addEventListener('click', function() {
-                modal.classList.add('hidden');
-                onCancel();
-            });
-            
-            // モーダルを表示
-            modal.classList.remove('hidden');
-        }
-
         // ログインユーザーの名前を支援員1欄に設定
         function setLoggedInUserName() {
             try {
                 const userName = sessionStorage.getItem('userName');
                 const userId = sessionStorage.getItem('userId');
                 
-                console.log('🔍 ログイン情報確認:', { userName, userId });
-                
                 const supporter1Select = document.getElementById('supporter1-input');
                 if (!supporter1Select) {
                     console.error('❌ 支援員1の選択欄が見つかりません');
                     return;
                 }
-                
-                // 利用可能なオプションをログ出力
-                console.log('📋 支援員1の利用可能オプション:', 
-                    Array.from(supporter1Select.options).map(opt => `"${opt.value}"`));
                 
                 if (userName) {
                     // selectのoptionから該当する値を探して設定
@@ -1331,7 +862,6 @@
                         updateSupportTypesForSupporter(userName);
                     } else {
                         console.warn(`⚠️ 支援員リストに「${userName}」が見つかりません`);
-                        console.warn('利用可能な選択肢:', Array.from(supporter1Select.options).map(opt => opt.value));
                     }
                 } else if (userId) {
                     // selectのoptionから該当する値を探して設定
@@ -1344,7 +874,6 @@
                         updateSupportTypesForSupporter(userId);
                     } else {
                         console.warn(`⚠️ 支援員リストに「${userId}」が見つかりません`);
-                        console.warn('利用可能な選択肢:', Array.from(supporter1Select.options).map(opt => opt.value));
                     }
                 } else {
                     console.warn('⚠️ ログインユーザー情報が見つかりません。index.htmlからアクセスしてください。');
@@ -1384,7 +913,7 @@
             function getBackgroundColor(minutes) {
                 if (minutes <= 60) return '#ffcccc'; // 赤（1:00以下）
                 if (minutes <= 120) return '#ffffcc'; // 黄（2:00以下）
-                if (minutes <= 300) return '#ccffff'; // 薄い水色（5:00以下）
+                if (minutes <= 300) return '#ccccff'; // 青（5:00以下）
                 return ''; // それ以上は背景色なし
             }
             
@@ -1450,7 +979,7 @@
             console.log(`${supportType}で残り時間がある利用者: ${filteredUsers.length}名 (${filteredUsers.join(', ')})`);
             
             // フィルタリングされた利用者でselectを更新
-            updateSelectOptionsWithColors('user-input', filteredUsers, supportType);
+            updateSelectOptions('user-input', filteredUsers);
             
             // 現在の支援種別を保存
             currentSupportType = supportType;
@@ -1571,7 +1100,7 @@
             } else if (minutes <= 120) {
                 userInput.style.backgroundColor = '#ffffcc'; // 黄
             } else if (minutes <= 300) {
-                userInput.style.backgroundColor = '#ccffff'; // 薄い水色
+                userInput.style.backgroundColor = '#ccccff'; // 青
             } else {
                 userInput.style.backgroundColor = '';
             }
@@ -1637,59 +1166,30 @@
                 const appearance = document.getElementById('appearance-input').value;
                 const userCheck = document.getElementById('check1').checked ? 'はい' : 'いいえ';
                 
-                // フォームデータをオブジェクトとして作成
-                const formData = {
+                // 確認メッセージを作成
+                const confirmMessage = `以下の内容で送信してよろしいですか？
+
+📅 日付: ${year}年${month}月${day}日
+⏰ 時間: ${startTime} ～ ${endTime}
+👤 利用者: ${user}
+👥 支援員1: ${supporter1}
+👥 支援員2: ${supporter2}
+📍 行き先: ${destination}
+🏷️ 支援種別: ${supportType}
+😊 様子: ${appearance}
+✅ 利用者様確認: ${userCheck}`;
+                
+                if (!confirm(confirmMessage)) {
+                    return false;
+                }
+                
+                // フォームデータを送信
+                submitFormData({
                     year, month, day, startTime, endTime,
                     user, supporter1, supporter2, destination,
                     supportType, userCheck, appearance
-                };
-                
-                // 日付確認フローを開始
-                checkDateAndProceed(formData);
+                });
             });
-        }
-
-        // 日付確認フローの実行
-        function checkDateAndProceed(formData) {
-            // 日付が今日と異なるかチェック
-            if (isDateDifferentFromToday(formData.year, formData.month, formData.day)) {
-                // 今日と異なる場合：日付確認モーダルを表示
-                showDateConfirmModal(
-                    formData.year, 
-                    formData.month, 
-                    formData.day,
-                    function() { // OK: 内容確認に進む
-                        showContentConfirmation(formData);
-                    },
-                    function() { // キャンセル: 何もしない
-                        console.log('日付確認がキャンセルされました');
-                    }
-                );
-            } else {
-                // 今日と同じ場合：直接内容確認に進む
-                showContentConfirmation(formData);
-            }
-        }
-
-        // 内容確認画面を表示
-        function showContentConfirmation(formData) {
-            // 確認メッセージを作成
-            const confirmMessage = `以下の内容で送信してよろしいですか？
-
-📅 日付: ${formData.year}年${formData.month}月${formData.day}日
-⏰ 時間: ${formData.startTime} ～ ${formData.endTime}
-👤 利用者: ${formData.user}
-👥 支援員1: ${formData.supporter1}
-👥 支援員2: ${formData.supporter2}
-📍 行き先: ${formData.destination}
-🏷️ 支援種別: ${formData.supportType}
-😊 様子: ${formData.appearance}
-✅ 利用者様確認: ${formData.userCheck}`;
-            
-            if (confirm(confirmMessage)) {
-                // 送信実行
-                submitFormData(formData);
-            }
         }
         
         // モーダルを表示する関数
@@ -1766,30 +1266,11 @@
             });
         });
 
-        // 送信ボタンの状態を管理する関数
-        function setSubmitButtonState(isLoading) {
-            const submitButton = document.querySelector('.submit-button');
-            if (isLoading) {
-                submitButton.disabled = true;
-                submitButton.innerHTML = '送信中... <span style="animation: spin 1s linear infinite; display: inline-block;">⏳</span>';
-                submitButton.style.opacity = '0.7';
-                submitButton.style.cursor = 'not-allowed';
-            } else {
-                submitButton.disabled = false;
-                submitButton.innerHTML = '記録を送信';
-                submitButton.style.opacity = '1';
-                submitButton.style.cursor = 'pointer';
-            }
-        }
-
         // フォームデータをAJAXで送信
         async function submitFormData(formData) {
             try {
                 console.log('=== フォーム送信開始 ===');
                 console.log('送信データ:', formData);
-                
-                // 送信中状態に変更
-                setSubmitButtonState(true);
                 
                 // FormDataを作成
                 const formDataObj = new FormData();
@@ -1798,7 +1279,7 @@
                     console.log(`FormData追加: ${key} = ${formData[key]}`);
                 });
                 
-                const submitUrl = 'https://script.google.com/macros/s/AKfycbwyos1rggYa4yrOAKw6FtjzuLHvQ1_JJX3GukgCGVspb39PyiHM7avQktzg1K-B851b/exec';
+                const submitUrl = 'https://script.google.com/macros/s/AKfycbzmwGCRCQjMfzF4o11fhp7lXmtT6CCfVEwpY4GaL_iggdrhalEV5X_6z-hiUDShV_JB/exec';
                 console.log('送信URL:', submitUrl);
                 
                 const response = await fetch(submitUrl, {
@@ -1832,19 +1313,6 @@
                         document.getElementById('destination-input').value = '';
                         document.getElementById('appearance-input').value = '';
                         
-                        // カスタムドロップダウンもリセット（モバイル用）
-                        const customUserButton = document.getElementById('custom-user-button');
-                        const customUserList = document.getElementById('custom-user-list');
-                        if (customUserButton) {
-                            customUserButton.textContent = '選択してください';
-                        }
-                        if (customUserList) {
-                            // 選択状態をクリア
-                            customUserList.querySelectorAll('.custom-dropdown-item').forEach(item => {
-                                item.classList.remove('selected');
-                            });
-                        }
-                        
                         // 少し遅れて支援員名を再設定（selectのoptionが準備されてから）
                         setTimeout(() => {
                             setLoggedInUserName();
@@ -1863,9 +1331,6 @@
             } catch (error) {
                 console.error('送信エラー:', error);
                 showModal(false, `送信に失敗しました: ${error.message}`, null);
-            } finally {
-                // 送信完了後は必ずボタンを元に戻す
-                setSubmitButtonState(false);
             }
         }
 
@@ -1913,38 +1378,6 @@
             }
         });
     </script>
-    
-    <!-- 日付確認モーダル -->
-    <div id="dateConfirmModal" class="modal-overlay hidden">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 class="modal-title">日付確認</h2>
-            </div>
-            <div class="modal-body">
-                <div class="warning-icon">⚠️</div>
-                <p class="modal-message">
-                    入力された日付が今日と異なります。<br>
-                    このまま送信してもよろしいですか？
-                </p>
-                <div class="date-info">
-                    <div class="date-comparison">
-                        <div class="today-date">
-                            <span class="date-label">今日：</span>
-                            <span id="todayDateText"></span>
-                        </div>
-                        <div class="input-date">
-                            <span class="date-label">入力日：</span>
-                            <span id="inputDateText"></span>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-buttons">
-                    <button id="dateConfirmOk" class="btn-ok">OK（送信続行）</button>
-                    <button id="dateConfirmCancel" class="btn-cancel">キャンセル</button>
-                </div>
-            </div>
-        </div>
-    </div>
     
     <!-- 送信完了モーダル -->
     <div id="submitModal" class="modal-overlay hidden">
