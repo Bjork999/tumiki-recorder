@@ -208,6 +208,226 @@
             padding: 8px;
         }
         
+        /* 利用者選択ドロップダウンの色付きオプション */
+        #user-input option[style*="background-color"] {
+            font-weight: 500;
+        }
+        
+        /* モバイル用カスタムドロップダウン */
+        .custom-dropdown {
+            position: relative;
+            display: none; /* デフォルトは非表示 */
+            flex: 1; /* 親要素の幅に合わせる */
+        }
+        
+        .custom-dropdown.mobile-active {
+            display: block;
+        }
+        
+        .custom-dropdown-button {
+            width: 100%;
+            height: 48px;
+            padding: 0 40px 0 16px;
+            font-size: 16px;
+            border: none;
+            border-bottom: 3px solid #9ca3af;
+            background: transparent;
+            outline: none;
+            cursor: pointer;
+            text-align: left;
+            position: relative;
+            transition: border-color 0.2s;
+        }
+        
+        .custom-dropdown-button:focus {
+            border-bottom-color: #3b82f6;
+        }
+        
+        .custom-dropdown-button::after {
+            content: '';
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 0;
+            height: 0;
+            border-left: 8px solid transparent;
+            border-right: 8px solid transparent;
+            border-top: 8px solid #6b7280;
+            transition: transform 0.2s;
+        }
+        
+        .custom-dropdown-button.active::after {
+            transform: translateY(-50%) rotate(180deg);
+        }
+        
+        .custom-dropdown-list {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 1000;
+            display: none;
+        }
+        
+        .custom-dropdown-list.show {
+            display: block;
+        }
+        
+        .custom-dropdown-item {
+            padding: 12px 16px;
+            cursor: pointer;
+            border-bottom: 1px solid #f3f4f6;
+            font-size: 16px;
+            transition: background-color 0.2s;
+        }
+        
+        .custom-dropdown-item:last-child {
+            border-bottom: none;
+        }
+        
+        .custom-dropdown-item:hover {
+            background-color: #f9fafb;
+        }
+        
+        .custom-dropdown-item.selected {
+            background-color: #e5e7eb;
+            font-weight: 600;
+        }
+        
+        /* 色分け用のカスタムドロップダウンアイテム */
+        .custom-dropdown-item.time-red {
+            background-color: #ffcccc !important;
+        }
+        
+        .custom-dropdown-item.time-yellow {
+            background-color: #ffffcc !important;
+        }
+        
+        .custom-dropdown-item.time-cyan {
+            background-color: #ccffff !important;
+        }
+        
+        /* モバイル時は元のselectを隠す */
+        .mobile-device #user-input {
+            display: none;
+        }
+        
+        /* 日付確認モーダルのスタイル */
+        .warning-icon {
+            font-size: 48px;
+            text-align: center;
+            margin: 16px 0;
+        }
+        
+        .date-info {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 16px;
+            margin: 16px 0;
+        }
+        
+        .date-comparison {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .today-date,
+        .input-date {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 12px;
+            border-radius: 4px;
+        }
+        
+        .today-date {
+            background: #ecfdf5;
+            border: 1px solid #a7f3d0;
+        }
+        
+        .input-date {
+            background: #fef3c7;
+            border: 1px solid #fbbf24;
+        }
+        
+        .date-label {
+            font-weight: 600;
+            color: #374151;
+        }
+        
+        .modal-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin-top: 24px;
+        }
+        
+        .btn-ok,
+        .btn-cancel {
+            padding: 12px 24px;
+            border-radius: 6px;
+            border: none;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            min-width: 120px;
+            transition: all 0.2s;
+        }
+        
+        .btn-ok {
+            background: #3b82f6;
+            color: white;
+        }
+        
+        .btn-ok:hover {
+            background: #2563eb;
+        }
+        
+        .btn-cancel {
+            background: #6b7280;
+            color: white;
+        }
+        
+        .btn-cancel:hover {
+            background: #4b5563;
+        }
+        
+        /* 送信中のスピンアニメーション */
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* 時間入力欄のプレースホルダーを薄くする */
+        .time-input::placeholder {
+            color: #d1d5db;
+            opacity: 0.7;
+        }
+        
+        .time-input::-webkit-input-placeholder {
+            color: #d1d5db;
+            opacity: 0.7;
+        }
+        
+        .time-input::-moz-placeholder {
+            color: #d1d5db;
+            opacity: 0.7;
+        }
+        
+        .time-input:-ms-input-placeholder {
+            color: #d1d5db;
+            opacity: 0.7;
+        }
+        
         /* 確認欄 */
         .confirmation-box {
             background: #fef3c7;
