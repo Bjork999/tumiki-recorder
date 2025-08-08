@@ -819,10 +819,10 @@
                 <!-- 行き先 -->
                 <div class="input-row">
                     <label class="input-label" for="destination-input">行き先</label>
-                    <select id="destination-input" name="destination" class="input-field" required>
-                        <option value="">選択してください</option>
+                    <input id="destination-input" name="destination" class="input-field" list="destination-list" placeholder="選択または直接入力してください" required>
+                    <datalist id="destination-list">
                         <!-- 動的に生成されます -->
-                    </select>
+                    </datalist>
                 </div>
 
                 <!-- 利用者様確認欄 -->
@@ -838,10 +838,10 @@
                 <!-- 様子 -->
                 <div class="input-row">
                     <label class="input-label" for="appearance-input">様子</label>
-                    <select id="appearance-input" name="appearance" class="input-field" required>
-                        <option value="">選択してください</option>
+                    <input id="appearance-input" name="appearance" class="input-field" list="appearance-list" placeholder="選択または直接入力してください" required>
+                    <datalist id="appearance-list">
                         <!-- 動的に生成されます -->
-                    </select>
+                    </datalist>
                 </div>
 
                 <!-- 送信ボタン -->
@@ -861,9 +861,51 @@
 
 
 
-        // select要素を更新する関数
+        // datalist要素を更新する関数
+        function updateDatalistOptions(datalistId, items) {
+            console.log(`📝 datalist ${datalistId} を更新中... アイテム数: ${items.length}`);
+            const datalistElement = document.getElementById(datalistId);
+            
+            if (!datalistElement) {
+                console.error(`❌ datalist要素が見つかりません: ${datalistId}`);
+                return;
+            }
+            
+            // 既存のオプションをクリア
+            datalistElement.innerHTML = '';
+            
+            // "-" や空白、null、undefinedを除外して追加
+            const filteredItems = items.filter(item =>
+                item && item.toString().trim() !== '' && item.toString().trim() !== '-'
+            );
+            
+            filteredItems.forEach((item, index) => {
+                const option = document.createElement('option');
+                option.value = item;
+                datalistElement.appendChild(option);
+                if (index < 3) { // 最初の3つだけログ出力
+                    console.log(`➕ datalist ${datalistId}[${index}]: ${item}`);
+                }
+            });
+            
+            console.log(`✅ datalist ${datalistId} の更新完了（${filteredItems.length}個のオプション、${items.length - filteredItems.length}個除外）`);
+        }
+
+        // select要素を更新する関数（datalist対応版）
         function updateSelectOptions(selectId, items) {
             console.log(`📝 ${selectId} を更新中... アイテム数: ${items.length}`);
+            
+            // datalist対応のチェック（行き先・様子欄）
+            if (selectId === 'destination-input') {
+                updateDatalistOptions('destination-list', items);
+                return;
+            }
+            if (selectId === 'appearance-input') {
+                updateDatalistOptions('appearance-list', items);
+                return;
+            }
+            
+            // 従来のselect要素の処理
             const selectElement = document.getElementById(selectId);
             
             if (!selectElement) {
