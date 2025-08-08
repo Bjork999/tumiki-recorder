@@ -788,6 +788,16 @@
                     </select>
                 </div>
 
+                <!-- 施設 -->
+                <div class="input-row">
+                    <label class="input-label" for="facility-input">施設</label>
+                    <select id="facility-input" name="facility" class="input-field" required>
+                        <option value="">選択してください</option>
+                        <option value="ひまわり">ひまわり</option>
+                        <option value="さくら">さくら</option>
+                    </select>
+                </div>
+
                 <!-- 利用者 -->
                 <div class="input-row">
                     <label class="input-label" for="user-input">利用者</label>
@@ -847,6 +857,7 @@
         let userRemainingTimesMap = {};
         let allUsers = [];
         let currentSupportType = ''; // 現在選択されている支援種別を保持
+        let userFacilityMappingData = {}; // 利用者-施設マッピングデータ
 
 
 
@@ -1146,10 +1157,15 @@
             // 4. 支援種別変更イベントの設定
             document.getElementById('support-type-input').addEventListener('change', function(e) {
                 const supportType = e.target.value.trim();
-                updateUserListBySupportType(supportType);
+                updateUserList();
+            });
+
+            // 5. 施設変更イベントの設定
+            document.getElementById('facility-input').addEventListener('change', function(e) {
+                updateUserList();
             });
             
-            // 5. 利用者選択欄の背景色更新イベント（一度だけ設定）
+            // 6. 利用者選択欄の背景色更新イベント（一度だけ設定）
             document.getElementById('user-input').addEventListener('change', function(e) {
                 updateUserInputBackground(e.target.value, currentSupportType);
             });
@@ -1167,7 +1183,7 @@
             try {
                 console.log("🔄 最新データを取得中...");
                 
-                                        const dataUrl = 'https://script.google.com/macros/s/AKfycbwyos1rggYa4yrOAKw6FtjzuLHvQ1_JJX3GukgCGVspb39PyiHM7avQktzg1K-B851b/exec?action=getData';
+                                        const dataUrl = 'https://script.google.com/macros/s/AKfycbyyT5gHwI89UOQ4GkR7muLRQGNgRYyWHd1SmRu-4EO2zAcAQkEey5X67E3algyJXA_4/exec?action=getData';
                 
                 const response = await fetch(dataUrl);
                 const responseText = await response.text();
@@ -1184,6 +1200,7 @@
                     supporterSupportTypesMap = data.supporterSupportTypes || {};
                     userRemainingTimesMap = data.userRemainingTimes || {};
                     allUsers = data.users || [];
+                    userFacilityMappingData = data.userFacilityMapping || {};
                     
                     console.log("✅ 最新データ更新完了");
                     showUpdateNotification("📊 最新データに更新されました");
@@ -1375,11 +1392,20 @@
             }
         }
 
-        // 支援種別に基づいて利用者リストを更新する関数
+        // 支援種別に基づいて利用者リストを更新する関数（後方互換性のため）
         function updateUserListBySupportType(supportType) {
-            console.log(`支援種別「${supportType}」に基づいて利用者リストを更新`);
+            updateUserList();
+        }
+
+        // 支援種別と施設に基づいて利用者リストを更新する関数
+        function updateUserList() {
+            const supportType = document.getElementById('support-type-input').value;
+            const facility = document.getElementById('facility-input').value;
+            
+            console.log(`支援種別「${supportType}」、施設「${facility}」に基づいて利用者リストを更新`);
             console.log('現在のallUsers:', allUsers);
             console.log('現在のuserRemainingTimesMap:', userRemainingTimesMap);
+            console.log('現在のuserFacilityMappingData:', userFacilityMappingData);
             
             // 背景色を決定する関数
             function getBackgroundColor(minutes) {
@@ -1391,8 +1417,8 @@
             
             const userSelect = document.getElementById('user-input');
             
-            // 支援種別が選択されていない場合は全利用者を表示
-            if (!supportType) {
+            // 支援種別も施設も選択されていない場合は全利用者を表示
+            if (!supportType && !facility) {
                 updateSelectOptions('user-input', allUsers);
                 return;
             }
@@ -1409,46 +1435,48 @@
                     return;
                 }
                 
-                const userTimes = userRemainingTimesMap[userName];
-                console.log(`利用者「${userName}」の残り時間データ:`, userTimes);
-                
-                if (!userTimes) {
-                    console.log(`利用者「${userName}」: 残り時間データなし`);
-                    return;
+                // 施設によるフィルタリング
+                if (facility) {
+                    const userFacility = userFacilityMappingData[userName];
+                    if (!userFacility || userFacility !== facility) {
+                        console.log(`利用者「${userName}」: 施設「${facility}」に該当しないため除外 (実際の施設: ${userFacility})`);
+                        return;
+                    }
                 }
                 
-                const remainingTime = userTimes[supportType];
-                console.log(`利用者「${userName}」の${supportType}残り時間: "${remainingTime}" (型: ${typeof remainingTime})`);
-                
-                if (!remainingTime || remainingTime === '') {
-                    console.log(`利用者「${userName}」: ${supportType}の残り時間なし`);
-                    return;
+                // 支援種別によるフィルタリング
+                if (supportType) {
+                    const userTimes = userRemainingTimesMap[userName];
+                    console.log(`利用者「${userName}」の残り時間データ:`, userTimes);
+                    
+                    if (!userTimes) {
+                        console.log(`利用者「${userName}」: 残り時間データなし`);
+                        return;
+                    }
+                    
+                    const remainingTime = userTimes[supportType];
+                    console.log(`利用者「${userName}」の${supportType}残り時間: "${remainingTime}" (型: ${typeof remainingTime})`);
+                    
+                    if (!remainingTime || remainingTime === '') {
+                        console.log(`利用者「${userName}」: ${supportType}の残り時間なし`);
+                        return;
+                    }
+                    
+                    // 残り時間がある利用者のみ追加
+                    const minutes = timeToMinutes(remainingTime);
+                    console.log(`利用者「${userName}」: ${remainingTime} = ${minutes}分`);
+                    
+                    if (minutes <= 0) {
+                        console.log(`利用者「${userName}」: 残り時間0分のため除外`);
+                        return;
+                    }
                 }
                 
-                // 残り時間がある利用者のみ追加
-                const minutes = timeToMinutes(remainingTime);
-                console.log(`利用者「${userName}」: ${remainingTime} = ${minutes}分`);
-                
-                // 詳細比較用ログ（上林誠と久山大の場合）
-                if (userName === '上林誠' || userName === '久山大') {
-                    console.log(`🔍 ${userName}の詳細データ:`, {
-                        原データ: remainingTime,
-                        型: typeof remainingTime,
-                        長さ: remainingTime.length,
-                        文字コード: [...remainingTime].map(c => c.charCodeAt(0)),
-                        計算結果: minutes
-                    });
-                }
-                
-                if (minutes > 0) {
-                    filteredUsers.push(userName);
-                    console.log(`利用者「${userName}」をリストに追加`);
-                } else {
-                    console.log(`利用者「${userName}」: 残り時間0分のため除外`);
-                }
+                filteredUsers.push(userName);
+                console.log(`利用者「${userName}」をリストに追加`);
             });
             
-            console.log(`${supportType}で残り時間がある利用者: ${filteredUsers.length}名 (${filteredUsers.join(', ')})`);
+            console.log(`フィルタリング後の利用者: ${filteredUsers.length}名 (${filteredUsers.join(', ')})`);
             
             // フィルタリングされた利用者でselectを更新
             updateSelectOptionsWithColors('user-input', filteredUsers, supportType);
@@ -1799,7 +1827,7 @@
                     console.log(`FormData追加: ${key} = ${formData[key]}`);
                 });
                 
-                const submitUrl = 'https://script.google.com/macros/s/AKfycbwyos1rggYa4yrOAKw6FtjzuLHvQ1_JJX3GukgCGVspb39PyiHM7avQktzg1K-B851b/exec';
+                const submitUrl = 'https://script.google.com/macros/s/AKfycbyyT5gHwI89UOQ4GkR7muLRQGNgRYyWHd1SmRu-4EO2zAcAQkEey5X67E3algyJXA_4/exec';
                 console.log('送信URL:', submitUrl);
                 
                 const response = await fetch(submitUrl, {
