@@ -32,21 +32,24 @@
 <style>
         body {
             font-family: 'Noto Sans JP', sans-serif;
-            margin: 0 auto;
+            margin: 0;
             padding: 0;
-            min-height: 100vh;
+            height: 100vh;
             background-color: #ffe4cc;
+            overflow: hidden;
         }
         
         /*スマートフォン最適化 */
         .smartphone-container {
             width: 100%;
-            margin: 0 auto;
+            height: 100vh;
+            margin: 0;
             padding: 4px;
             box-sizing: border-box;
             display: flex;
             align-items: flex-start;
             justify-content: center;
+            overflow-y: auto;
         }
         
         .form-container {
