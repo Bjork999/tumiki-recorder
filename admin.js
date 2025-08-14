@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // ↓↓↓↓ ご自身の新しいウェブアプリのURLに書き換えてください ↓↓↓↓
-    const gasUrl = 'https://script.google.com/macros/s/AKfycbyyT5gHwI89UOQ4GkR7muLRQGNgRYyWHd1SmRu-4EO2zAcAQkEey5X67E3algyJXA_4/exec';
+    const gasUrl = 'https://script.google.com/macros/s/AKfycbwUfed0uF6pqHvppd1lFZxnQdbfV8iZrq2EuFZzyhz-LBTVveeu95bkZy0ZR21FUjs1/exec';
     const userList = document.getElementById('user-list');
     const addUserBtn = document.getElementById('add-user-btn');
     const newUserIdInput = document.getElementById('new-user-id');

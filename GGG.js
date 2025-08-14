@@ -228,14 +228,6 @@ function handleDeleteUser(postData) {
   }
 }
 
-// グローバルキャッシュ
-let CACHE = {
-  users: null,
-  supporters: null,
-  yearMonth: null,
-  folders: {},
-  initialized: false
-};
 
 // シートの設定を定義（統合版）
 const SHEET_CONFIGS = {
@@ -247,7 +239,7 @@ const SHEET_CONFIGS = {
     userCell: 'Z2',
     prefix: '居宅介護',
     csvRange: 'A:AU',
-    serviceType: '通院介助',
+    serviceType: '通院等介助',
     emptyCheckStartRow: 10,
     emptyCheckEndRow: 89,
     useSupporter: false
@@ -312,7 +304,7 @@ function mergeAndShowF_batch() {
     const startRow = 7;
     const dateCol = 2;
     const rCol = 18;
-    const fCol = 6;
+    const fCol = 7;
     const maxRow = 88;
 
     // データが入っている最終行を自動判定（最大行数制限付き）
@@ -498,17 +490,33 @@ function getDataLists() {
       throw new Error('データ用シートが見つかりません');
     }
 
-    // 利用者データ（C7:AZZ7）
-    const usersRow = dataSheet.getRange('C7:AZZ7').getValues()[0];
+    // 利用者データ（C7:BZ7）
+    const usersRow = dataSheet.getRange('C7:BZ7').getValues()[0];
     const users = usersRow.filter(cell => cell && cell.toString().trim() !== '' && cell.toString().trim() !== '-')
                           .map(cell => cell.toString().trim());
     
+    // フリガナデータ（C6:BZ6）を取得して利用者とのマッピングを作成
+    const furiganaRow = dataSheet.getRange('C6:BZ6').getValues()[0];
+    const userFuriganaMapping = {};
+    
+    // 利用者と同じ列のフリガナ情報を取得
+    usersRow.forEach((user, index) => {
+      if (user && user.toString().trim() !== '' && user.toString().trim() !== '-') {
+        const userName = user.toString().trim();
+        const furigana = furiganaRow[index];
+        if (furigana && furigana.toString().trim() !== '') {
+          userFuriganaMapping[userName] = furigana.toString().trim();
+        }
+      }
+    });
+    
+    console.log('利用者-フリガナマッピング:', userFuriganaMapping);
 
-    // 支援員データ（D19:O19）を取得
-    const supportersRange = dataSheet.getRange('C19:AQ19');
+    // 支援員データ（C19:BZ19）を取得
+    const supportersRange = dataSheet.getRange('C19:BZ19');
     const supportersRowRaw = supportersRange.getValues()[0];
     
-    console.log('支援員データ範囲: C19:AQ19');
+    console.log('支援員データ範囲: C19:BZ19');
     
     // 支援員名とその列位置をマッピング（D=1として）
     const supporterColumnMap = {};
@@ -525,22 +533,22 @@ function getDataLists() {
     });
 
     // 行き先・様子データ
-    const destinationsRow = dataSheet.getRange('C25:Z25').getValues()[0];
+    const destinationsRow = dataSheet.getRange('C25:BZ25').getValues()[0];
     const destinations = destinationsRow.filter(cell => cell && cell.toString().trim() !== '' && cell.toString().trim() !== '-')
                                        .map(cell => cell.toString().trim());
 
-    const appearancesRow = dataSheet.getRange('C27:Z27').getValues()[0];
+    const appearancesRow = dataSheet.getRange('C27:BZ27').getValues()[0];
     const appearances = appearancesRow.filter(cell => cell && cell.toString().trim() !== '' && cell.toString().trim() !== '-')
                                      .map(cell => cell.toString().trim());
 
-    const supportTypes = ['移動支援', '行動援護', '通院介助'];
+    const supportTypes = ['移動支援', '行動援護', '通院等介助'];
 
     // ○×データを取得（D21:O23）
-    const supportTypeRows = dataSheet.getRange('D21:O23').getValues();
-    const supportTypeNames = ['行動援護', '移動支援', '通院介助'];
+    const supportTypeRows = dataSheet.getRange('D21:BZ23').getValues();
+    const supportTypeNames = ['行動援護', '移動支援', '通院等介助'];
     const supporterSupportTypes = {};
 
-    console.log('○×データ範囲: c21:AQ23');
+    console.log('○×データ範囲: c21:BZ23');
 
     // 各支援員について、その列位置の○×をチェック
     supporters.forEach(name => {
@@ -568,8 +576,9 @@ function getDataLists() {
     if (summarySheet) {
       try {
         // C15:T15とC20:T20の利用者名を取得
-        const userNamesRow1 = summarySheet.getRange('C15:T15').getValues()[0];
-        const userNamesRow2 = summarySheet.getRange('C20:T20').getValues()[0];
+        const userNamesRow1 = summarySheet.getRange('C15:AG15').getValues()[0];
+        const userNamesRow2 = summarySheet.getRange('C20:AG20').getValues()[0];
+        const userNamesRow3 = summarySheet.getRange('C25:AG25').getValues()[0];
         
         // 時間セルの値を正しく処理する関数
         function formatTimeCell(cellValue) {
@@ -615,15 +624,21 @@ function getDataLists() {
 
         // 16-18行目と21-23行目の残り時間を取得
         const remainingTimes1 = {
-          '行動援護': summarySheet.getRange('C16:T16').getValues()[0],
-          '移動支援': summarySheet.getRange('C17:T17').getValues()[0],
-          '通院介助': summarySheet.getRange('C18:T18').getValues()[0]
+          '行動援護': summarySheet.getRange('C16:AG16').getValues()[0],
+          '移動支援': summarySheet.getRange('C17:AG17').getValues()[0],
+          '通院等介助': summarySheet.getRange('C18:AG18').getValues()[0]
         };
         
         const remainingTimes2 = {
-          '行動援護': summarySheet.getRange('C21:T21').getValues()[0],
-          '移動支援': summarySheet.getRange('C22:T22').getValues()[0],
-          '通院介助': summarySheet.getRange('C23:T23').getValues()[0]
+          '行動援護': summarySheet.getRange('C21:AG21').getValues()[0],
+          '移動支援': summarySheet.getRange('C22:AG22').getValues()[0],
+          '通院等介助': summarySheet.getRange('C23:AG23').getValues()[0]
+        };
+
+        const remainingTimes3 = {
+          '行動援護': summarySheet.getRange('C26:AG26').getValues()[0],
+          '移動支援': summarySheet.getRange('C27:AG27').getValues()[0],
+          '通院等介助': summarySheet.getRange('C28:AG28').getValues()[0]
         };
         
         // 利用者名と残り時間をマッピング（最初の行）
@@ -635,7 +650,7 @@ function getDataLists() {
             userRemainingTimes[name] = {
               '行動援護': formatTimeCell(remainingTimes1['行動援護'][index]),
               '移動支援': formatTimeCell(remainingTimes1['移動支援'][index]),
-              '通院介助': formatTimeCell(remainingTimes1['通院介助'][index])
+              '通院等介助': formatTimeCell(remainingTimes1['通院等介助'][index])
             };
             console.log(`利用者 ${name} の残り時間:`, userRemainingTimes[name]);
           }
@@ -650,12 +665,28 @@ function getDataLists() {
             userRemainingTimes[name] = {
               '行動援護': formatTimeCell(remainingTimes2['行動援護'][index]),
               '移動支援': formatTimeCell(remainingTimes2['移動支援'][index]),
-              '通院介助': formatTimeCell(remainingTimes2['通院介助'][index])
+              '通院等介助': formatTimeCell(remainingTimes2['通院等介助'][index])
             };
             console.log(`利用者 ${name} の残り時間:`, userRemainingTimes[name]);
           }
         });
         
+        // 利用者名と残り時間をマッピング（3番目の行）
+        userNamesRow3.forEach((userName, index) => {
+          if (userName && userName.toString().trim() !== '') {
+            const name = userName.toString().trim();
+            
+            
+            userRemainingTimes[name] = {
+              '行動援護': formatTimeCell(remainingTimes3['行動援護'][index]),
+              '移動支援': formatTimeCell(remainingTimes3['移動支援'][index]),
+              '通院等介助': formatTimeCell(remainingTimes3['通院等介助'][index])
+            };
+            console.log(`利用者 ${name} の残り時間:`, userRemainingTimes[name]);
+          }
+        });
+
+
         console.log('利用者残り時間データ:', userRemainingTimes);
         
       } catch (error) {
@@ -671,7 +702,8 @@ function getDataLists() {
       supportTypes: supportTypes,
       appearances: appearances,
       supporterSupportTypes: supporterSupportTypes,
-      userRemainingTimes: userRemainingTimes
+      userRemainingTimes: userRemainingTimes,
+      userFurigana: userFuriganaMapping
     };
 
     return ContentService
@@ -942,291 +974,5 @@ function handleLoginPost(e) {
     console.log('Sending error response:', response);
     return ContentService.createTextOutput(response)
       .setMimeType(ContentService.MimeType.JSON);
-  }
-}
-
-// ==========================
-// キャッシュ初期化
-// ==========================
-function initializeCache() {
-  if (CACHE.initialized) return;
-
-  console.log('キャッシュを初期化中...');
-
-  try {
-    const ss = SpreadsheetApp.getActiveSpreadsheet();
-    const dataSheet = ss.getSheetByName('データ用');
-
-    // 利用者リストを取得
-    const usersRow = dataSheet.getRange('C7:AZ7').getValues()[0];
-    CACHE.users = usersRow.filter(cell => cell && cell.toString().trim() !== '' && cell.toString().trim() !== '-')
-                          .map(cell => cell.toString().trim());
-
-    // 支援員リストを取得
-    const supportersRow = dataSheet.getRange('C19:AZ19').getValues()[0];
-    CACHE.supporters = supportersRow.filter(cell => cell && cell.toString().trim() !== '' && cell.toString().trim() !== '-')
-                                   .map(cell => cell.toString().trim());
-
-    // 年月を取得
-    CACHE.yearMonth = getYearMonth();
-
-    CACHE.initialized = true;
-    console.log('キャッシュ初期化完了:', CACHE);
-
-  } catch (error) {
-    console.error('キャッシュ初期化エラー:', error);
-    throw error;
-  }
-}
-
-// ==========================
-// 年月取得
-// ==========================
-function getYearMonth() {
-  try {
-    const ss = SpreadsheetApp.getActiveSpreadsheet();
-    const summarySheet = ss.getSheetByName('集計表');
-
-    if (!summarySheet) {
-      throw new Error('集計表シートが見つかりません');
-    }
-
-    // 年と月を取得（月はE2セル）
-    let year = summarySheet.getRange('B2').getValue();
-    let month = summarySheet.getRange('E2').getValue();
-
-    // 年の処理
-    if (typeof year === 'object' && year instanceof Date) {
-      year = year.getFullYear();
-    } else if (typeof year === 'string') {
-      year = parseInt(year.replace(/[^\d]/g, ''), 10);
-    } else {
-      year = parseInt(year, 10);
-    }
-
-    // 月の処理
-    if (typeof month === 'object' && month instanceof Date) {
-      month = month.getMonth() + 1;
-    } else if (typeof month === 'string') {
-      month = parseInt(month.replace(/[^\d]/g, ''), 10);
-    } else {
-      month = parseInt(month, 10);
-    }
-
-    // 値の検証
-    if (isNaN(year) || year < 2000 || year > 3000) {
-      throw new Error(`年の値が不正です: ${year}`);
-    }
-    if (isNaN(month) || month < 1 || month > 12) {
-      throw new Error(`月の値が不正です: ${month}`);
-    }
-
-    const yearMonthStr = `${year}${month.toString().padStart(2, '0')}`;
-    console.log(`取得した年月: ${year}年${month}月 (${yearMonthStr})`);
-
-    return { year, month, yearMonthStr };
-
-  } catch (error) {
-    console.error('年月取得エラー:', error);
-    throw error;
-  }
-}
-
-// ==========================
-// 認証情報テスト関数
-// ==========================
-function testAuthentication() {
-  try {
-    console.log('認証情報テスト開始...');
-    
-    const ss = SpreadsheetApp.getActiveSpreadsheet();
-    const accountSheet = ss.getSheetByName('アカウント');
-    
-    if (!accountSheet) {
-      console.log('❌ アカウントシートが見つかりません');
-      return;
-    }
-    
-    console.log('✅ アカウントシートが見つかりました');
-    
-    const data = accountSheet.getDataRange().getValues();
-    console.log('データ行数:', data.length);
-    
-    // ヘッダー行を表示
-    if (data.length > 0) {
-      console.log('ヘッダー行:', data[0]);
-    }
-    
-    // データ行を表示（パスワードは隠す）
-    for (let i = 1; i < data.length; i++) {
-      const userId = data[i][0];
-      const password = data[i][1];
-      const role = data[i][2];
-      
-      console.log(`行${i}: userID="${userId}", Password="${password ? '***' : '(空)'}", Role="${role || '(空)'}"`);
-    }
-    
-    // テスト認証情報は削除されました（セキュリティ対応）
-    
-    console.log('テスト認証は削除されました');
-    
-  } catch (error) {
-    console.error('テストエラー:', error);
-  }
-}
-
-
-// ==========================
-// デバッグ用：実際のデータ確認関数
-// ==========================
-function debugSupporterData() {
-  try {
-    const ss = SpreadsheetApp.getActiveSpreadsheet();
-    const dataSheet = ss.getSheetByName('データ用');
-    
-    console.log('=== 支援員データデバッグ ===');
-    
-    // 19行目の支援員名を確認（A列からO列まで）
-    for (let col = 1; col <= 15; col++) {
-      const cellValue = dataSheet.getRange(19, col).getValue();
-      const columnLetter = String.fromCharCode(64 + col); // A=1, B=2...
-      console.log(`${columnLetter}19: "${cellValue}"`);
-    }
-    
-    console.log('\n=== ○×データデバッグ ===');
-    
-    // 21-23行目の○×データを確認（A列からO列まで）
-    for (let row = 21; row <= 23; row++) {
-      const rowName = ['', '行動援護', '移動支援', '通院介助'][row - 20];
-      console.log(`\n${row}行目（${rowName}）:`);
-      
-      for (let col = 1; col <= 15; col++) {
-        const cellValue = dataSheet.getRange(row, col).getValue();
-        const columnLetter = String.fromCharCode(64 + col);
-        console.log(`  ${columnLetter}${row}: "${cellValue}"`);
-      }
-    }
-    
-  } catch (error) {
-    console.error('デバッグエラー:', error);
-  }
-}
-
-
-// フォーム送信のテスト関数
-function testFormSubmission() {
-  console.log('=== フォーム送信テスト開始 ===');
-  
-  // テストデータ（個人情報を含まないサンプル）
-  const testData = {
-    year: '2025',
-    month: '01',
-    day: '15',
-    startTime: '10:00',
-    endTime: '12:00',
-    user: 'サンプル利用者',
-    supporter1: 'サンプル支援員',
-    supporter2: '',
-    destination: 'サンプル行き先',
-    supportType: '移動支援',
-    userCheck: 'はい',
-    appearance: 'サンプル様子'
-  };
-  
-  // モックのeオブジェクトを作成
-  const mockE = {
-    parameter: testData
-  };
-  
-  console.log('テストデータ:', testData);
-  
-  try {
-    const result = handleFormSubmission(mockE);
-    console.log('結果:', result.getContent());
-    console.log('=== テスト完了 ===');
-  } catch (error) {
-    console.error('テストエラー:', error);
-  }
-}
-
-
-// ==========================
-// キャッシュ機能付き高速ログイン
-// ==========================
-function getCachedUserData() {
-  const cache = PropertiesService.getScriptProperties();
-  const cachedData = cache.getProperty('USER_DATA');
-  const cacheTime = cache.getProperty('CACHE_TIME');
-  
-  // 5分間キャッシュ（300000ミリ秒）
-  if (cachedData && cacheTime && 
-      (new Date().getTime() - parseInt(cacheTime)) < 300000) {
-    console.log('キャッシュされたユーザーデータを使用');
-    return JSON.parse(cachedData);
-  }
-  
-  console.log('新しいユーザーデータを取得中...');
-  // キャッシュ期限切れ、新しいデータを取得
-  const newData = createUserHashMap();
-  cache.setProperties({
-    'USER_DATA': JSON.stringify(newData),
-    'CACHE_TIME': new Date().getTime().toString()
-  });
-  
-  return newData;
-}
-
-function createUserHashMap() {
-  const ss = SpreadsheetApp.getActiveSpreadsheet();
-  const accountSheet = ss.getSheetByName('アカウント');
-  const lastRow = accountSheet.getLastRow();
-  
-  if (lastRow <= 1) {
-    return {};
-  }
-  
-  const data = accountSheet.getRange(2, 1, lastRow - 1, 3).getValues();
-  const userMap = {};
-  
-  for (let i = 0; i < data.length; i++) {
-    const [userId, userPassword, userName] = data[i];
-    if (userId && userId.toString().trim() !== '') {
-      userMap[userId.toString()] = {
-        password: userPassword.toString(),
-        name: userName ? userName.toString() : userId.toString()
-      };
-    }
-  }
-  
-  console.log(`ユーザーマップ作成完了: ${Object.keys(userMap).length}件`);
-  return userMap;
-}
-
-// 超高速ログイン（キャッシュ版）
-function superFastLogin(username, password) {
-  try {
-    const userMap = getCachedUserData();
-    const user = userMap[username];
-    
-    if (user && user.password === password) {
-      console.log(`高速ログイン成功: ${username}`);
-      return {
-        success: true,
-        userId: username,
-        userName: user.name
-      };
-    }
-    
-    console.log(`高速ログイン失敗: ${username}`);
-    return {
-      success: false,
-      error: 'ユーザーIDまたはパスワードが違います。'
-    };
-  } catch (error) {
-    console.error('高速ログインエラー:', error);
-    return {
-      success: false,
-      error: error.toString()
-    };
   }
 }

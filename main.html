@@ -38,11 +38,11 @@
             background-color: #ffe4cc;
         }
         
-        /* 720x1280スマートフォン最適化 */
+        /*スマートフォン最適化 */
         .smartphone-container {
-            width: 100%;
+            width: 98%;
             margin: 0 auto;
-            padding: 1px;
+            padding: 2px;
             box-sizing: border-box;
         }
         
@@ -788,13 +788,21 @@
                     </select>
                 </div>
 
-                <!-- 施設 -->
+                <!-- 頭文字 -->
                 <div class="input-row">
-                    <label class="input-label" for="facility-input">施設</label>
-                    <select id="facility-input" name="facility" class="input-field" required>
-                        <option value="">選択してください</option>
-                        <option value="ひまわり">ひまわり</option>
-                        <option value="さくら">さくら</option>
+                    <label class="input-label" for="initial-input">頭文字</label>
+                    <select id="initial-input" name="initial" class="input-field">
+                        <option value="">全て</option>
+                        <option value="あ">あ</option>
+                        <option value="か">か</option>
+                        <option value="さ">さ</option>
+                        <option value="た">た</option>
+                        <option value="な">な</option>
+                        <option value="は">は</option>
+                        <option value="ま">ま</option>
+                        <option value="や">や</option>
+                        <option value="ら">ら</option>
+                        <option value="わ">わ</option>
                     </select>
                 </div>
 
@@ -857,7 +865,7 @@
         let userRemainingTimesMap = {};
         let allUsers = [];
         let currentSupportType = ''; // 現在選択されている支援種別を保持
-        let userFacilityMappingData = {}; // 利用者-施設マッピングデータ
+        let userFuriganaData = {}; // 利用者フリガナデータ
 
 
 
@@ -1202,8 +1210,8 @@
                 updateUserList();
             });
 
-            // 5. 施設変更イベントの設定
-            document.getElementById('facility-input').addEventListener('change', function(e) {
+            // 5. 頭文字変更イベントの設定
+            document.getElementById('initial-input').addEventListener('change', function(e) {
                 updateUserList();
             });
             
@@ -1225,7 +1233,7 @@
             try {
                 console.log("🔄 最新データを取得中...");
                 
-                                        const dataUrl = 'https://script.google.com/macros/s/AKfycbyyT5gHwI89UOQ4GkR7muLRQGNgRYyWHd1SmRu-4EO2zAcAQkEey5X67E3algyJXA_4/exec?action=getData';
+                                        const dataUrl = 'https://script.google.com/macros/s/AKfycbwUfed0uF6pqHvppd1lFZxnQdbfV8iZrq2EuFZzyhz-LBTVveeu95bkZy0ZR21FUjs1/exec?action=getData';
                 
                 const response = await fetch(dataUrl);
                 const responseText = await response.text();
@@ -1242,7 +1250,7 @@
                     supporterSupportTypesMap = data.supporterSupportTypes || {};
                     userRemainingTimesMap = data.userRemainingTimes || {};
                     allUsers = data.users || [];
-                    userFacilityMappingData = data.userFacilityMapping || {};
+                    userFuriganaData = data.userFurigana || {};
                     
                     console.log("✅ 最新データ更新完了");
                     showUpdateNotification("📊 最新データに更新されました");
@@ -1422,7 +1430,7 @@
                 
                 if (!types || types.length === 0) {
                     // デフォルトの支援種別
-                    types = ["移動支援", "行動援護", "通院介助"];
+                    types = ["移動支援", "行動援護", "通院等介助"];
                     console.log(`⚠️ ${name}の支援種別データが見つかりません。デフォルトを使用します。`);
                 } else {
                     console.log(`✅ ${name}の支援種別を更新:`, types);
@@ -1439,15 +1447,15 @@
             updateUserList();
         }
 
-        // 支援種別と施設に基づいて利用者リストを更新する関数
+        // 支援種別と頭文字に基づいて利用者リストを更新する関数
         function updateUserList() {
             const supportType = document.getElementById('support-type-input').value;
-            const facility = document.getElementById('facility-input').value;
+            const selectedInitial = document.getElementById('initial-input').value;
             
-            console.log(`支援種別「${supportType}」、施設「${facility}」に基づいて利用者リストを更新`);
+            console.log(`支援種別「${supportType}」、頭文字「${selectedInitial}」に基づいて利用者リストを更新`);
             console.log('現在のallUsers:', allUsers);
             console.log('現在のuserRemainingTimesMap:', userRemainingTimesMap);
-            console.log('現在のuserFacilityMappingData:', userFacilityMappingData);
+            console.log('現在のuserFuriganaData:', userFuriganaData);
             
             // 背景色を決定する関数
             function getBackgroundColor(minutes) {
@@ -1459,8 +1467,8 @@
             
             const userSelect = document.getElementById('user-input');
             
-            // 支援種別も施設も選択されていない場合は全利用者を表示
-            if (!supportType && !facility) {
+            // 支援種別も頭文字も選択されていない場合は全利用者を表示
+            if (!supportType && !selectedInitial) {
                 updateSelectOptions('user-input', allUsers);
                 return;
             }
@@ -1477,11 +1485,19 @@
                     return;
                 }
                 
-                // 施設によるフィルタリング
-                if (facility) {
-                    const userFacility = userFacilityMappingData[userName];
-                    if (!userFacility || userFacility !== facility) {
-                        console.log(`利用者「${userName}」: 施設「${facility}」に該当しないため除外 (実際の施設: ${userFacility})`);
+                // 頭文字によるフィルタリング
+                if (selectedInitial) {
+                    const furigana = userFuriganaData[userName];
+                    if (!furigana) {
+                        console.log(`利用者「${userName}」: フリガナデータがないため除外`);
+                        return;
+                    }
+                    
+                    const firstChar = furigana.charAt(0);
+                    const initialGroup = getInitialGroup(firstChar);
+                    
+                    if (initialGroup !== selectedInitial) {
+                        console.log(`利用者「${userName}」: 頭文字「${selectedInitial}」に該当しないため除外 (実際の頭文字: ${firstChar})`);
                         return;
                     }
                 }
@@ -1525,6 +1541,32 @@
             
             // 現在の支援種別を保存
             currentSupportType = supportType;
+        }
+        
+        // フリガナから頭文字グループを判定する関数
+        function getInitialGroup(firstChar) {
+            if (!firstChar) return '';
+            
+            const kanaMap = {
+                'あ': ['あ', 'い', 'う', 'え', 'お', 'ア', 'イ', 'ウ', 'エ', 'オ'],
+                'か': ['か', 'き', 'く', 'け', 'こ', 'が', 'ぎ', 'ぐ', 'げ', 'ご', 'カ', 'キ', 'ク', 'ケ', 'コ', 'ガ', 'ギ', 'グ', 'ゲ', 'ゴ'],
+                'さ': ['さ', 'し', 'す', 'せ', 'そ', 'ざ', 'じ', 'ず', 'ぜ', 'ぞ', 'サ', 'シ', 'ス', 'セ', 'ソ', 'ザ', 'ジ', 'ズ', 'ゼ', 'ゾ'],
+                'た': ['た', 'ち', 'つ', 'て', 'と', 'だ', 'ぢ', 'づ', 'で', 'ど', 'タ', 'チ', 'ツ', 'テ', 'ト', 'ダ', 'ヂ', 'ヅ', 'デ', 'ド'],
+                'な': ['な', 'に', 'ぬ', 'ね', 'の', 'ナ', 'ニ', 'ヌ', 'ネ', 'ノ'],
+                'は': ['は', 'ひ', 'ふ', 'へ', 'ほ', 'ば', 'び', 'ぶ', 'べ', 'ぼ', 'ぱ', 'ぴ', 'ぷ', 'ぺ', 'ぽ', 'ハ', 'ヒ', 'フ', 'ヘ', 'ホ', 'バ', 'ビ', 'ブ', 'ベ', 'ボ', 'パ', 'ピ', 'プ', 'ペ', 'ポ'],
+                'ま': ['ま', 'み', 'む', 'め', 'も', 'マ', 'ミ', 'ム', 'メ', 'モ'],
+                'や': ['や', 'ゆ', 'よ', 'ヤ', 'ユ', 'ヨ'],
+                'ら': ['ら', 'り', 'る', 'れ', 'ろ', 'ラ', 'リ', 'ル', 'レ', 'ロ'],
+                'わ': ['わ', 'を', 'ん', 'ワ', 'ヲ', 'ン']
+            };
+            
+            for (const [group, chars] of Object.entries(kanaMap)) {
+                if (chars.includes(firstChar)) {
+                    return group;
+                }
+            }
+            
+            return '';
         }
         
         // 時間を分に変換するヘルパー関数
@@ -1869,7 +1911,7 @@
                     console.log(`FormData追加: ${key} = ${formData[key]}`);
                 });
                 
-                const submitUrl = 'https://script.google.com/macros/s/AKfycbyyT5gHwI89UOQ4GkR7muLRQGNgRYyWHd1SmRu-4EO2zAcAQkEey5X67E3algyJXA_4/exec';
+                const submitUrl = 'https://script.google.com/macros/s/AKfycbwUfed0uF6pqHvppd1lFZxnQdbfV8iZrq2EuFZzyhz-LBTVveeu95bkZy0ZR21FUjs1/exec';
                 console.log('送信URL:', submitUrl);
                 
                 const response = await fetch(submitUrl, {
