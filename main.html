@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ja"><head>
 <meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes" name="viewport"/>
 <title>積み木記録表</title>
 
 <!-- PWA対応：アイコン設定 -->
@@ -32,7 +32,7 @@
 <style>
         body {
             font-family: 'Noto Sans JP', sans-serif;
-            margin: 0;
+            margin: 0 auto;
             padding: 0;
             min-height: 100vh;
             background-color: #ffe4cc;
@@ -40,9 +40,9 @@
         
         /*スマートフォン最適化 */
         .smartphone-container {
-            width: 98%;
+            width: 100%;
             margin: 0 auto;
-            padding: 2px;
+            padding: 0;
             box-sizing: border-box;
         }
         
@@ -53,7 +53,6 @@
             padding: 16px;
             border: 1px solid #e5e7eb;
             width: 100%;
-            min-width: 350px;
         }
         
         /* タイトル */
@@ -84,7 +83,6 @@
             background: #f9fafb;
             border-radius: 8px;
             border: 1px solid #d1d5db;
-            min-width: 320px;
         }
         
         .date-input {
@@ -122,7 +120,6 @@
             background: #f0f9ff;
             border-radius: 8px;
             border: 1px solid #0ea5e9;
-            min-width: 280px;
         }
         
         .time-input {
@@ -155,7 +152,6 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            min-width: 320px;
         }
         
         .input-label {
@@ -903,6 +899,11 @@
         function updateSelectOptions(selectId, items) {
             console.log(`📝 ${selectId} を更新中... アイテム数: ${items.length}`);
             
+            // 利用者リストの場合はアイウエオ順にソート
+            if (selectId === 'user-input') {
+                items = sortUsersByKana(items);
+            }
+            
             // datalist対応のチェック（行き先・様子欄）
             if (selectId === 'destination-input') {
                 updateDatalistOptions('destination-list', items);
@@ -1090,6 +1091,9 @@
         // 利用者選択用：背景色付きオプションを作成する関数
         function updateSelectOptionsWithColors(selectId, items, supportType) {
             console.log(`🎨 ${selectId} を色付きで更新中... アイテム数: ${items.length}, 支援種別: ${supportType}`);
+            
+            // 利用者リストをアイウエオ順にソート
+            items = sortUsersByKana(items);
             
             // モバイル判定：モバイルの場合はカスタムドロップダウンを使用
             if (selectId === 'user-input' && isMobileDevice()) {
@@ -1541,6 +1545,25 @@
             
             // 現在の支援種別を保存
             currentSupportType = supportType;
+        }
+        
+        // 利用者をフリガナのアイウエオ順でソートする関数
+        function sortUsersByKana(users) {
+            // 「※」は常に最初に表示
+            const asteriskUsers = users.filter(user => user === '※');
+            const normalUsers = users.filter(user => user !== '※');
+            
+            // フリガナデータを使ってソート
+            normalUsers.sort((a, b) => {
+                const furiganaA = userFuriganaData[a] || a; // フリガナがない場合は元の名前を使用
+                const furiganaB = userFuriganaData[b] || b;
+                
+                // ひらがな・カタカナでソート
+                return furiganaA.localeCompare(furiganaB, 'ja');
+            });
+            
+            // 「※」を先頭に、その後ソート済みの利用者
+            return [...asteriskUsers, ...normalUsers];
         }
         
         // フリガナから頭文字グループを判定する関数
