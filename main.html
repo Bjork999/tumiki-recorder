@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ja"><head>
 <meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes" name="viewport"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>積み木記録表</title>
 
 <!-- PWA対応：アイコン設定 -->
@@ -42,8 +42,11 @@
         .smartphone-container {
             width: 100%;
             margin: 0 auto;
-            padding: 0;
+            padding: 8px;
             box-sizing: border-box;
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
         }
         
         .form-container {
@@ -53,6 +56,7 @@
             padding: 16px;
             border: 1px solid #e5e7eb;
             width: 100%;
+            max-width: 360px;
         }
         
         /* タイトル */
