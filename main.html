@@ -472,22 +472,65 @@
             margin-top: 6px;
         }
         
-        /* 50音選択UI */
-        .kana-selector {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 4px;
-            margin-bottom: 8px;
-            padding: 8px;
-            background: #f9fafb;
-            border-radius: 6px;
-            border: 1px solid #e5e7eb;
+        /* 段階的ドロップダウンUI */
+        .user-dropdown-container {
+            flex: 1;
+            position: relative;
         }
         
-        .kana-button {
-            min-width: 28px;
-            height: 28px;
-            font-size: 12px;
+        .user-dropdown {
+            position: relative;
+            width: 100%;
+        }
+        
+        .user-dropdown-button {
+            width: 100%;
+            height: 44px;
+            padding: 0 12px;
+            font-size: 14px;
+            border: none;
+            border-bottom: 3px solid #9ca3af;
+            background: transparent;
+            text-align: left;
+            cursor: pointer;
+            transition: border-color 0.2s;
+        }
+        
+        .user-dropdown-button:focus {
+            outline: none;
+            border-bottom-color: #3b82f6;
+        }
+        
+        .user-dropdown-menu {
+            position: absolute;
+            top: 44px;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 100;
+            max-height: 250px;
+            overflow-y: auto;
+        }
+        
+        .user-dropdown-menu.hidden {
+            display: none;
+        }
+        
+        /* 50音選択画面のスタイル */
+        .kana-selection {
+            padding: 8px;
+        }
+        
+        .dropdown-option {
+            display: inline-block;
+            min-width: 32px;
+            height: 32px;
+            margin: 2px;
+            padding: 0 8px;
+            font-size: 14px;
             font-weight: 600;
             border: 1px solid #d1d5db;
             background: white;
@@ -495,35 +538,85 @@
             border-radius: 4px;
             cursor: pointer;
             transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
         }
         
-        .kana-button:hover {
+        .dropdown-option:hover {
             background: #f3f4f6;
             border-color: #9ca3af;
         }
         
-        .kana-button.active {
-            background: #3b82f6;
-            color: white;
-            border-color: #3b82f6;
-        }
-        
-        .kana-button.all {
-            min-width: 35px;
+        .dropdown-option:first-child {
             background: #10b981;
             color: white;
             border-color: #10b981;
         }
         
-        .kana-button.all:hover {
+        .dropdown-option:first-child:hover {
             background: #059669;
         }
         
-        .kana-button.all.active {
-            background: #047857;
+        /* 利用者一覧画面のスタイル */
+        .user-list-view {
+            padding: 8px;
+        }
+        
+        .back-button {
+            width: 100%;
+            padding: 8px 12px;
+            margin-bottom: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            border: 1px solid #9ca3af;
+            background: #f9fafb;
+            color: #374151;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .back-button:hover {
+            background: #f3f4f6;
+            border-color: #6b7280;
+        }
+        
+        .user-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 6px;
+        }
+        
+        .user-option {
+            padding: 8px 12px;
+            font-size: 14px;
+            font-weight: 500;
+            border: 1px solid #d1d5db;
+            background: white;
+            color: #374151;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+        
+        .user-option:hover {
+            background: #f3f4f6;
+            border-color: #9ca3af;
+        }
+        
+        /* 残り時間による色分け */
+        .user-option.time-red {
+            background: #ffcccc;
+            border-color: #ff9999;
+        }
+        
+        .user-option.time-yellow {
+            background: #ffffcc;
+            border-color: #ffff99;
+        }
+        
+        .user-option.time-cyan {
+            background: #ccffff;
+            border-color: #99ffff;
         }
 
         /* 送信ボタン */
@@ -851,49 +944,40 @@
 
                 <!-- 利用者 -->
                 <div class="input-row">
-                    <label class="input-label" for="user-input">利用者</label>
-                    <div style="flex: 1;">
-                        <!-- 50音選択UI -->
-                        <div class="kana-selector" id="kana-selector">
-                            <button type="button" class="kana-button all active" data-kana="">全て</button>
-                            <button type="button" class="kana-button" data-kana="あ">あ</button>
-                            <button type="button" class="kana-button" data-kana="か">か</button>
-                            <button type="button" class="kana-button" data-kana="さ">さ</button>
-                            <button type="button" class="kana-button" data-kana="た">た</button>
-                            <button type="button" class="kana-button" data-kana="な">な</button>
-                            <button type="button" class="kana-button" data-kana="は">は</button>
-                            <button type="button" class="kana-button" data-kana="ま">ま</button>
-                            <button type="button" class="kana-button" data-kana="や">や</button>
-                            <button type="button" class="kana-button" data-kana="ら">ら</button>
-                            <button type="button" class="kana-button" data-kana="わ">わ</button>
+                    <label class="input-label" for="user-dropdown">利用者</label>
+                    <div class="user-dropdown-container">
+                        <!-- 段階的ドロップダウンUI -->
+                        <div class="user-dropdown" id="user-dropdown">
+                            <!-- 状態1: 初期表示 -->
+                            <button type="button" class="user-dropdown-button" id="user-dropdown-button">
+                                選択してください ▼
+                            </button>
+                            
+                            <!-- 状態2: 50音選択画面 -->
+                            <div class="user-dropdown-menu kana-selection hidden" id="kana-selection">
+                                <button type="button" class="dropdown-option" data-kana="">全て</button>
+                                <button type="button" class="dropdown-option" data-kana="あ">あ</button>
+                                <button type="button" class="dropdown-option" data-kana="か">か</button>
+                                <button type="button" class="dropdown-option" data-kana="さ">さ</button>
+                                <button type="button" class="dropdown-option" data-kana="た">た</button>
+                                <button type="button" class="dropdown-option" data-kana="な">な</button>
+                                <button type="button" class="dropdown-option" data-kana="は">は</button>
+                                <button type="button" class="dropdown-option" data-kana="ま">ま</button>
+                                <button type="button" class="dropdown-option" data-kana="や">や</button>
+                                <button type="button" class="dropdown-option" data-kana="ら">ら</button>
+                                <button type="button" class="dropdown-option" data-kana="わ">わ</button>
+                            </div>
+                            
+                            <!-- 状態3: 利用者一覧画面 -->
+                            <div class="user-dropdown-menu user-list-view hidden" id="user-list-view">
+                                <button type="button" class="back-button" id="back-to-kana">← 戻る</button>
+                                <div class="user-options" id="user-options">
+                                    <!-- 動的に生成される利用者ボタン -->
+                                </div>
+                            </div>
                         </div>
-                        <select id="user-input" name="user" class="input-field" required>
-                            <option value="">選択してください</option>
-                            <!-- 動的に生成されます -->
-                        </select>
-                    </div>
-                    <!-- モバイル用カスタムドロップダウン -->
-                    <div id="custom-user-dropdown" class="custom-dropdown">
-                        <!-- モバイル用50音選択UI -->
-                        <div class="kana-selector" id="mobile-kana-selector">
-                            <button type="button" class="kana-button all active" data-kana="">全て</button>
-                            <button type="button" class="kana-button" data-kana="あ">あ</button>
-                            <button type="button" class="kana-button" data-kana="か">か</button>
-                            <button type="button" class="kana-button" data-kana="さ">さ</button>
-                            <button type="button" class="kana-button" data-kana="た">た</button>
-                            <button type="button" class="kana-button" data-kana="な">な</button>
-                            <button type="button" class="kana-button" data-kana="は">は</button>
-                            <button type="button" class="kana-button" data-kana="ま">ま</button>
-                            <button type="button" class="kana-button" data-kana="や">や</button>
-                            <button type="button" class="kana-button" data-kana="ら">ら</button>
-                            <button type="button" class="kana-button" data-kana="わ">わ</button>
-                        </div>
-                        <button type="button" class="custom-dropdown-button" id="custom-user-button">
-                            選択してください
-                        </button>
-                        <div class="custom-dropdown-list" id="custom-user-list">
-                            <!-- 動的に生成されます -->
-                        </div>
+                        <!-- フォーム送信用の隠し入力フィールド -->
+                        <input type="hidden" id="user-input" name="user" required>
                     </div>
                 </div>
 
@@ -1260,15 +1344,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             console.log("🚀 高速初期化開始");
             
-            // 0. モバイル判定とUI切り替え
-            if (isMobileDevice()) {
-                console.log("📱 モバイル端末を検出");
-                document.body.classList.add('mobile-device');
-                document.getElementById('custom-user-dropdown').classList.add('mobile-active');
-                initializeCustomDropdown();
-            } else {
-                console.log("💻 デスクトップ端末を検出");
-            }
+            console.log("💻 デスクトップ端末を検出");
             
             // 1. 即座に基本UI要素を初期化（日付、時間など）
             setCurrentDate();
@@ -1291,8 +1367,8 @@
                 updateUserList();
             });
 
-            // 5. 50音選択ボタンのイベント設定
-            setupKanaSelector();
+            // 5. 利用者ドロップダウンのイベント設定
+            setupUserDropdown();
             
             // 6. 利用者選択欄の背景色更新イベント（一度だけ設定）
             document.getElementById('user-input').addEventListener('change', function(e) {
@@ -1341,6 +1417,7 @@
                     // データ取得完了後に支援員1の自動選択を再実行
                     setTimeout(() => {
                         setLoggedInUserName();
+                        // 段階的ドロップダウンでは初期表示時に特別な処理は不要
                     }, 100);
                 } else {
                     console.warn("⚠️ データ取得エラー:", data.error);
@@ -1530,55 +1607,120 @@
             updateUserList();
         }
 
-        // 50音選択セットアップ
-        function setupKanaSelector() {
-            const kanaButtons = document.querySelectorAll('.kana-button');
-            kanaButtons.forEach(button => {
-                button.addEventListener('click', function() {
+        // 段階的ドロップダウンセットアップ
+        function setupUserDropdown() {
+            const dropdownButton = document.getElementById('user-dropdown-button');
+            const kanaSelection = document.getElementById('kana-selection');
+            const userListView = document.getElementById('user-list-view');
+            const backButton = document.getElementById('back-to-kana');
+            
+            // 状態1: 初期表示 → 状態2: 50音選択画面
+            dropdownButton.addEventListener('click', function() {
+                hideAllMenus();
+                kanaSelection.classList.remove('hidden');
+                console.log('50音選択画面を表示');
+            });
+            
+            // 状態2: 50音選択 → 状態3: 利用者一覧画面
+            document.querySelectorAll('.dropdown-option').forEach(option => {
+                option.addEventListener('click', function() {
                     const selectedKana = this.getAttribute('data-kana');
+                    console.log(`50音「${selectedKana || '全て'}」が選択されました`);
                     
-                    // デスクトップ版とモバイル版の両方のボタンを同期
-                    kanaButtons.forEach(btn => {
-                        if (btn.getAttribute('data-kana') === selectedKana) {
-                            btn.classList.add('active');
-                        } else {
-                            btn.classList.remove('active');
-                        }
-                    });
-                    
-                    // 利用者リストを更新
-                    updateUserList();
+                    // 利用者一覧を更新して表示
+                    updateUserOptionsAndShow(selectedKana);
                 });
             });
+            
+            // 状態3: 戻るボタン → 状態2: 50音選択画面
+            backButton.addEventListener('click', function() {
+                hideAllMenus();
+                kanaSelection.classList.remove('hidden');
+                console.log('50音選択画面に戻りました');
+            });
+            
+            // 外部クリックでメニューを閉じる
+            document.addEventListener('click', function(event) {
+                const dropdown = document.getElementById('user-dropdown');
+                if (!dropdown.contains(event.target)) {
+                    hideAllMenus();
+                }
+            });
+        }
+        
+        // すべてのドロップダウンメニューを非表示にする
+        function hideAllMenus() {
+            document.getElementById('kana-selection').classList.add('hidden');
+            document.getElementById('user-list-view').classList.add('hidden');
+        }
+        
+        // 利用者オプションを更新して利用者一覧画面を表示
+        function updateUserOptionsAndShow(selectedKana) {
+            const supportType = document.getElementById('support-type-input').value;
+            const userOptionsContainer = document.getElementById('user-options');
+            
+            // フィルタリングされた利用者リストを取得
+            const filteredUsers = getFilteredUsers(selectedKana, supportType);
+            
+            // 利用者オプションを生成
+            userOptionsContainer.innerHTML = '';
+            
+            filteredUsers.forEach(userName => {
+                const button = document.createElement('button');
+                button.type = 'button';
+                button.className = 'user-option';
+                button.textContent = userName;
+                button.dataset.userName = userName;
+                
+                // 残り時間による色分け
+                if (userName !== '※' && supportType && userRemainingTimesMap[userName] && userRemainingTimesMap[userName][supportType]) {
+                    const remainingTime = userRemainingTimesMap[userName][supportType];
+                    const minutes = timeToMinutes(remainingTime);
+                    
+                    if (minutes <= 60) {
+                        button.classList.add('time-red');
+                    } else if (minutes <= 120) {
+                        button.classList.add('time-yellow');
+                    } else if (minutes <= 300) {
+                        button.classList.add('time-cyan');
+                    }
+                }
+                
+                // クリックイベント
+                button.addEventListener('click', function() {
+                    // 利用者を選択して状態1に戻る
+                    selectUser(userName, supportType);
+                });
+                
+                userOptionsContainer.appendChild(button);
+            });
+            
+            // 利用者一覧画面を表示
+            hideAllMenus();
+            document.getElementById('user-list-view').classList.remove('hidden');
+            
+            console.log(`${filteredUsers.length}名の利用者を表示しました`);
+        }
+        
+        // 利用者を選択して初期状態に戻る
+        function selectUser(userName, supportType) {
+            // 隠し入力フィールドに値を設定
+            document.getElementById('user-input').value = userName;
+            
+            // ドロップダウンボタンのテキストを更新
+            document.getElementById('user-dropdown-button').textContent = `${userName} ▼`;
+            
+            // すべてのメニューを非表示
+            hideAllMenus();
+            
+            // 背景色を更新
+            updateUserInputBackground(userName, supportType);
+            
+            console.log(`利用者「${userName}」が選択されました`);
         }
 
-        // 支援種別と50音に基づいて利用者リストを更新する関数
-        function updateUserList() {
-            const supportType = document.getElementById('support-type-input').value;
-            const selectedKana = document.querySelector('.kana-button.active').getAttribute('data-kana');
-            
-            console.log(`支援種別「${supportType}」、50音「${selectedKana || '全て'}」に基づいて利用者リストを更新`);
-            console.log('現在のallUsers:', allUsers);
-            console.log('現在のuserRemainingTimesMap:', userRemainingTimesMap);
-            console.log('現在のuserFuriganaData:', userFuriganaData);
-            
-            // 背景色を決定する関数
-            function getBackgroundColor(minutes) {
-                if (minutes <= 60) return '#ffcccc'; // 赤（1:00以下）
-                if (minutes <= 120) return '#ffffcc'; // 黄（2:00以下）
-                if (minutes <= 300) return '#ccffff'; // 薄い水色（5:00以下）
-                return ''; // それ以上は背景色なし
-            }
-            
-            const userSelect = document.getElementById('user-input');
-            
-            // 支援種別も50音も選択されていない場合は全利用者を表示
-            if (!supportType && !selectedKana) {
-                updateSelectOptions('user-input', allUsers);
-                return;
-            }
-            
-            // フィルタリングされた利用者リストを作成
+        // フィルタリングされた利用者を取得する関数
+        function getFilteredUsers(selectedKana, supportType) {
             const filteredUsers = [];
             
             allUsers.forEach(userName => {
@@ -1602,7 +1744,6 @@
                     const kanaGroup = getInitialGroup(firstChar);
                     
                     if (kanaGroup !== selectedKana) {
-                        console.log(`利用者「${userName}」: 50音「${selectedKana}」に該当しないため除外 (実際の頭文字: ${firstChar})`);
                         return;
                     }
                 }
@@ -1610,42 +1751,35 @@
                 // 支援種別によるフィルタリング
                 if (supportType) {
                     const userTimes = userRemainingTimesMap[userName];
-                    console.log(`利用者「${userName}」の残り時間データ:`, userTimes);
                     
                     if (!userTimes) {
-                        console.log(`利用者「${userName}」: 残り時間データなし`);
                         return;
                     }
                     
                     const remainingTime = userTimes[supportType];
-                    console.log(`利用者「${userName}」の${supportType}残り時間: "${remainingTime}" (型: ${typeof remainingTime})`);
                     
                     if (!remainingTime || remainingTime === '') {
-                        console.log(`利用者「${userName}」: ${supportType}の残り時間なし`);
                         return;
                     }
                     
-                    // 残り時間がある利用者のみ追加
                     const minutes = timeToMinutes(remainingTime);
-                    console.log(`利用者「${userName}」: ${remainingTime} = ${minutes}分`);
                     
                     if (minutes <= 0) {
-                        console.log(`利用者「${userName}」: 残り時間0分のため除外`);
                         return;
                     }
                 }
                 
                 filteredUsers.push(userName);
-                console.log(`利用者「${userName}」をリストに追加`);
             });
             
-            console.log(`フィルタリング後の利用者: ${filteredUsers.length}名 (${filteredUsers.join(', ')})`);
-            
-            // フィルタリングされた利用者でselectを更新
-            updateSelectOptionsWithColors('user-input', filteredUsers, supportType);
-            
-            // 現在の支援種別を保存
-            currentSupportType = supportType;
+            return sortUsersByKana(filteredUsers);
+        }
+
+        // 支援種別変更時の処理（段階的ドロップダウンでは特別な処理は不要）
+        function updateUserList() {
+            // 段階的ドロップダウンでは、利用者がすでに選択されている場合は何もしない
+            // 新たに50音を選択した時点で最新のフィルタリングが適用される
+            console.log('支援種別が変更されました - 利用者を再選択する必要があります');
         }
         
         // 利用者をフリガナのアイウエオ順でソートする関数
@@ -2069,27 +2203,10 @@
                         document.getElementById('destination-input').value = '';
                         document.getElementById('appearance-input').value = '';
                         
-                        // 50音選択を「全て」にリセット
-                        document.querySelectorAll('.kana-button').forEach(btn => {
-                            if (btn.getAttribute('data-kana') === '') {
-                                btn.classList.add('active');
-                            } else {
-                                btn.classList.remove('active');
-                            }
-                        });
+                        // 利用者ドロップダウンを初期状態にリセット
+                        document.getElementById('user-dropdown-button').textContent = '選択してください ▼';
+                        hideAllMenus();
                         
-                        // カスタムドロップダウンもリセット（モバイル用）
-                        const customUserButton = document.getElementById('custom-user-button');
-                        const customUserList = document.getElementById('custom-user-list');
-                        if (customUserButton) {
-                            customUserButton.textContent = '選択してください';
-                        }
-                        if (customUserList) {
-                            // 選択状態をクリア
-                            customUserList.querySelectorAll('.custom-dropdown-item').forEach(item => {
-                                item.classList.remove('selected');
-                            });
-                        }
                         
                         // 少し遅れて支援員名を再設定（selectのoptionが準備されてから）
                         setTimeout(() => {
