@@ -472,6 +472,60 @@
             margin-top: 6px;
         }
         
+        /* 50音選択UI */
+        .kana-selector {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            margin-bottom: 8px;
+            padding: 8px;
+            background: #f9fafb;
+            border-radius: 6px;
+            border: 1px solid #e5e7eb;
+        }
+        
+        .kana-button {
+            min-width: 28px;
+            height: 28px;
+            font-size: 12px;
+            font-weight: 600;
+            border: 1px solid #d1d5db;
+            background: white;
+            color: #374151;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .kana-button:hover {
+            background: #f3f4f6;
+            border-color: #9ca3af;
+        }
+        
+        .kana-button.active {
+            background: #3b82f6;
+            color: white;
+            border-color: #3b82f6;
+        }
+        
+        .kana-button.all {
+            min-width: 35px;
+            background: #10b981;
+            color: white;
+            border-color: #10b981;
+        }
+        
+        .kana-button.all:hover {
+            background: #059669;
+        }
+        
+        .kana-button.all.active {
+            background: #047857;
+        }
+
         /* 送信ボタン */
         .submit-button {
             width: 100%;
@@ -794,33 +848,46 @@
                     </select>
                 </div>
 
-                <!-- 頭文字 -->
-                <div class="input-row">
-                    <label class="input-label" for="initial-input">頭文字</label>
-                    <select id="initial-input" name="initial" class="input-field">
-                        <option value="">全て</option>
-                        <option value="あ">あ</option>
-                        <option value="か">か</option>
-                        <option value="さ">さ</option>
-                        <option value="た">た</option>
-                        <option value="な">な</option>
-                        <option value="は">は</option>
-                        <option value="ま">ま</option>
-                        <option value="や">や</option>
-                        <option value="ら">ら</option>
-                        <option value="わ">わ</option>
-                    </select>
-                </div>
 
                 <!-- 利用者 -->
                 <div class="input-row">
                     <label class="input-label" for="user-input">利用者</label>
-                    <select id="user-input" name="user" class="input-field" required>
-                        <option value="">選択してください</option>
-                        <!-- 動的に生成されます -->
-                    </select>
+                    <div style="flex: 1;">
+                        <!-- 50音選択UI -->
+                        <div class="kana-selector" id="kana-selector">
+                            <button type="button" class="kana-button all active" data-kana="">全て</button>
+                            <button type="button" class="kana-button" data-kana="あ">あ</button>
+                            <button type="button" class="kana-button" data-kana="か">か</button>
+                            <button type="button" class="kana-button" data-kana="さ">さ</button>
+                            <button type="button" class="kana-button" data-kana="た">た</button>
+                            <button type="button" class="kana-button" data-kana="な">な</button>
+                            <button type="button" class="kana-button" data-kana="は">は</button>
+                            <button type="button" class="kana-button" data-kana="ま">ま</button>
+                            <button type="button" class="kana-button" data-kana="や">や</button>
+                            <button type="button" class="kana-button" data-kana="ら">ら</button>
+                            <button type="button" class="kana-button" data-kana="わ">わ</button>
+                        </div>
+                        <select id="user-input" name="user" class="input-field" required>
+                            <option value="">選択してください</option>
+                            <!-- 動的に生成されます -->
+                        </select>
+                    </div>
                     <!-- モバイル用カスタムドロップダウン -->
                     <div id="custom-user-dropdown" class="custom-dropdown">
+                        <!-- モバイル用50音選択UI -->
+                        <div class="kana-selector" id="mobile-kana-selector">
+                            <button type="button" class="kana-button all active" data-kana="">全て</button>
+                            <button type="button" class="kana-button" data-kana="あ">あ</button>
+                            <button type="button" class="kana-button" data-kana="か">か</button>
+                            <button type="button" class="kana-button" data-kana="さ">さ</button>
+                            <button type="button" class="kana-button" data-kana="た">た</button>
+                            <button type="button" class="kana-button" data-kana="な">な</button>
+                            <button type="button" class="kana-button" data-kana="は">は</button>
+                            <button type="button" class="kana-button" data-kana="ま">ま</button>
+                            <button type="button" class="kana-button" data-kana="や">や</button>
+                            <button type="button" class="kana-button" data-kana="ら">ら</button>
+                            <button type="button" class="kana-button" data-kana="わ">わ</button>
+                        </div>
                         <button type="button" class="custom-dropdown-button" id="custom-user-button">
                             選択してください
                         </button>
@@ -1224,10 +1291,8 @@
                 updateUserList();
             });
 
-            // 5. 頭文字変更イベントの設定
-            document.getElementById('initial-input').addEventListener('change', function(e) {
-                updateUserList();
-            });
+            // 5. 50音選択ボタンのイベント設定
+            setupKanaSelector();
             
             // 6. 利用者選択欄の背景色更新イベント（一度だけ設定）
             document.getElementById('user-input').addEventListener('change', function(e) {
@@ -1465,12 +1530,34 @@
             updateUserList();
         }
 
-        // 支援種別と頭文字に基づいて利用者リストを更新する関数
+        // 50音選択セットアップ
+        function setupKanaSelector() {
+            const kanaButtons = document.querySelectorAll('.kana-button');
+            kanaButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const selectedKana = this.getAttribute('data-kana');
+                    
+                    // デスクトップ版とモバイル版の両方のボタンを同期
+                    kanaButtons.forEach(btn => {
+                        if (btn.getAttribute('data-kana') === selectedKana) {
+                            btn.classList.add('active');
+                        } else {
+                            btn.classList.remove('active');
+                        }
+                    });
+                    
+                    // 利用者リストを更新
+                    updateUserList();
+                });
+            });
+        }
+
+        // 支援種別と50音に基づいて利用者リストを更新する関数
         function updateUserList() {
             const supportType = document.getElementById('support-type-input').value;
-            const selectedInitial = document.getElementById('initial-input').value;
+            const selectedKana = document.querySelector('.kana-button.active').getAttribute('data-kana');
             
-            console.log(`支援種別「${supportType}」、頭文字「${selectedInitial}」に基づいて利用者リストを更新`);
+            console.log(`支援種別「${supportType}」、50音「${selectedKana || '全て'}」に基づいて利用者リストを更新`);
             console.log('現在のallUsers:', allUsers);
             console.log('現在のuserRemainingTimesMap:', userRemainingTimesMap);
             console.log('現在のuserFuriganaData:', userFuriganaData);
@@ -1485,8 +1572,8 @@
             
             const userSelect = document.getElementById('user-input');
             
-            // 支援種別も頭文字も選択されていない場合は全利用者を表示
-            if (!supportType && !selectedInitial) {
+            // 支援種別も50音も選択されていない場合は全利用者を表示
+            if (!supportType && !selectedKana) {
                 updateSelectOptions('user-input', allUsers);
                 return;
             }
@@ -1503,8 +1590,8 @@
                     return;
                 }
                 
-                // 頭文字によるフィルタリング
-                if (selectedInitial) {
+                // 50音によるフィルタリング
+                if (selectedKana) {
                     const furigana = userFuriganaData[userName];
                     if (!furigana) {
                         console.log(`利用者「${userName}」: フリガナデータがないため除外`);
@@ -1512,10 +1599,10 @@
                     }
                     
                     const firstChar = furigana.charAt(0);
-                    const initialGroup = getInitialGroup(firstChar);
+                    const kanaGroup = getInitialGroup(firstChar);
                     
-                    if (initialGroup !== selectedInitial) {
-                        console.log(`利用者「${userName}」: 頭文字「${selectedInitial}」に該当しないため除外 (実際の頭文字: ${firstChar})`);
+                    if (kanaGroup !== selectedKana) {
+                        console.log(`利用者「${userName}」: 50音「${selectedKana}」に該当しないため除外 (実際の頭文字: ${firstChar})`);
                         return;
                     }
                 }
@@ -1981,6 +2068,15 @@
                         document.getElementById('user-input').value = '';
                         document.getElementById('destination-input').value = '';
                         document.getElementById('appearance-input').value = '';
+                        
+                        // 50音選択を「全て」にリセット
+                        document.querySelectorAll('.kana-button').forEach(btn => {
+                            if (btn.getAttribute('data-kana') === '') {
+                                btn.classList.add('active');
+                            } else {
+                                btn.classList.remove('active');
+                            }
+                        });
                         
                         // カスタムドロップダウンもリセット（モバイル用）
                         const customUserButton = document.getElementById('custom-user-button');
