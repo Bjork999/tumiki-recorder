@@ -516,11 +516,11 @@ function getDataLists(e) {
     
     console.log('利用者-フリガナマッピング:', userFuriganaMapping);
 
-    // 支援員データ（C19:BZ19）を取得
-    const supportersRange = dataSheet.getRange('C19:BZ19');
+    // 支援員データ（D19:BJ19）を取得
+    const supportersRange = dataSheet.getRange('D19:BJ19');
     const supportersRowRaw = supportersRange.getValues()[0];
     
-    console.log('支援員データ範囲: C19:BZ19');
+    console.log('支援員データ範囲: D19:BJ19');
     
     // 支援員名とその列位置をマッピング（D=1として）
     const supporterColumnMap = {};
@@ -530,9 +530,9 @@ function getDataLists(e) {
       if (cell && cell.toString().trim() !== '' && cell.toString().trim() !== '-') {
         const name = cell.toString().trim();
         allSupporters.push(name);
-        const actualColumn = index + 3; // D=4, E=5, F=6...
+        const actualColumn = index + 1; // D19の場合：D=1, E=2, F=3...
         supporterColumnMap[name] = actualColumn;
-        console.log(`支援員: ${name} → 列${actualColumn} (${String.fromCharCode(64 + actualColumn)}列)`);
+        console.log(`支援員: ${name} → 列${actualColumn} (${String.fromCharCode(67 + actualColumn)}列)`);
       }
     });
 
@@ -566,17 +566,21 @@ function getDataLists(e) {
 
     const supportTypes = ['移動支援', '行動援護', '通院等介助'];
 
-    // ○×データを取得（D21:O23）
-    const supportTypeRows = dataSheet.getRange('D21:BZ23').getValues();
+    // ○×データを取得（個別行で正確に取得）
+    const behaviorSupport = dataSheet.getRange('D20:BJ20').getValues()[0]; // 行動援護
+    const mobilitySupport = dataSheet.getRange('D22:BJ22').getValues()[0]; // 移動支援
+    const medicalSupport = dataSheet.getRange('D23:BJ23').getValues()[0];  // 通院等介助
+    
+    const supportTypeRows = [behaviorSupport, mobilitySupport, medicalSupport];
     const supportTypeNames = ['行動援護', '移動支援', '通院等介助'];
     const supporterSupportTypes = {};
 
-    console.log('○×データ範囲: c21:BZ23');
+    console.log('○×データ範囲: D20:BJ20, D22:BJ22, D23:BJ23');
 
     // 各支援員について、その列位置の○×をチェック（全支援員を対象に処理）
     allSupporters.forEach(name => {
       supporterSupportTypes[name] = [];
-      const columnIndex = supporterColumnMap[name] - 3; // c列を0とするため-3
+      const columnIndex = supporterColumnMap[name] - 1; // D列を0とするため-1
       
       console.log(`\n${name}の支援種別チェック（列インデックス${columnIndex}）:`);
       
