@@ -539,24 +539,10 @@ function getDataLists(e) {
       }
     });
 
-    // 権限判定：管理者ユーザーかどうかをチェック
-    const adminUsers = ['亀野 浩', '福澤 翔太'];
-    const isAdmin = requestUserName && adminUsers.includes(requestUserName);
-    
-    let supporters;
-    if (isAdmin) {
-      // 管理者の場合：全支援員リストを返す
-      supporters = [...allSupporters];
-      console.log(`管理者ユーザー「${requestUserName}」- 全支援員を表示: ${supporters.length}名`);
-    } else if (requestUserName && allSupporters.includes(requestUserName)) {
-      // 一般ユーザーの場合：本人のみを返す
-      supporters = [requestUserName];
-      console.log(`一般ユーザー「${requestUserName}」- 本人のみを表示`);
-    } else {
-      // ユーザー名が不明または支援員リストにない場合：全支援員を返す（フォールバック）
-      supporters = [...allSupporters];
-      console.log(`ユーザー名不明またはリストにないユーザー「${requestUserName}」- 全支援員を表示（フォールバック）`);
-    }
+    // 全支援員リストを返す（フロントエンド側で支援員1/2の制御を行う）
+    const supporters = [...allSupporters];
+    console.log(`全支援員リストを返す: ${supporters.length}名`);
+    console.log(`リクエストユーザー: ${requestUserName}`);
 
     // 行き先・様子データ
     const destinationsRow = dataSheet.getRange('C25:BZ25').getValues()[0];

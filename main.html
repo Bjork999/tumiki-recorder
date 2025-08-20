@@ -1401,8 +1401,17 @@
                 if (data.success) {
                     // 最新データでリストを更新
                     updateSelectOptions('user-input', data.users || []);
-                    updateSelectOptions('supporter1-input', data.supporters || []);
+                    
+                    // 支援員1: ログインユーザーのみのリストを作成
+                    const supporter1List = [];
+                    if (userName && (data.supporters || []).includes(userName)) {
+                        supporter1List.push(userName);
+                    }
+                    updateSelectOptions('supporter1-input', supporter1List);
+                    
+                    // 支援員2: 全支援員のリスト
                     updateSelectOptions('supporter2-input', data.supporters || []);
+                    
                     updateSelectOptions('destination-input', data.destinations || []);
                     updateSelectOptions('support-type-input', data.supportTypes || []);
                     updateSelectOptions('appearance-input', data.appearances || []);
