@@ -1392,7 +1392,7 @@
                 const userName = sessionStorage.getItem('userName') || sessionStorage.getItem('userId') || '';
                 console.log("📝 送信するユーザー名:", userName);
                 
-                const dataUrl = `https://script.google.com/macros/s/AKfycbzSCxTVzRzN23am_IR5Ae3oDgVn72Muxm2ftBkxpt17J_OLuTX--qKsdVYXDFdclKgJ/exec?action=getData&userName=${encodeURIComponent(userName)}`;
+                const dataUrl = `https://script.google.com/macros/s/AKfycbxMT0whiW2W5E_U6Rc54aP2VBT5lnovKCpmDwlwxtDhXi-BmtS-AMFZctYaIXmrDW40/exec?action=getData&userName=${encodeURIComponent(userName)}`;
                 
                 const response = await fetch(dataUrl);
                 const responseText = await response.text();
@@ -2178,7 +2178,7 @@
                     console.log(`FormData追加: ${key} = ${formData[key]}`);
                 });
                 
-                const submitUrl = 'https://script.google.com/macros/s/AKfycbzSCxTVzRzN23am_IR5Ae3oDgVn72Muxm2ftBkxpt17J_OLuTX--qKsdVYXDFdclKgJ/exec';
+                const submitUrl = 'https://script.google.com/macros/s/AKfycbxMT0whiW2W5E_U6Rc54aP2VBT5lnovKCpmDwlwxtDhXi-BmtS-AMFZctYaIXmrDW40/exec';
                 console.log('送信URL:', submitUrl);
                 
                 const response = await fetch(submitUrl, {
