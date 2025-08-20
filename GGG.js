@@ -526,13 +526,16 @@ function getDataLists(e) {
     const supporterColumnMap = {};
     const allSupporters = [];
     
+    console.log('🔍 supportersRowRaw配列の中身:', supportersRowRaw);
+    
     supportersRowRaw.forEach((cell, index) => {
+      console.log(`🔍 インデックス${index}: "${cell}"`);
       if (cell && cell.toString().trim() !== '' && cell.toString().trim() !== '-') {
         const name = cell.toString().trim();
         allSupporters.push(name);
         const actualColumn = index + 1; // D19の場合：D=1, E=2, F=3...
         supporterColumnMap[name] = actualColumn;
-        console.log(`支援員: ${name} → 列${actualColumn} (${String.fromCharCode(67 + actualColumn)}列)`);
+        console.log(`🔍 支援員: ${name} → 列${actualColumn} (配列インデックス${index})`);
       }
     });
 
@@ -566,34 +569,41 @@ function getDataLists(e) {
 
     const supportTypes = ['移動支援', '行動援護', '通院等介助'];
 
-    // ○×データを取得（個別行で正確に取得）
-    const behaviorSupport = dataSheet.getRange('D20:BJ20').getValues()[0]; // 行動援護
-    const mobilitySupport = dataSheet.getRange('D22:BJ22').getValues()[0]; // 移動支援
-    const medicalSupport = dataSheet.getRange('D23:BJ23').getValues()[0];  // 通院等介助
-    
-    const supportTypeRows = [behaviorSupport, mobilitySupport, medicalSupport];
+    // ○×データを取得（3行まとめて取得）
+    const supportTypeRows = dataSheet.getRange('D21:BJ23').getValues();
     const supportTypeNames = ['行動援護', '移動支援', '通院等介助'];
     const supporterSupportTypes = {};
 
-    console.log('○×データ範囲: D20:BJ20, D22:BJ22, D23:BJ23');
+    console.log('🔍 ○×データ範囲: D21:BJ23');
+    console.log('🔍 supportTypeRows配列:', supportTypeRows);
 
     // 各支援員について、その列位置の○×をチェック（全支援員を対象に処理）
     allSupporters.forEach(name => {
       supporterSupportTypes[name] = [];
       const columnIndex = supporterColumnMap[name] - 1; // D列を0とするため-1
       
-      console.log(`\n${name}の支援種別チェック（列インデックス${columnIndex}）:`);
+      console.log(`\n🔍 ${name}の支援種別チェック（列インデックス${columnIndex}）:`);
+      console.log(`🔍 ${name}のactualColumn: ${supporterColumnMap[name]}`);
       
       supportTypeRows.forEach((row, typeIdx) => {
         const cellValue = row[columnIndex];
-        console.log(`  ${supportTypeNames[typeIdx]}: "${cellValue}"`);
+        console.log(`🔍 ${supportTypeNames[typeIdx]} (行${typeIdx}): "${cellValue}" (型: ${typeof cellValue})`);
+        
+        if (name === '林 恵美子') {
+          console.log(`🔍 林 恵美子の${supportTypeNames[typeIdx]}詳細:`, {
+            row: row,
+            columnIndex: columnIndex,
+            cellValue: cellValue,
+            isCircle: cellValue === '○'
+          });
+        }
         
         if (cellValue === '○') {
           supporterSupportTypes[name].push(supportTypeNames[typeIdx]);
         }
       });
       
-      console.log(`${name}の最終支援種別:`, supporterSupportTypes[name]);
+      console.log(`🔍 ${name}の最終支援種別:`, supporterSupportTypes[name]);
     });
 
     // 集計表シートから利用者の残り時間を取得
