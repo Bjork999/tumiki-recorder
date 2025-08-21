@@ -1402,9 +1402,15 @@
                     // 最新データでリストを更新
                     updateSelectOptions('user-input', data.users || []);
                     
-                    // 支援員1: ログインユーザーのみのリストを作成
+                    // 支援員1: 特権ユーザーには全員表示、それ以外はログインユーザーのみ
+                    const privilegedUsers = ['亀野 浩', '福澤 翔太'];
                     const supporter1List = [];
-                    if (userName && (data.supporters || []).includes(userName)) {
+                    
+                    if (userName && privilegedUsers.includes(userName)) {
+                        // 特権ユーザーの場合、全支援員リストを表示
+                        supporter1List.push(...(data.supporters || []));
+                    } else if (userName && (data.supporters || []).includes(userName)) {
+                        // 一般ユーザーの場合、ログインユーザーのみ表示
                         supporter1List.push(userName);
                     }
                     updateSelectOptions('supporter1-input', supporter1List);
