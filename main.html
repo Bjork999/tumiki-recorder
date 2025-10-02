@@ -1009,6 +1009,22 @@
                     </datalist>
                 </div>
 
+                <!-- 次回通院日（通院等介助選択時のみ表示） -->
+                <div id="next-visit-section" style="display: none;">
+                    <div class="input-row">
+                        <label class="input-label" for="next-visit-date-input">次回通院日</label>
+                        <input id="next-visit-date-input" name="nextVisitDate" type="date" class="input-field">
+                    </div>
+                    <div class="input-row">
+                        <label class="input-label" for="next-visit-time-input">次回通院時刻</label>
+                        <input id="next-visit-time-input" name="nextVisitTime" type="time" class="input-field">
+                    </div>
+                    <div class="input-row">
+                        <label class="input-label" for="hospital-name-input">病院名</label>
+                        <input id="hospital-name-input" name="hospitalName" type="text" class="input-field" placeholder="病院名を入力">
+                    </div>
+                </div>
+
                 <!-- 送信ボタン -->
                 <button type="submit" class="submit-button">記録を送信</button>
             </form>
@@ -1365,6 +1381,7 @@
             document.getElementById('support-type-input').addEventListener('change', function(e) {
                 const supportType = e.target.value.trim();
                 updateUserList();
+                toggleNextVisitSection(supportType);
             });
 
             // 5. 利用者ドロップダウンのイベント設定
@@ -1392,7 +1409,7 @@
                 const userName = sessionStorage.getItem('userName') || sessionStorage.getItem('userId') || '';
                 console.log("📝 送信するユーザー名:", userName);
                 
-                const dataUrl = `https://script.google.com/macros/s/AKfycbxMT0whiW2W5E_U6Rc54aP2VBT5lnovKCpmDwlwxtDhXi-BmtS-AMFZctYaIXmrDW40/exec?action=getData&userName=${encodeURIComponent(userName)}`;
+                const dataUrl = `https://script.google.com/macros/s/AKfycbxlZnn0LRRt5_L69IcwUOUDk8s1gNdSiO6UAOvZTr5W1yssHcB909-XB5ETmiQae9sL/exec?action=getData&userName=${encodeURIComponent(userName)}`;
                 
                 const response = await fetch(dataUrl);
                 const responseText = await response.text();
@@ -1620,6 +1637,22 @@
         // 支援種別に基づいて利用者リストを更新する関数（後方互換性のため）
         function updateUserListBySupportType(supportType) {
             updateUserList();
+        }
+
+        // 次回通院日セクションの表示/非表示を切り替える関数
+        function toggleNextVisitSection(supportType) {
+            const nextVisitSection = document.getElementById('next-visit-section');
+            if (supportType === '通院等介助') {
+                nextVisitSection.style.display = 'block';
+                console.log('✅ 次回通院日セクションを表示しました');
+            } else {
+                nextVisitSection.style.display = 'none';
+                // 非表示時は入力値をクリア
+                document.getElementById('next-visit-date-input').value = '';
+                document.getElementById('next-visit-time-input').value = '';
+                document.getElementById('hospital-name-input').value = '';
+                console.log('🔒 次回通院日セクションを非表示にしました');
+            }
         }
 
         // 段階的ドロップダウンセットアップ
@@ -2022,12 +2055,16 @@
                 const supportType = document.getElementById('support-type-input').value;
                 const appearance = document.getElementById('appearance-input').value;
                 const userCheck = document.getElementById('check1').checked ? 'はい' : 'いいえ';
-                
+                const nextVisitDate = document.getElementById('next-visit-date-input').value;
+                const nextVisitTime = document.getElementById('next-visit-time-input').value;
+                const hospitalName = document.getElementById('hospital-name-input').value;
+
                 // フォームデータをオブジェクトとして作成
                 const formData = {
                     year, month, day, startTime, endTime,
                     user, supporter1, supporter2, destination,
-                    supportType, userCheck, appearance
+                    supportType, userCheck, appearance,
+                    nextVisitDate, nextVisitTime, hospitalName
                 };
                 
                 // 日付確認フローを開始
@@ -2059,6 +2096,14 @@
 
         // 内容確認画面を表示
         function showContentConfirmation(formData) {
+            // 次回通院日情報を追加（通院等介助の場合のみ）
+            let nextVisitInfo = '';
+            if (formData.supportType === '通院等介助' && (formData.nextVisitDate || formData.nextVisitTime || formData.hospitalName)) {
+                nextVisitInfo = `\n📅 次回通院日: ${formData.nextVisitDate || '未入力'}`;
+                nextVisitInfo += `\n⏰ 次回通院時刻: ${formData.nextVisitTime || '未入力'}`;
+                nextVisitInfo += `\n🏥 病院名: ${formData.hospitalName || '未入力'}`;
+            }
+
             // 確認メッセージを作成
             const confirmMessage = `以下の内容で送信してよろしいですか？
 
@@ -2070,8 +2115,8 @@
 📍 行き先: ${formData.destination}
 🏷️ 支援種別: ${formData.supportType}
 😊 様子: ${formData.appearance}
-✅ 利用者様確認: ${formData.userCheck}`;
-            
+✅ 利用者様確認: ${formData.userCheck}${nextVisitInfo}`;
+
             if (confirm(confirmMessage)) {
                 // 送信実行
                 submitFormData(formData);
@@ -2109,7 +2154,20 @@
                     { label: '様子', value: formData.appearance },
                     { label: '利用者確認', value: formData.userCheck === 'はい' ? '確認済み' : '未確認' }
                 ];
-                
+
+                // 次回通院日情報を追加（通院等介助で入力がある場合のみ）
+                if (formData.supportType === '通院等介助' && (formData.nextVisitDate || formData.nextVisitTime || formData.hospitalName)) {
+                    if (formData.nextVisitDate) {
+                        dataRows.push({ label: '次回通院日', value: formData.nextVisitDate });
+                    }
+                    if (formData.nextVisitTime) {
+                        dataRows.push({ label: '次回通院時刻', value: formData.nextVisitTime });
+                    }
+                    if (formData.hospitalName) {
+                        dataRows.push({ label: '病院名', value: formData.hospitalName });
+                    }
+                }
+
                 dataRows.forEach(row => {
                     const tr = document.createElement('tr');
                     tr.innerHTML = `
@@ -2184,7 +2242,7 @@
                     console.log(`FormData追加: ${key} = ${formData[key]}`);
                 });
                 
-                const submitUrl = 'https://script.google.com/macros/s/AKfycbxMT0whiW2W5E_U6Rc54aP2VBT5lnovKCpmDwlwxtDhXi-BmtS-AMFZctYaIXmrDW40/exec';
+                const submitUrl = 'https://script.google.com/macros/s/AKfycbxlZnn0LRRt5_L69IcwUOUDk8s1gNdSiO6UAOvZTr5W1yssHcB909-XB5ETmiQae9sL/exec';
                 console.log('送信URL:', submitUrl);
                 
                 const response = await fetch(submitUrl, {
