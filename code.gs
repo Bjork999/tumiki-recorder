@@ -1001,7 +1001,10 @@ function handleFormSubmission(e) {
       destination: e.parameter.destination,
       supportType: e.parameter.supportType,
       userCheck: e.parameter.userCheck,
-      appearance: e.parameter.appearance
+      appearance: e.parameter.appearance,
+      nextVisitDate: e.parameter.nextVisitDate,
+      nextVisitTime: e.parameter.nextVisitTime,
+      hospitalName: e.parameter.hospitalName
     };
     
     console.log('受信したフォームデータ:', formData);
