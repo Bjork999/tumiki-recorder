@@ -1,5 +1,5 @@
-// Google Apps Script URL
-const GAS_URL = 'https://script.google.com/macros/s/AKfycbyPoY_eSUkljZWPKh0gSy0aVUuT4r-tRyCQxJ-EavaQgqYIMeH9EcLj5AzRA-ynzOuv/exec';
+// Cloudflare Workers API URL
+const API_URL = 'https://kintai.runesansu03.workers.dev';
 
 // 認証状態
 let isAuthenticated = false;
@@ -150,8 +150,8 @@ async function authenticateUser(userId, password, isQR) {
         const messageElement = isQR ? qrMessage : loginMessage;
         showMessage(messageElement, '認証中...', 'info');
 
-        // Google Apps Scriptのログイン認証エンドポイントを呼び出し
-        const url = `${GAS_URL}?action=login&username=${encodeURIComponent(userId)}&password=${encodeURIComponent(password)}&callback=handleLoginResponse`;
+        // Cloudflare Workers APIのログイン認証エンドポイントを呼び出し
+        const url = `${API_URL}?action=login&username=${encodeURIComponent(userId)}&password=${encodeURIComponent(password)}&callback=handleLoginResponse`;
 
         // JSONP形式でリクエスト
         const script = document.createElement('script');
@@ -224,7 +224,7 @@ async function handleAttendancePunch(event) {
         const dateStr = formatDate(now);
         const timeStr = formatTime(now);
 
-        // Google Apps Scriptに送信するデータ
+        // Cloudflare Workers APIに送信するデータ
         const attendanceData = {
             action: 'attendance',
             userId: currentUser.userId,
@@ -236,18 +236,22 @@ async function handleAttendancePunch(event) {
 
         console.log('打刻データ送信:', attendanceData);
 
-        // Google Apps Scriptに送信
-        const response = await fetch(GAS_URL, {
+        // Cloudflare Workers APIに送信
+        const response = await fetch(API_URL, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(attendanceData),
-            mode: 'no-cors' // CORS制限を回避
+            body: JSON.stringify(attendanceData)
         });
 
-        // no-corsモードでは詳細なレスポンスが取得できないため、成功とみなす
-        showMessage(attendanceMessage, `${getAttendanceTypeName(attendanceType)}を記録しました`, 'success');
+        const result = await response.json();
+
+        if (result.success) {
+            showMessage(attendanceMessage, `${getAttendanceTypeName(attendanceType)}を記録しました`, 'success');
+        } else {
+            showMessage(attendanceMessage, result.error || '打刻に失敗しました', 'error');
+        }
 
         // 2秒後に画面をリセット
         setTimeout(() => {
