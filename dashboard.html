@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>勤怠ダッシュボード</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', 'Noto Sans JP', sans-serif;
+        }
+
+        /* 従業員カードスタイル - 横長レイアウト */
+        .employee-card {
+            aspect-ratio: 2.5 / 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-radius: 0.375rem;
+            padding: 0.375rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+            text-align: center;
+        }
+
+        .employee-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .card-in {
+            background-color: #dcfce7;
+            color: #166534;
+            border: 2px solid #86efac;
+        }
+
+        .card-break {
+            background-color: #dbeafe;
+            color: #1e40af;
+            border: 2px solid #93c5fd;
+        }
+
+        .card-out {
+            background-color: #fee2e2;
+            color: #991b1b;
+            border: 2px solid #fca5a5;
+        }
+
+        .employee-name {
+            font-size: 0.75rem;
+            font-weight: 700;
+            margin-bottom: 0.125rem;
+            line-height: 1.2;
+        }
+
+        .employee-status {
+            font-size: 0.625rem;
+            font-weight: 600;
+            margin-top: 0.0625rem;
+            line-height: 1.2;
+        }
+
+        .break-end-time {
+            font-size: 0.5rem;
+            font-weight: 500;
+            margin-top: 0.0625rem;
+            opacity: 0.9;
+            line-height: 1.2;
+        }
+
+        /* カスタムグリッドカラム（Tailwind CSSの拡張） */
+        @media (min-width: 1280px) {
+            .xl\:grid-cols-16 {
+                grid-template-columns: repeat(16, minmax(0, 1fr));
+            }
+        }
+
+        @media (min-width: 1536px) {
+            .\32xl\:grid-cols-20 {
+                grid-template-columns: repeat(20, minmax(0, 1fr));
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+
+    <div class="container mx-auto p-4 sm:p-6 lg:p-8">
+        <!-- Navigation Header -->
+        <div class="bg-white rounded-lg shadow-md p-4 mb-4">
+            <div class="flex items-center justify-between">
+                <h3 class="text-sm font-semibold text-gray-700">勤怠管理システム</h3>
+                <div class="flex space-x-2">
+                    <a href="index.html" class="bg-gray-100 text-gray-600 px-3 py-1 rounded-full text-sm hover:bg-gray-200 transition-colors">勤怠打刻</a>
+                    <span class="bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full text-sm font-medium">ダッシュボード</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Header -->
+        <div class="flex justify-between items-center mb-6">
+            <h1 class="text-3xl font-bold text-gray-900">勤怠ダッシュボード</h1>
+            <div class="flex items-center space-x-4">
+                <button onclick="loadDashboardData()" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium">
+                    更新
+                </button>
+                <div class="text-lg text-gray-600 font-medium">
+                    <span id="current-time"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 統計情報 -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+            <div class="bg-white rounded-lg shadow p-6">
+                <div class="text-sm font-medium text-gray-500">出勤中</div>
+                <div class="text-2xl font-bold text-green-600" id="in-count">0</div>
+            </div>
+            <div class="bg-white rounded-lg shadow p-6">
+                <div class="text-sm font-medium text-gray-500">休憩中</div>
+                <div class="text-2xl font-bold text-blue-600" id="break-count">0</div>
+            </div>
+            <div class="bg-white rounded-lg shadow p-6">
+                <div class="text-sm font-medium text-gray-500">退勤済み</div>
+                <div class="text-2xl font-bold text-red-600" id="out-count">0</div>
+            </div>
+            <div class="bg-white rounded-lg shadow p-6">
+                <div class="text-sm font-medium text-gray-500">総従業員数</div>
+                <div class="text-2xl font-bold text-gray-600" id="total-count">0</div>
+            </div>
+        </div>
+
+        <!-- Main Dashboard - Grid Layout -->
+        <div class="bg-white rounded-2xl shadow-lg p-6">
+            <div id="loading-indicator" class="p-8 text-center text-gray-500">
+                <p>データを読み込んでいます...</p>
+            </div>
+
+            <div id="error-indicator" class="hidden p-8 text-center text-red-500">
+                <p>データの読み込みに失敗しました。</p>
+                <button onclick="loadDashboardData()" class="mt-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors">
+                    再試行
+                </button>
+            </div>
+
+            <!-- グリッドコンテナ -->
+            <div id="employee-grid" class="hidden grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-10 xl:grid-cols-16 2xl:grid-cols-20 gap-3">
+                <!-- 従業員カードがここに動的に挿入されます -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // DOM Elements
+        const employeeGrid = document.getElementById('employee-grid');
+        const loadingIndicator = document.getElementById('loading-indicator');
+        const errorIndicator = document.getElementById('error-indicator');
+        const currentTimeEl = document.getElementById('current-time');
+
+        // 初期化
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeApp();
+        });
+
+        /**
+         * アプリケーション初期化
+         */
+        async function initializeApp() {
+            updateClock();
+            setInterval(updateClock, 1000); // Update clock every second
+
+            await loadDashboardData();
+            startAutoRefresh();
+        }
+
+        /**
+         * 時刻表示更新
+         */
+        function updateClock() {
+            currentTimeEl.textContent = new Date().toLocaleTimeString('ja-JP');
+        }
+
+        /**
+         * ダッシュボードデータ読み込み
+         */
+        async function loadDashboardData() {
+            try {
+                loadingIndicator.style.display = 'block';
+                errorIndicator.classList.add('hidden');
+                employeeGrid.classList.add('hidden');
+
+                // JWT認証トークンを取得
+                const token = localStorage.getItem('jwt_token');
+
+                // REST API呼び出し: ダッシュボード概要取得
+                const summaryData = await callAPI('/api/dashboard/summary', 'GET', null, token);
+
+                renderGrid(summaryData.statuses || []);
+
+                loadingIndicator.style.display = 'none';
+                employeeGrid.classList.remove('hidden');
+
+            } catch (error) {
+                console.error('Dashboard data loading failed:', error);
+                showError();
+            }
+        }
+
+        /**
+         * 自動更新開始
+         */
+        function startAutoRefresh() {
+            // 1分ごとに自動更新
+            setInterval(async () => {
+                try {
+                    const token = localStorage.getItem('jwt_token');
+                    const summaryData = await callAPI('/api/dashboard/summary', 'GET', null, token);
+                    renderGrid(summaryData.statuses || []);
+                } catch (error) {
+                    console.error('Auto refresh failed:', error);
+                }
+            }, 60000);
+        }
+
+        /**
+         * グリッドレンダリング
+         */
+        function renderGrid(statuses) {
+            employeeGrid.innerHTML = ''; // Clear existing grid
+
+            if (statuses.length === 0) {
+                employeeGrid.innerHTML = '<div class="col-span-full text-center text-gray-500 py-8">まだ勤怠データがありません。</div>';
+                updateStatistics(0, 0, 0, 0);
+                return;
+            }
+
+            statuses.sort((a, b) => (a.name || a.userId).localeCompare(b.name || b.userId, 'ja')); // Sort by name
+
+            let inCount = 0, breakCount = 0, outCount = 0;
+            const now = new Date();
+
+            statuses.forEach(data => {
+                let cardClass, statusText, breakEndText = '';
+                let currentStatus = data.status;
+
+                // 休憩終了判定のロジック
+                const isBreakOver = data.status === 'BREAK' && data.breakEndTime &&
+                    isTimeOver(data.breakEndTime, now);
+
+                if (isBreakOver) {
+                    cardClass = 'card-in';
+                    statusText = '出勤中';
+                    currentStatus = 'IN';
+                    inCount++;
+                } else {
+                    switch (data.status) {
+                        case 'IN':
+                            cardClass = 'card-in';
+                            statusText = '出勤中';
+                            inCount++;
+                            break;
+                        case 'OUT':
+                            cardClass = 'card-out';
+                            statusText = '退勤済';
+                            outCount++;
+                            break;
+                        case 'BREAK':
+                            cardClass = 'card-break';
+                            statusText = '休憩中';
+                            // 休憩終了時刻を計算（休憩開始時刻 + 60分）
+                            breakEndText = calculateBreakEndTime(data.lastActionTime);
+                            breakCount++;
+                            break;
+                        default:
+                            cardClass = 'card-out';
+                            statusText = '不明';
+                    }
+                }
+
+                // カード作成
+                const card = document.createElement('div');
+                card.className = `employee-card ${cardClass}`;
+
+                let cardContent = `
+                    <div class="employee-name">${data.name || data.userId}</div>
+                    <div class="employee-status">${statusText}</div>
+                `;
+
+                // 休憩中の場合は終了時刻を追加
+                if (currentStatus === 'BREAK' && breakEndText) {
+                    cardContent += `<div class="break-end-time">終了 ${breakEndText}</div>`;
+                }
+
+                card.innerHTML = cardContent;
+                employeeGrid.appendChild(card);
+            });
+
+            // 統計情報を更新
+            updateStatistics(inCount, breakCount, outCount, statuses.length);
+        }
+
+        /**
+         * 休憩終了時刻を計算（休憩開始時刻 + 60分）
+         */
+        function calculateBreakEndTime(breakStartTime) {
+            if (!breakStartTime || breakStartTime === '—') return '';
+
+            try {
+                // 時刻形式: "HH:MM:SS" or "HH:MM"
+                const timeParts = breakStartTime.split(':');
+                if (timeParts.length < 2) return '';
+
+                const hours = parseInt(timeParts[0], 10);
+                const minutes = parseInt(timeParts[1], 10);
+
+                // 60分追加
+                let endMinutes = minutes + 60;
+                let endHours = hours;
+
+                if (endMinutes >= 60) {
+                    endHours += Math.floor(endMinutes / 60);
+                    endMinutes = endMinutes % 60;
+                }
+
+                if (endHours >= 24) {
+                    endHours = endHours % 24;
+                }
+
+                // HH:MM形式で返す
+                return `${String(endHours).padStart(2, '0')}:${String(endMinutes).padStart(2, '0')}`;
+            } catch (error) {
+                console.error('Break end time calculation error:', error);
+                return '';
+            }
+        }
+
+        /**
+         * 時刻比較（休憩終了判定）
+         */
+        function isTimeOver(timeString, currentTime) {
+            if (!timeString) return false;
+
+            try {
+                const today = new Date();
+                const [hours, minutes] = timeString.split(':').map(Number);
+                const targetTime = new Date(today.getFullYear(), today.getMonth(), today.getDate(), hours, minutes);
+                return currentTime > targetTime;
+            } catch (error) {
+                return false;
+            }
+        }
+
+        /**
+         * 統計情報を更新
+         */
+        function updateStatistics(inCount, breakCount, outCount, totalCount) {
+            document.getElementById('in-count').textContent = inCount;
+            document.getElementById('break-count').textContent = breakCount;
+            document.getElementById('out-count').textContent = outCount;
+            document.getElementById('total-count').textContent = totalCount;
+        }
+
+        /**
+         * REST API呼び出し
+         * @param {string} endpoint - APIエンドポイント
+         * @param {string} method - HTTPメソッド (GET, POST, etc.)
+         * @param {object} data - 送信データ
+         * @param {string} token - JWTトークン (オプション)
+         */
+        async function callAPI(endpoint, method = 'GET', data = null, token = null) {
+            const headers = {
+                'Content-Type': 'application/json'
+            };
+
+            // JWTトークンがある場合はAuthorizationヘッダーに追加
+            if (token) {
+                headers['Authorization'] = `Bearer ${token}`;
+            }
+
+            const options = {
+                method: method,
+                headers: headers
+            };
+
+            if (data && method !== 'GET') {
+                options.body = JSON.stringify(data);
+            }
+
+            try {
+                const response = await fetch(endpoint, options);
+                const result = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(result.message || `HTTP error! status: ${response.status}`);
+                }
+
+                return result;
+            } catch (error) {
+                console.error('API call error:', error);
+                throw error;
+            }
+        }
+
+        /**
+         * エラー表示
+         */
+        function showError() {
+            loadingIndicator.style.display = 'none';
+            employeeGrid.classList.add('hidden');
+            errorIndicator.classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
