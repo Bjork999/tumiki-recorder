@@ -133,14 +133,41 @@
         .login-button:active {
             transform: translateY(1px);
         }
-        
+
+        /* 勤怠打刻ボタン */
+        .attendance-link-button {
+            width: 100%;
+            height: 44px;
+            background: #10b981;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            border: none;
+            border-radius: 6px;
+            margin-top: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .attendance-link-button:hover {
+            background: #059669;
+        }
+
+        .attendance-link-button:active {
+            transform: translateY(1px);
+        }
+
         /* エラーメッセージ */
         .error-message {
             min-height: 32px;
             margin-top: 16px;
             text-align: center;
         }
-        
+
         .error-text {
             color: #dc2626;
             font-size: 16px;
@@ -168,6 +195,11 @@
             }
             
             .login-button {
+                height: 56px;
+                font-size: 18px;
+            }
+
+            .attendance-link-button {
                 height: 56px;
                 font-size: 18px;
             }
@@ -211,7 +243,10 @@
                 
                 <!-- ログインボタン -->
                 <button class="login-button" type="submit">ログイン</button>
-                
+
+                <!-- 勤怠打刻ボタン -->
+                <a href="attendance.html" class="attendance-link-button">勤怠打刻</a>
+
                 <!-- エラーメッセージ -->
                 <div class="error-message">
                     <p id="errorMessage" class="error-text"></p>

@@ -24,7 +24,7 @@ function doPost(e) {
   try {
     const postData = JSON.parse(e.postData.contents);
     const action = postData.action;
-    
+
     if (action === 'submitRecord') {
       return handleSubmitRecord(postData);
     } else if (action === 'addUser') {
@@ -33,8 +33,10 @@ function doPost(e) {
       return handleDeleteUser(postData);
     } else if (action === 'getUsers') {
       return handleGetUsers();
+    } else if (action === 'attendance') {
+      return handleAttendance(postData);
     }
-    
+
     return ContentService.createTextOutput(JSON.stringify({
       success: false,
       error: '不明なアクションです'
@@ -226,6 +228,138 @@ function handleDeleteUser(postData) {
     return ContentService.createTextOutput(JSON.stringify({
       success: false,
       error: error.message
+    })).setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
+// ==========================
+// 勤怠打刻処理
+// ==========================
+function handleAttendance(postData) {
+  try {
+    console.log('勤怠打刻処理開始:', postData);
+
+    const userId = postData.userId;
+    const userName = postData.userName;
+    const date = postData.date;
+    const time = postData.time;
+    const type = postData.type; // clock-in, break-start, break-end, clock-out
+
+    // 打刻タイプの日本語名
+    const typeNames = {
+      'clock-in': '出勤',
+      'break-start': '休憩開始',
+      'break-end': '休憩終了',
+      'clock-out': '退勤'
+    };
+
+    const typeName = typeNames[type] || type;
+
+    // スプレッドシートを取得
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const attendanceSheet = ss.getSheetByName('出勤簿');
+
+    if (!attendanceSheet) {
+      throw new Error('出勤簿シートが見つかりません');
+    }
+
+    // 出勤簿の設定（SHEET_CONFIGSから取得）
+    const config = SHEET_CONFIGS['出勤簿'];
+    if (!config) {
+      throw new Error('出勤簿の設定が見つかりません');
+    }
+
+    // データを記録する行を検索（日付とユーザー名で一致する行を探す）
+    const startRow = config.startRow;
+    const endRow = config.endRow;
+    const dateCol = 2; // B列
+    const userCol = 18; // R列（支援員名）
+
+    // 日付列とユーザー列のデータを取得
+    const numRows = endRow - startRow + 1;
+    const dateRange = attendanceSheet.getRange(startRow, dateCol, numRows, 1);
+    const userRange = attendanceSheet.getRange(startRow, userCol, numRows, 1);
+
+    const dates = dateRange.getValues();
+    const users = userRange.getValues();
+
+    // 該当する行を検索（同じ日付で空行を見つける）
+    let targetRow = -1;
+    for (let i = 0; i < numRows; i++) {
+      const rowDate = dates[i][0];
+      const rowUser = users[i][0];
+
+      // 日付が一致し、ユーザー名が空の行を探す
+      if (rowDate && rowDate.toString() === date && (!rowUser || rowUser.toString().trim() === '')) {
+        targetRow = startRow + i;
+        break;
+      }
+    }
+
+    // 該当行が見つからない場合は、空行を探す
+    if (targetRow === -1) {
+      for (let i = 0; i < numRows; i++) {
+        const rowDate = dates[i][0];
+        if (!rowDate || rowDate.toString().trim() === '') {
+          targetRow = startRow + i;
+          // 日付を設定
+          attendanceSheet.getRange(targetRow, dateCol).setValue(date);
+          break;
+        }
+      }
+    }
+
+    if (targetRow === -1) {
+      throw new Error('記録できる空行が見つかりません');
+    }
+
+    console.log(`打刻記録: 行${targetRow}に記録`);
+
+    // 打刻タイプに応じて列を決定
+    let targetCol;
+    switch (type) {
+      case 'clock-in':
+        targetCol = 3; // C列（出勤時刻）
+        break;
+      case 'break-start':
+        targetCol = 4; // D列（休憩開始）
+        break;
+      case 'break-end':
+        targetCol = 5; // E列（休憩終了）
+        break;
+      case 'clock-out':
+        targetCol = 6; // F列（退勤時刻）
+        break;
+      default:
+        throw new Error(`不明な打刻タイプ: ${type}`);
+    }
+
+    // 時刻を記録
+    attendanceSheet.getRange(targetRow, targetCol).setValue(time);
+
+    // ユーザー名を記録（R列）
+    attendanceSheet.getRange(targetRow, userCol).setValue(userName);
+
+    console.log(`${typeName}を記録しました: ${userName} - ${date} ${time}`);
+
+    // 成功レスポンス
+    return ContentService.createTextOutput(JSON.stringify({
+      success: true,
+      message: `${typeName}を記録しました`,
+      data: {
+        userId: userId,
+        userName: userName,
+        date: date,
+        time: time,
+        type: typeName
+      }
+    })).setMimeType(ContentService.MimeType.JSON);
+
+  } catch (error) {
+    console.error('勤怠打刻エラー:', error);
+    return ContentService.createTextOutput(JSON.stringify({
+      success: false,
+      error: `勤怠打刻エラー: ${error.message}`
     })).setMimeType(ContentService.MimeType.JSON);
   }
 }

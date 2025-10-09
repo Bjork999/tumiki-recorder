@@ -61,3 +61,5 @@ This is a Progressive Web Application (PWA) for mobility support record manageme
 - All user-facing text is in Japanese
 - Form fields and validation messages use Japanese terminology
 - Date/time handling uses Japanese locale formatting
+
+code.gsとprocessBillingCodes.gsは連携先のグーグルスプレッドシートのApps Scriptに書かれたcodeです。

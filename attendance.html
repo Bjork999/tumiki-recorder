@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>勤怠打刻 - 積み木記録表</title>
+
+    <!-- PWA対応：アイコン設定 -->
+    <link rel="icon" type="image/png" sizes="32x32" href="tumiki-icon.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="tumiki-icon.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="tumiki-icon.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="tumiki-icon.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="tumiki-icon.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="tumiki-icon.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="tumiki-icon.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="tumiki-icon.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="tumiki-icon.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="tumiki-icon.png">
+    <link rel="apple-touch-icon" sizes="57x57" href="tumiki-icon.png">
+    <link rel="apple-touch-icon" href="tumiki-icon.png">
+
+    <!-- PWAマニフェスト -->
+    <link rel="manifest" href="manifest.json">
+
+    <!-- iOS用メタタグ -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="積み木">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#ffffff">
+
+    <link rel="stylesheet" href="style.css">
+
+    <!-- QRコードリーダーライブラリ -->
+    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+
+    <style>
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            background-color: #ffe4cc;
+        }
+
+        /* スマートフォン最適化 */
+        .smartphone-container {
+            width: 100%;
+            margin: 0 auto;
+            padding: 8px;
+            box-sizing: border-box;
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            padding-top: 40px;
+        }
+
+        .attendance-container {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            border: 1px solid #e5e7eb;
+            width: 100%;
+            max-width: 360px;
+            position: relative;
+        }
+
+        /* タイトル */
+        .title-box {
+            border: 2px solid #9ca3af;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 32px;
+            border-radius: 8px;
+        }
+
+        .title-text {
+            font-size: 20px;
+            font-weight: bold;
+            letter-spacing: 0.1em;
+            color: #1f2937;
+        }
+
+        /* 切り替えボタン（右上） */
+        .switch-button {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            background: #10b981;
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+            border: none;
+            border-radius: 6px;
+            padding: 8px 12px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .switch-button:hover {
+            background: #059669;
+        }
+
+        /* QRコードリーダー */
+        #qr-reader {
+            width: 100%;
+            border: 2px solid #9ca3af;
+            border-radius: 8px;
+            margin-bottom: 24px;
+            overflow: hidden;
+        }
+
+        /* ユーザー情報表示 */
+        .user-info {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 24px;
+            text-align: center;
+        }
+
+        .user-name {
+            font-size: 18px;
+            font-weight: bold;
+            color: #1f2937;
+            margin-bottom: 8px;
+        }
+
+        .user-id {
+            font-size: 14px;
+            color: #6b7280;
+        }
+
+        /* 入力フィールド */
+        .input-group {
+            margin-bottom: 16px;
+        }
+
+        .input-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            background: #e5e7eb;
+            padding: 10px 12px;
+            border: 1px solid #9ca3af;
+            border-radius: 4px;
+            margin-bottom: 6px;
+            text-align: center;
+        }
+
+        .input-field {
+            width: 100%;
+            height: 44px;
+            padding: 0 16px;
+            font-size: 16px;
+            border: none;
+            border-bottom: 2px solid #9ca3af;
+            background: transparent;
+            outline: none;
+            transition: border-color 0.2s;
+            box-sizing: border-box;
+        }
+
+        .input-field:focus {
+            border-bottom-color: #3b82f6;
+        }
+
+        /* 打刻ボタングリッド */
+        .button-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .attendance-button {
+            height: 80px;
+            font-size: 18px;
+            font-weight: bold;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: white;
+        }
+
+        .attendance-button:active {
+            transform: translateY(2px);
+        }
+
+        .button-clock-in {
+            background: #3b82f6;
+        }
+
+        .button-clock-in:hover {
+            background: #2563eb;
+        }
+
+        .button-break-start {
+            background: #f59e0b;
+        }
+
+        .button-break-start:hover {
+            background: #d97706;
+        }
+
+        .button-break-end {
+            background: #10b981;
+        }
+
+        .button-break-end:hover {
+            background: #059669;
+        }
+
+        .button-clock-out {
+            background: #ef4444;
+        }
+
+        .button-clock-out:hover {
+            background: #dc2626;
+        }
+
+        /* 認証ボタン */
+        .auth-button {
+            width: 100%;
+            height: 44px;
+            background: #3b82f6;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            border: none;
+            border-radius: 6px;
+            margin-top: 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .auth-button:hover {
+            background: #2563eb;
+        }
+
+        .auth-button:active {
+            transform: translateY(1px);
+        }
+
+        /* メッセージ */
+        .message {
+            min-height: 32px;
+            margin-top: 16px;
+            text-align: center;
+        }
+
+        .message-text {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .message-error {
+            color: #dc2626;
+        }
+
+        .message-success {
+            color: #10b981;
+        }
+
+        /* 非表示クラス */
+        .hidden {
+            display: none;
+        }
+
+        /* レスポンシブ調整 */
+        @media (max-width: 720px) {
+            .smartphone-container {
+                padding: 12px;
+                padding-top: 20px;
+            }
+
+            .attendance-container {
+                padding: 24px;
+            }
+
+            .title-text {
+                font-size: 24px;
+            }
+
+            .attendance-button {
+                height: 100px;
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="smartphone-container">
+        <div class="attendance-container">
+            <!-- 切り替えボタン -->
+            <button id="switchAuthButton" class="switch-button">ID/パスワード入力</button>
+
+            <!-- タイトル -->
+            <div class="title-box">
+                <h1 class="title-text" id="pageTitle">勤怠打刻 (QR)</h1>
+            </div>
+
+            <!-- QRコード認証画面 -->
+            <div id="qrAuthSection">
+                <!-- QRコードリーダー -->
+                <div id="qr-reader"></div>
+
+                <!-- 読み取り状態メッセージ -->
+                <div class="message">
+                    <p id="qrMessage" class="message-text">QRコードをカメラにかざしてください</p>
+                </div>
+            </div>
+
+            <!-- ID/パスワード認証画面 -->
+            <div id="passwordAuthSection" class="hidden">
+                <form id="loginForm">
+                    <!-- ユーザーID -->
+                    <div class="input-group">
+                        <label class="input-label" for="username">ユーザーID</label>
+                        <input
+                            class="input-field"
+                            id="username"
+                            type="text"
+                            placeholder="ユーザーID"
+                            autocomplete="username"
+                        >
+                    </div>
+
+                    <!-- パスワード -->
+                    <div class="input-group">
+                        <label class="input-label" for="password">パスワード</label>
+                        <input
+                            class="input-field"
+                            id="password"
+                            type="password"
+                            placeholder="パスワード"
+                            autocomplete="current-password"
+                        >
+                    </div>
+
+                    <!-- 認証ボタン -->
+                    <button class="auth-button" type="submit">認証</button>
+
+                    <!-- エラーメッセージ -->
+                    <div class="message">
+                        <p id="loginMessage" class="message-text"></p>
+                    </div>
+                </form>
+            </div>
+
+            <!-- 認証後の打刻画面 -->
+            <div id="attendanceSection" class="hidden">
+                <!-- ユーザー情報 -->
+                <div class="user-info">
+                    <div class="user-name" id="displayUserName"></div>
+                    <div class="user-id" id="displayUserId"></div>
+                </div>
+
+                <!-- 打刻ボタン -->
+                <div class="button-grid">
+                    <button class="attendance-button button-clock-in" data-type="clock-in">
+                        出勤
+                    </button>
+                    <button class="attendance-button button-break-start" data-type="break-start">
+                        休憩開始
+                    </button>
+                    <button class="attendance-button button-break-end" data-type="break-end">
+                        休憩終了
+                    </button>
+                    <button class="attendance-button button-clock-out" data-type="clock-out">
+                        退勤
+                    </button>
+                </div>
+
+                <!-- 打刻メッセージ -->
+                <div class="message">
+                    <p id="attendanceMessage" class="message-text"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="attendance.js"></script>
+</body>
+</html>
