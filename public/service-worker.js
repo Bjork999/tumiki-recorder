@@ -3,7 +3,7 @@
  * モバイル環境での信頼性向上のため
  */
 
-const CACHE_VERSION = 'tumiki-v1.0.1';
+const CACHE_VERSION = 'tumiki-v1.0.2';
 const STATIC_CACHE = `${CACHE_VERSION}-static`;
 const DATA_CACHE = `${CACHE_VERSION}-data`;
 
@@ -85,12 +85,16 @@ self.addEventListener('fetch', (event) => {
  */
 async function networkFirstStrategy(request, cacheName) {
   try {
-    // ネットワークから取得を試みる
-    const networkResponse = await fetch(request);
+    // ネットワークから取得を試みる（リダイレクトを許可）
+    const networkResponse = await fetch(request, {
+      redirect: 'follow'
+    });
 
-    // 成功したらキャッシュに保存（GETリクエストかつHTTP/HTTPSのみ）
+    // 成功したらキャッシュに保存（GETリクエストかつHTTP/HTTPSのみ、リダイレクトでない）
     const url = new URL(request.url);
-    if (request.method === 'GET' && networkResponse.ok && (url.protocol === 'http:' || url.protocol === 'https:')) {
+    if (request.method === 'GET' && networkResponse.ok &&
+        (url.protocol === 'http:' || url.protocol === 'https:') &&
+        networkResponse.type !== 'opaqueredirect') {
       const cache = await caches.open(cacheName);
       cache.put(request, networkResponse.clone());
     }
@@ -135,13 +139,17 @@ async function cacheFirstStrategy(request, cacheName) {
     return cachedResponse;
   }
 
-  // キャッシュになければネットワークから取得
+  // キャッシュになければネットワークから取得（リダイレクトを許可）
   try {
-    const networkResponse = await fetch(request);
+    const networkResponse = await fetch(request, {
+      redirect: 'follow'
+    });
 
-    // 成功したらキャッシュに保存（HTTPまたはHTTPSのみ）
+    // 成功したらキャッシュに保存（HTTPまたはHTTPSのみ、リダイレクトでない）
     const url = new URL(request.url);
-    if (networkResponse.ok && (url.protocol === 'http:' || url.protocol === 'https:')) {
+    if (networkResponse.ok &&
+        (url.protocol === 'http:' || url.protocol === 'https:') &&
+        networkResponse.type !== 'opaqueredirect') {
       const cache = await caches.open(cacheName);
       cache.put(request, networkResponse.clone());
     }
