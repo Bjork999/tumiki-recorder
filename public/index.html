@@ -254,19 +254,7 @@
 
     <script src="login.js"></script>
 
-    <!-- Service Worker登録（モバイル対応） -->
-    <script>
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/service-worker.js')
-                    .then((registration) => {
-                        console.log('✅ Service Worker登録成功:', registration.scope);
-                    })
-                    .catch((error) => {
-                        console.warn('⚠️ Service Worker登録失敗:', error);
-                    });
-            });
-        }
-    </script>
+    <!-- Service Worker: 一時的に無効化（Cloudflare Workersとの互換性問題） -->
+    <!-- Service Worker登録コードを削除 -->
 </body>
 </html>
