@@ -226,19 +226,28 @@ async function handleGetData(env) {
       "無口な時間があった"
     ];
 
-    // 4. 当月の残り時間取得
+    // 4. 当月の残り時間取得（バッチ処理で同時リクエスト数を制限）
     const monthlyHoursData = {};
+    const BATCH_SIZE = 5; // 同時リクエスト数を5に制限
 
-    for (const user of users) {
-      const docId = `user_${user.id}_${currentMonth}`;
-      const monthlyHour = await db.getItem('monthly_hours', { id: docId });
+    for (let i = 0; i < users.length; i += BATCH_SIZE) {
+      const batch = users.slice(i, i + BATCH_SIZE);
+      const promises = batch.map(async (user) => {
+        const docId = `user_${user.id}_${currentMonth}`;
+        const monthlyHour = await db.getItem('monthly_hours', { id: docId });
+        return { userId: user.id, data: monthlyHour };
+      });
 
-      if (monthlyHour) {
-        monthlyHoursData[user.id] = {
-          behaviorSupport: monthlyHour.behaviorSupport || {},
-          mobilitySupport: monthlyHour.mobilitySupport || {},
-          hospitalSupport: monthlyHour.hospitalSupport || {}
-        };
+      const results = await Promise.all(promises);
+
+      for (const result of results) {
+        if (result.data) {
+          monthlyHoursData[result.userId] = {
+            behaviorSupport: result.data.behaviorSupport || {},
+            mobilitySupport: result.data.mobilitySupport || {},
+            hospitalSupport: result.data.hospitalSupport || {}
+          };
+        }
       }
     }
 
