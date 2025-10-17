@@ -19,3 +19,17 @@ Thumbs.db
 # Temporary files
 *.tmp
 *.temp GGG.js
+
+# Environment variables and secrets (IMPORTANT: Never commit!)
+.dev.vars
+.env
+.env.local
+*.pem
+*.key
+
+# Node modules
+node_modules/
+
+# Build output
+dist/
+.wrangler/
