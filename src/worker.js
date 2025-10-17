@@ -205,10 +205,11 @@ async function handleGetData(env) {
       (user.hospitalSupport?.availableTime && user.hospitalSupport.availableTime !== '')
     );
 
-    // 2. 支援員取得 (株式会社ネクストステージのみ)
-    const allEmployees = await db.scanItems('employees');
-    const supporters = allEmployees
-      .filter(emp => emp.affiliation === '株式会社ネクストステージ')
+    // 2. 支援員取得 (株式会社ネクストステージのみ - Firestoreクエリで直接フィルタ)
+    const supportersData = await db.scanItems('employees', {
+      affiliation: '株式会社ネクストステージ'
+    });
+    const supporters = supportersData
       .map(emp => emp.name)
       .sort();
 
