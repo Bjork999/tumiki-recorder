@@ -3,32 +3,20 @@
  * モバイル環境での信頼性向上のため
  */
 
-const CACHE_VERSION = 'tumiki-v1.0.2';
+const CACHE_VERSION = 'tumiki-v1.0.3';
 const STATIC_CACHE = `${CACHE_VERSION}-static`;
 const DATA_CACHE = `${CACHE_VERSION}-data`;
-
-// 静的アセットのキャッシュリスト（存在するファイルのみ）
-const STATIC_ASSETS = [
-  '/',
-  '/index.html',
-  '/main.html',
-  '/login.js',
-  '/style.css',
-  '/tumiki-icon.png',
-  '/manifest.json'
-];
 
 // Service Workerインストール時
 self.addEventListener('install', (event) => {
   console.log('[Service Worker] インストール中...');
+
+  // 静的アセットは動的にキャッシュ（インストール時は空）
+  // GitHub Pagesとの互換性のため
   event.waitUntil(
     caches.open(STATIC_CACHE)
       .then((cache) => {
-        console.log('[Service Worker] 静的アセットをキャッシュ中...');
-        return cache.addAll(STATIC_ASSETS);
-      })
-      .then(() => {
-        console.log('[Service Worker] インストール完了、即座に有効化');
+        console.log('[Service Worker] キャッシュ初期化完了');
         return self.skipWaiting();
       })
       .catch((error) => {
