@@ -4,15 +4,66 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Service Worker削除ツール</title>
+    <style>
+        body {
+            font-family: system-ui, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        button {
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 6px;
+            margin: 10px 5px;
+        }
+        button:hover {
+            background: #dc2626;
+        }
+        #status {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f3f4f6;
+            border-radius: 6px;
+        }
+    </style>
 </head>
 <body>
-    <h1>Service Worker削除</h1>
+    <h1>🧹 Service Worker 強制削除</h1>
+    <p>Service Workerエラーを解決するためのツールです。</p>
+
     <button id="unregisterBtn">Service Workerを削除</button>
+    <button id="reloadBtn" style="background: #3b82f6;">ページをリロード</button>
+    <button id="clearAllBtn" style="background: #8b5cf6;">すべてクリア + リロード</button>
+
     <div id="status"></div>
 
     <script>
+        // ページ読み込み時に自動チェック
+        window.addEventListener('load', async () => {
+            const status = document.getElementById('status');
+
+            if ('serviceWorker' in navigator) {
+                const registrations = await navigator.serviceWorker.getRegistrations();
+                const cacheNames = await caches.keys();
+
+                status.innerHTML = `
+                    <p><strong>現在の状態:</strong></p>
+                    <p>Service Worker登録数: ${registrations.length}</p>
+                    <p>キャッシュ数: ${cacheNames.length}</p>
+                    ${registrations.length > 0 ? '<p style="color: red;">⚠️ Service Workerが登録されています。削除が必要です。</p>' : '<p style="color: green;">✅ Service Workerは登録されていません。</p>'}
+                `;
+            }
+        });
+
+        // Service Worker削除
         document.getElementById('unregisterBtn').addEventListener('click', async () => {
             const status = document.getElementById('status');
+            status.innerHTML = '<p>🔄 削除中...</p>';
 
             if ('serviceWorker' in navigator) {
                 const registrations = await navigator.serviceWorker.getRegistrations();
@@ -34,10 +85,47 @@
                     status.innerHTML += `<p style="color: blue;">🗑️ キャッシュ削除: ${cacheName}</p>`;
                 }
 
-                status.innerHTML += '<p style="color: green;">✅ すべて削除完了。ページをリロードしてください。</p>';
+                status.innerHTML += '<p style="color: green;">✅ すべて削除完了！「ページをリロード」ボタンを押してください。</p>';
             } else {
                 status.innerHTML = '<p style="color: red;">❌ Service Workerに対応していません</p>';
             }
+        });
+
+        // リロード
+        document.getElementById('reloadBtn').addEventListener('click', () => {
+            location.reload(true);
+        });
+
+        // すべてクリア + リロード
+        document.getElementById('clearAllBtn').addEventListener('click', async () => {
+            const status = document.getElementById('status');
+            status.innerHTML = '<p>🔄 すべてクリア中...</p>';
+
+            // Service Worker削除
+            if ('serviceWorker' in navigator) {
+                const registrations = await navigator.serviceWorker.getRegistrations();
+                for (let registration of registrations) {
+                    await registration.unregister();
+                }
+            }
+
+            // すべてのキャッシュ削除
+            const cacheNames = await caches.keys();
+            for (let cacheName of cacheNames) {
+                await caches.delete(cacheName);
+            }
+
+            // localStorage削除
+            localStorage.clear();
+
+            // sessionStorage削除
+            sessionStorage.clear();
+
+            status.innerHTML = '<p style="color: green;">✅ すべてクリア完了！3秒後にリロードします...</p>';
+
+            setTimeout(() => {
+                location.href = '/';
+            }, 3000);
         });
     </script>
 </body>
